@@ -180,7 +180,10 @@ export function addAutoButton(self: MiruSuiteModuleInstance, bankId: string, but
  * @param button to remove
  * @returns the updated autoMap
  */
-function removeAutoButtonFromAnyBank(self: MiruSuiteModuleInstance, button: AutoConfiguredButton): AutoConfiguredBankMap {
+function removeAutoButtonFromAnyBank(
+	self: MiruSuiteModuleInstance,
+	button: AutoConfiguredButton,
+): AutoConfiguredBankMap {
 	const autoMap: AutoConfiguredBankMap = config.get('autoConfiguredMap', {}) as AutoConfiguredBankMap
 	const banks = Object.keys(autoMap)
 	for (const bank of banks) {

@@ -4,4528 +4,4623 @@
  */
 
 export interface paths {
-    "/api/autocut": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get AutoCut running state and config. */
-        get: operations["getAutoCutSettings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/autocut/config": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update AutoCut configuration. */
-        put: operations["setAutoCutConfig"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/autocut/history": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the history of AutoCut events. */
-        get: operations["getAutoCutHistory"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/autocut/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Start the AutoCut feature. */
-        put: operations["startAutoCut"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/autocut/stop": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Stop the AutoCut feature. */
-        put: operations["stopAutoCut"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/credentials": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Returns whether Basic Auth is enabled */
-        get: operations["getCredentialsRequired"];
-        put?: never;
-        /** Update the user credentials */
-        post: operations["updateCredentials"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/flags": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Returns all enabled boolean flags (data collection, etc.) */
-        get: operations["getFlags"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/flags/{flag}/{value}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Enable or disable a boolean flag (data collection, etc.) */
-        post: operations["setFlag"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/onnx": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the current ONNX configuration */
-        get: operations["getOnnxConfiguration"];
-        /** Set the ONNX configuration */
-        put: operations["setOnnxConfiguration"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/onnx/nvidia-smi": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the output of nvidia-smi */
-        get: operations["getNvidiaSmi"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/onnx/providers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get available ONNX providers */
-        get: operations["getOnnxProviders"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/onnx/reset-cuda": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Reset disabled CUDA */
-        post: operations["resetCuda"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/onnx/state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the current state of the ONNX service */
-        get: operations["getOnnxState"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/shotsize": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the shot size targets */
-        get: operations["getTargetShotSizeConfigs"];
-        put?: never;
-        /** Set the shot size targSoet size for a given size */
-        post: operations["setTargetShotSizeConfig"];
-        /** Reset the shot size targets to the default values */
-        delete: operations["resetTargetShotSizeConfigs"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/config/throwTestError": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Throw a test error */
-        post: operations["throwTestError"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/controller": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all available game controllers */
-        get: operations["listGameControllers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/controller/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get game controller settings */
-        get: operations["getGameControllerSettings"];
-        put?: never;
-        /** Update game controller settings */
-        post: operations["setGameControllerSettings"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all currently defined devices */
-        get: operations["listDevices"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/add": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a new device */
-        post: operations["addDevice"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/discover/audio": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all available audio sources */
-        get: operations["discoverAudio"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/discover/mdns": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List devices discovered via mDNS */
-        get: operations["getDiscoveredDevices"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/discover/mdns/services": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List services discovered via mDNS */
-        get: operations["listRawServices"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/discover/ndi": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all available NDI sources */
-        get: operations["discoverNDI"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/discover/webcam": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all available webcams */
-        get: operations["discoverWebcam"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get device by id */
-        get: operations["getDeviceById"];
-        /** Update device name or components using a patch */
-        put: operations["updateDevice"];
-        post?: never;
-        /** Remove a device from the active project */
-        delete: operations["removeDevice"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/add": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add one or more components to a device with default settings */
-        post: operations["addDeviceComponent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/controller": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the state of the PTZ controller of a source */
-        get: operations["getPtzState"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/controller/control": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Send manual commands to the PTZ controller of a source */
-        post: operations["controlPtz"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/controller/control/direct/{endpoint}/{rawCommand}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send a raw control command to the PTZ
-         * @description Currently only supports Panasonic cameras.
-         */
-        post: operations["controlPtzDirectly"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/controller/home": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Save the current camera position as the home position */
-        put: operations["saveHome"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/director/automove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Trigger an automatic random movement */
-        post: operations["triggerRandomAutoMove"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/director/limit/{border}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update a head tracking director's border limit according to the current PTZ position */
-        post: operations["learnBorderLimit"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/director/presetmove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Trigger an automatic preset movement
-         * @description Looks for a preset matching the currently active preset according to the settings of the AutoMoveDirector. If the active preset is not applied, the origin point is the current camera position, not the preset.
-         */
-        post: operations["triggerRandomPresetMove"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/director/steady/exit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Exit steady mode for a head tracking director */
-        post: operations["exitSteadyMode"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/director/stop": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Stop automatic movement */
-        post: operations["stopAutoMove"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/input/video": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the video feed of an input component */
-        get: operations["streamVideo"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/tracker/learn": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Trigger learning of a new face on a PersonTracker */
-        post: operations["triggerLearnFace"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/tracker/target/{person}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Set the director's target person
-         * @description Use -1 to unset the tracked person.
-         */
-        post: operations["setTargetPerson"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/{component}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete a component by id from a device */
-        delete: operations["deleteDeviceComponent"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/{component}/disable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Disable an existing device component */
-        post: operations["disableDeviceComponent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/devices/{id}/{component}/enable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Enable an existing device component */
-        post: operations["enableDeviceComponent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/faces/embeddings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all faces with embeddings */
-        get: operations["listFaceEmbeddings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/faces/persistent": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all non-temporary faces */
-        get: operations["listFaces"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/faces/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update the name of a face */
-        post: operations["updateFaceIdName"];
-        /** Delete a face */
-        delete: operations["deleteFace"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/faces/{id}/embeddings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the embeddings of a face */
-        get: operations["getFaceEmbeddings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/faces/{id}/img": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a sample face image by id */
-        get: operations["getFaceImage"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get license details */
-        get: operations["getLicenseDetails"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a license */
-        post: operations["createLicense"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license/install": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Install a license */
-        put: operations["installLicense"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license/reload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Reload the license */
-        put: operations["reloadLicense"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license/uninstall": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Uninstall the license */
-        put: operations["uninstallLicense"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/license/validate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Validate a license */
-        put: operations["validateLicense"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List all projects */
-        get: operations["listProjects"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the active project */
-        get: operations["getProject"];
-        /** Update the active project */
-        put: operations["updateActiveProject"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/active": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the id of the active preset and the applied state */
-        get: operations["getActivePreset"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/add": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add a new preset to the active project */
-        post: operations["addPreset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/capture/{device}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Capture a new preset from a device, continue to /add */
-        post: operations["capturePreset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/gaindisabled": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["PresetResource_setGainDisabled"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/reapply/{device}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Plays the already active preset. Useful if the camera has already moved away */
-        post: operations["playActivePreset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update a preset by id in the active project */
-        put: operations["updatePreset"];
-        post?: never;
-        /** Delete a preset by id from the active project */
-        delete: operations["deletePreset"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/{id}/overwrite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Overwrite a preset with the current position of the camera. This doesn't change the name or the ChangeComponentSettingsCommands. */
-        post: operations["overwritePreset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/active/presets/{id}/play": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Play a preset by id in the active project */
-        post: operations["playPreset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a new project */
-        post: operations["createProject"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/load": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Load a project */
-        put: operations["loadProject"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/projects/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update a project by id */
-        put: operations["updateProject"];
-        post?: never;
-        /** Delete a project */
-        delete: operations["deleteProject"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ptz/calibration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all calibrators */
-        get: operations["listCalibrators"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ptz/calibration/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Start a calibration for Panasonic PTZ */
-        post: operations["startCalibration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ptz/calibration/start/dummy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Start a dummy calibration */
-        post: operations["startDummyCalibration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ptz/calibration/stop": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Stop a calibration */
-        post: operations["stopCalibration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ptz/calibration/{index}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a calibrator with calibration curve */
-        get: operations["getCalibrator"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the state stream */
-        get: operations["streamState"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/stream/gui": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GUIUpdateStreamResource_stream"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the current switcher state */
-        get: operations["getSwitcherState"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/config": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get switcher driver and properties */
-        get: operations["getSwitcherConfig"];
-        put?: never;
-        /** Set switcher driver and properties */
-        post: operations["setSwitcherConfig"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/connect": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Connect to switcher */
-        post: operations["connectSwitcher"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/disconnect": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Disconnect from the switcher */
-        post: operations["disconnectSwitcher"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/preview/{input}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the  preview input */
-        post: operations["setPreview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/program/{input}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the program input */
-        post: operations["setProgram"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/recording": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the recording state */
-        post: operations["setRecording"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/streaming": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the streaming state */
-        post: operations["setStreaming"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/switcher/transition": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Trigger the configured transition */
-        post: operations["triggerTransition"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/db": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the version of the database */
-        get: operations["getDbVersion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/gc": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Run garbage collection */
-        post: operations["gc"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/mode": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the launch mode of the application */
-        get: operations["getMode"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/sendstream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Stream some stuff */
-        get: operations["getTestStream"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/shutdown": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Shutdown the application */
-        post: operations["shutdown"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/version": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the version of the application */
-        get: operations["getVersion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+	'/api/autocut': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get AutoCut running state and config. */
+		get: operations['getAutoCutSettings']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/autocut/config': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Update AutoCut configuration. */
+		put: operations['setAutoCutConfig']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/autocut/history': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the history of AutoCut events. */
+		get: operations['getAutoCutHistory']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/autocut/start': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Start the AutoCut feature. */
+		put: operations['startAutoCut']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/autocut/stop': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Stop the AutoCut feature. */
+		put: operations['stopAutoCut']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/credentials': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Returns whether Basic Auth is enabled */
+		get: operations['getCredentialsRequired']
+		put?: never
+		/** Update the user credentials */
+		post: operations['updateCredentials']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/flags': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Returns all enabled boolean flags (data collection, etc.) */
+		get: operations['getFlags']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/flags/{flag}/{value}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Enable or disable a boolean flag (data collection, etc.) */
+		post: operations['setFlag']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/onnx': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the current ONNX configuration */
+		get: operations['getOnnxConfiguration']
+		/** Set the ONNX configuration */
+		put: operations['setOnnxConfiguration']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/onnx/nvidia-smi': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the output of nvidia-smi */
+		get: operations['getNvidiaSmi']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/onnx/providers': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get available ONNX providers */
+		get: operations['getOnnxProviders']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/onnx/reset-cuda': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Reset disabled CUDA */
+		post: operations['resetCuda']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/onnx/state': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the current state of the ONNX service */
+		get: operations['getOnnxState']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/shotsize': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the shot size targets */
+		get: operations['getTargetShotSizeConfigs']
+		put?: never
+		/** Set the shot size targSoet size for a given size */
+		post: operations['setTargetShotSizeConfig']
+		/** Reset the shot size targets to the default values */
+		delete: operations['resetTargetShotSizeConfigs']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/config/throwTestError': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Throw a test error */
+		post: operations['throwTestError']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/controller': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get all available game controllers */
+		get: operations['listGameControllers']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/controller/settings': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get game controller settings */
+		get: operations['getGameControllerSettings']
+		put?: never
+		/** Update game controller settings */
+		post: operations['setGameControllerSettings']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all currently defined devices */
+		get: operations['listDevices']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/add': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Create a new device */
+		post: operations['addDevice']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/audio': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all available audio sources */
+		get: operations['discoverAudio']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/mdns': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List devices discovered via mDNS */
+		get: operations['getDiscoveredDevices']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/mdns/services': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List services discovered via mDNS */
+		get: operations['listRawServices']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/ndi': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all available NDI sources */
+		get: operations['discoverNDI']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/webcam': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all available webcams */
+		get: operations['discoverWebcam']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get device by id */
+		get: operations['getDeviceById']
+		/** Update device name or components using a patch */
+		put: operations['updateDevice']
+		post?: never
+		/** Remove a device from the active project */
+		delete: operations['removeDevice']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/add': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Add one or more components to a device with default settings */
+		post: operations['addDeviceComponent']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/controller': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the state of the PTZ controller of a source */
+		get: operations['getPtzState']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/controller/control': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Send manual commands to the PTZ controller of a source */
+		post: operations['controlPtz']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/controller/control/direct/{endpoint}/{rawCommand}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/**
+		 * Send a raw control command to the PTZ
+		 * @description Currently only supports Panasonic cameras.
+		 */
+		post: operations['controlPtzDirectly']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/controller/home': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Save the current camera position as the home position */
+		put: operations['saveHome']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/director/automove': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Trigger an automatic random movement */
+		post: operations['triggerRandomAutoMove']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/director/limit/{border}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Update a head tracking director's border limit according to the current PTZ position */
+		post: operations['learnBorderLimit']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/director/presetmove': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/**
+		 * Trigger an automatic preset movement
+		 * @description Looks for a preset matching the currently active preset according to the settings of the AutoMoveDirector. If the active preset is not applied, the origin point is the current camera position, not the preset.
+		 */
+		post: operations['triggerRandomPresetMove']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/director/steady/exit': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Exit steady mode for a head tracking director */
+		post: operations['exitSteadyMode']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/director/stop': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Stop automatic movement */
+		post: operations['stopAutoMove']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/input/video': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the video feed of an input component */
+		get: operations['streamVideo']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/tracker/learn': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Trigger learning of a new face on a PersonTracker */
+		post: operations['triggerLearnFace']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/tracker/target/{person}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/**
+		 * Set the director's target person
+		 * @description Use -1 to unset the tracked person.
+		 */
+		post: operations['setTargetPerson']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/{component}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		post?: never
+		/** Delete a component by id from a device */
+		delete: operations['deleteDeviceComponent']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/{component}/disable': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Disable an existing device component */
+		post: operations['disableDeviceComponent']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/{component}/enable': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Enable an existing device component */
+		post: operations['enableDeviceComponent']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/faces/embeddings': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all faces with embeddings */
+		get: operations['listFaceEmbeddings']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/faces/persistent': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all non-temporary faces */
+		get: operations['listFaces']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/faces/{id}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Update the name of a face */
+		post: operations['updateFaceIdName']
+		/** Delete a face */
+		delete: operations['deleteFace']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/faces/{id}/embeddings': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the embeddings of a face */
+		get: operations['getFaceEmbeddings']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/faces/{id}/img': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get a sample face image by id */
+		get: operations['getFaceImage']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get license details */
+		get: operations['getLicenseDetails']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/create': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Create a license */
+		post: operations['createLicense']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/install': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Install a license */
+		put: operations['installLicense']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/reload': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Reload the license */
+		put: operations['reloadLicense']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/uninstall': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Uninstall the license */
+		put: operations['uninstallLicense']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/validate': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Validate a license */
+		put: operations['validateLicense']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all projects */
+		get: operations['listProjects']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the active project */
+		get: operations['getProject']
+		/** Update the active project */
+		put: operations['updateActiveProject']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/active': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the id of the active preset and the applied state */
+		get: operations['getActivePreset']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/add': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Add a new preset to the active project */
+		post: operations['addPreset']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/capture/{device}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Capture a new preset from a device, continue to /add */
+		post: operations['capturePreset']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/gaindisabled': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		post: operations['PresetResource_setGainDisabled']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/reapply/{device}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Plays the already active preset. Useful if the camera has already moved away */
+		post: operations['playActivePreset']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/{id}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Update a preset by id in the active project */
+		put: operations['updatePreset']
+		post?: never
+		/** Delete a preset by id from the active project */
+		delete: operations['deletePreset']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/{id}/overwrite': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Overwrite a preset with the current position of the camera. This doesn't change the name or the ChangeComponentSettingsCommands. */
+		post: operations['overwritePreset']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/active/presets/{id}/play': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Play a preset by id in the active project */
+		post: operations['playPreset']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/create': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Create a new project */
+		post: operations['createProject']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/load': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Load a project */
+		put: operations['loadProject']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/projects/{id}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Update a project by id */
+		put: operations['updateProject']
+		post?: never
+		/** Delete a project */
+		delete: operations['deleteProject']
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/ptz/calibration': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get all calibrators */
+		get: operations['listCalibrators']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/ptz/calibration/start': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Start a calibration for Panasonic PTZ */
+		post: operations['startCalibration']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/ptz/calibration/start/dummy': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Start a dummy calibration */
+		post: operations['startDummyCalibration']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/ptz/calibration/stop': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Stop a calibration */
+		post: operations['stopCalibration']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/ptz/calibration/{index}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get a calibrator with calibration curve */
+		get: operations['getCalibrator']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/state': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the state stream */
+		get: operations['streamState']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/stream/gui': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get: operations['GUIUpdateStreamResource_stream']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the current switcher state */
+		get: operations['getSwitcherState']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/config': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get switcher driver and properties */
+		get: operations['getSwitcherConfig']
+		put?: never
+		/** Set switcher driver and properties */
+		post: operations['setSwitcherConfig']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/connect': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Connect to switcher */
+		post: operations['connectSwitcher']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/disconnect': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Disconnect from the switcher */
+		post: operations['disconnectSwitcher']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/preview/{input}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Set the  preview input */
+		post: operations['setPreview']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/program/{input}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Set the program input */
+		post: operations['setProgram']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/recording': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Set the recording state */
+		post: operations['setRecording']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/streaming': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Set the streaming state */
+		post: operations['setStreaming']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/switcher/transition': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Trigger the configured transition */
+		post: operations['triggerTransition']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/db': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the version of the database */
+		get: operations['getDbVersion']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/gc': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Run garbage collection */
+		post: operations['gc']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/mode': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the launch mode of the application */
+		get: operations['getMode']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/sendstream': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Stream some stuff */
+		get: operations['getTestStream']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/shutdown': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Shutdown the application */
+		post: operations['shutdown']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/version': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the version of the application */
+		get: operations['getVersion']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 }
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 export interface components {
-    schemas: {
-        /** @description Patch for AutoMoveDirectorComponentSettings */
-        AUTO_MOVE: {
-            enabled?: boolean | null;
-            /** Format: double */
-            delaySeconds?: number | null;
-            autoMoveVariant?: (string & components["schemas"]["AutoMoveVariant"]) | null;
-            /** Format: double */
-            maxPanSpeed?: number | null;
-            /** Format: double */
-            maxTiltSpeed?: number | null;
-            /** Format: double */
-            maxZoomSpeed?: number | null;
-            /** Format: double */
-            presetMoveMinDistanceDegrees?: number | null;
-            /** Format: double */
-            presetMoveMaxDistanceDegrees?: number | null;
-            presetRepeat?: boolean | null;
-            /** Format: double */
-            presetMoveSpeed?: number | null;
-            presetFilterKey?: string | null;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "AUTO_MOVE";
-        };
-        ActionEntry: {
-            action?: components["schemas"]["ControllerAction"];
-            axis?: string;
-            inverted?: boolean;
-            type?: components["schemas"]["AxisType"];
-            /** Format: float */
-            sensitivity?: number;
-        };
-        ActivePreset: {
-            /** Format: int64 */
-            id?: number;
-            automatic?: boolean;
-            /** Format: int32 */
-            maxAppliedCommands?: number;
-            applied?: boolean;
-        };
-        AtemProperties: {
-            ip?: string;
-        };
-        AudienceAutoCutComponentSettings: Record<string, never>;
-        AudioAnalyzerSettings: Record<string, never>;
-        AudioAutoCutComponentSettings: {
-            reactToAudienceSounds?: boolean;
-            speakerPresets?: number[];
-        };
-        AudioInputComponentSettings: {
-            descriptor?: components["schemas"]["AudioInputDescriptor"] | null;
-            /** Format: int32 */
-            channel?: number;
-        };
-        AudioInputDescriptor: {
-            name: string;
-            hostApi: string;
-            /** Format: int32 */
-            channels?: number;
-            /** Format: int32 */
-            hostApiIndex?: number;
-        };
-        /** @description Result of the audio classifier on an input signal. */
-        AudioLabelEvent: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "audioLabel";
-            /** Format: int64 */
-            deviceId?: number;
-            labels?: {
-                [key: string]: number;
-            };
-        };
-        /** @description Audio level state of a source. */
-        AudioLevelState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "audioLevel";
-            /** Format: int64 */
-            deviceId?: number;
-            /** Format: double */
-            level?: number;
-        };
-        AutoCutConfig: {
-            style?: components["schemas"]["AutoCutStyle"];
-            presentationEnabled?: boolean;
-            pipEnabled?: boolean;
-            speakerEnabled?: boolean;
-            audienceEnabled?: boolean;
-        };
-        AutoCutDBO: {
-            style?: components["schemas"]["AutoCutStyle"];
-            presentationEnabled?: boolean;
-            pipEnabled?: boolean;
-            speakerEnabled?: boolean;
-            audienceEnabled?: boolean;
-        };
-        /** @description AutoCut update event e.g. cut, detected person, etc. */
-        AutoCutEvent: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "autoCutEvent";
-            /** Format: int64 */
-            deviceId?: number;
-            /** Format: int64 */
-            timestamp?: number;
-            type?: components["schemas"]["AutoCutEventType"];
-            msg?: string;
-        };
-        /** @enum {string} */
-        AutoCutEventType: "CUT" | "STATE_CHANGED" | "PRESENTATION_CHANGED" | "PERSON_TRACKING_CHANGED" | "AUDIO_CHANGED" | "DEBUG" | "PRESET_APPLIED";
-        AutoCutSettings: {
-            running?: boolean;
-            config?: components["schemas"]["AutoCutConfig"];
-        };
-        /** @description State and substate of the AutoCut state machine. */
-        AutoCutState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "autoCutState";
-            state?: components["schemas"]["StateDto"];
-            subState?: components["schemas"]["SubState"];
-        };
-        /** @enum {string} */
-        AutoCutStyle: "GRANDPA" | "BALANCED" | "GAMER";
-        AutoMoveDirectorComponentSettings: {
-            /** Format: double */
-            delaySeconds?: number;
-            autoMoveVariant?: components["schemas"]["AutoMoveVariant"];
-            /** Format: double */
-            maxPanSpeed?: number;
-            /** Format: double */
-            maxTiltSpeed?: number;
-            /** Format: double */
-            maxZoomSpeed?: number;
-            /** Format: double */
-            presetMoveMinDistanceDegrees?: number;
-            /** Format: double */
-            presetMoveMaxDistanceDegrees?: number;
-            presetRepeat?: boolean;
-            /** Format: double */
-            presetMoveSpeed?: number;
-            presetFilterKey: string;
-        };
-        /** @enum {string} */
-        AutoMoveVariant: "RANDOM" | "PRESET_TRANSITION" | "DISABLED";
-        /** @enum {string} */
-        AxisType: "BUTTON" | "AXIS";
-        BirdDogControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        /** @enum {string} */
-        Border: "LEFT" | "RIGHT" | "TOP" | "BOTTOM";
-        /** @description Describes the amount of deceleration on each border, resulting from the border limits. */
-        BorderBrakeState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "borderBrake";
-            /** Format: int64 */
-            deviceId?: number;
-            /** Format: double */
-            top?: number;
-            /** Format: double */
-            right?: number;
-            /** Format: double */
-            bottom?: number;
-            /** Format: double */
-            left?: number;
-        };
-        BorderLimits: {
-            /** Format: double */
-            rightBorder?: number;
-            /** Format: double */
-            leftBorder?: number;
-            /** Format: double */
-            topBorder?: number;
-            /** Format: double */
-            bottomBorder?: number;
-        };
-        /** @description Calibration of a PTZ camera */
-        Calibration: {
-            ip?: string;
-            dimension?: components["schemas"]["PTZDimension"];
-            /** Format: double */
-            progress?: number;
-        };
-        /** @enum {string} */
-        CalibrationPtzVendor: "CANON" | "PANASONIC" | "BIRD_DOG" | "SONY" | "MARSHALL";
-        /** @description Calibrator including calibration curve */
-        CalibrationWithCurve: {
-            ip?: string;
-            dimension?: components["schemas"]["PTZDimension"];
-            /** Format: double */
-            progress?: number;
-            curve?: {
-                [key: string]: components["schemas"]["PositionTimePair"][];
-            };
-        };
-        CanonControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        /** @description Canon PTZ device found via mDNS service. */
-        CanonPtzDevice: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "canonPtz";
-            ip?: string;
-            model?: string;
-            serialNumber?: string;
-        };
-        ChangeComponentSettingsCommand: {
-            /** Format: int64 */
-            deviceId?: number;
-            settings?: components["schemas"]["ComponentSettingsPatch"];
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "COMPSET";
-        };
-        ComponentFeedback: {
-            state: components["schemas"]["ComponentState"];
-            message: string;
-        };
-        /** @enum {string} */
-        ComponentId: "INPUT_AUDIO" | "INPUT_DUMMY" | "INPUT_MJPEG" | "INPUT_NDI" | "INPUT_WEBCAM" | "AUDIO_ANALYZER" | "PERSON_TRACKER" | "PRESENTATION_ANALYZER" | "DIRECTOR_AUTO_MOVE" | "DIRECTOR_HEAD_TRACKING" | "DIRECTOR_LECTURE" | "CONTROLLER_SIMULATED_CROP" | "CONTROLLER_PANASONIC" | "CONTROLLER_CANON" | "CONTROLLER_BIRD_DOG" | "CONTROLLER_SONY_CGI" | "CONTROLLER_SONY_VISCA" | "CONTROLLER_MARSHALL_VISCA" | "CONTROLLER_UNREAL_ENGINE" | "RECORDER" | "AUTO_CUT_AUDIENCE" | "AUTO_CUT_AUDIO" | "AUTO_CUT_PRESENTATION" | "AUTO_CUT_SPEAKER" | "AUTO_CUT_STAGE";
-        ComponentPatchDto: {
-            audioInput?: components["schemas"]["AudioInputComponentSettings"] | null;
-            dummyInput?: components["schemas"]["DummyInputComponentSettings"] | null;
-            mjpegInput?: components["schemas"]["MJPEGInputComponentSettings"] | null;
-            ndiInput?: components["schemas"]["NDIInputComponentSettings"] | null;
-            webcamInput?: components["schemas"]["WebcamInputComponentSettings"] | null;
-            personTracker?: components["schemas"]["PersonTrackerComponentSettings"] | null;
-            presentationAnalyzer?: components["schemas"]["PresentationAnalyzerSettings"] | null;
-            audioAnalyzer?: components["schemas"]["AudioAnalyzerSettings"] | null;
-            autoMoveDirector?: components["schemas"]["AutoMoveDirectorComponentSettings"] | null;
-            headTrackingDirector?: components["schemas"]["HeadTrackingDirectorComponentSettings"] | null;
-            lectureDirector?: components["schemas"]["LectureDirectorComponentSettings"] | null;
-            simulatedCropController?: components["schemas"]["SimulatedCropControllerSettings"] | null;
-            panasonicController?: components["schemas"]["PanasonicControllerSettings"] | null;
-            canonController?: components["schemas"]["CanonControllerSettings"] | null;
-            birdDogController?: components["schemas"]["BirdDogControllerSettings"] | null;
-            sonyCGIController?: components["schemas"]["SonyCGIControllerSettings"] | null;
-            sonyViscaController?: components["schemas"]["SonyViscaControllerSettings"] | null;
-            marshallViscaController?: components["schemas"]["MarshallViscaControllerSettings"] | null;
-            unrealEngineController?: components["schemas"]["UnrealEngineControllerSettings"] | null;
-            recorder?: components["schemas"]["RecorderComponentSettings"] | null;
-            audienceAutoCut?: components["schemas"]["AudienceAutoCutComponentSettings"] | null;
-            audioAutoCut?: components["schemas"]["AudioAutoCutComponentSettings"] | null;
-            presentationAutoCut?: components["schemas"]["PresentationAutoCutComponentSettings"] | null;
-            speakerAutoCut?: components["schemas"]["SpeakerAutoCutComponentSettings"] | null;
-            stageAutoCut?: components["schemas"]["StageAutoCutComponentSettings"] | null;
-        };
-        ComponentSettingsPatch: {
-            /** @description Discriminator */
-            type?: string;
-        } & (components["schemas"]["PERSON_TRACK"] | components["schemas"]["AUTO_MOVE"] | components["schemas"]["HEAD_DIRECTOR"] | components["schemas"]["LECTURE_DIRECTOR"]);
-        /** @enum {string} */
-        ComponentState: "LOADING" | "RUNNING" | "WARN" | "ERROR" | "OFF";
-        /** @enum {string} */
-        ConnectionState: "CONNECTING" | "CONNECTED" | "DISCONNECTED";
-        /** @enum {string} */
-        ConnectionStatus: "CONNECTED" | "DISCONNECTED" | "DISCONNECTED_AUTHENTICATION_FAILED" | "RECONNECT";
-        /** @enum {string} */
-        ControllerAction: "PAN" | "TILT" | "ZOOM" | "PREVIOUS_DEVICE" | "NEXT_DEVICE";
-        /** @enum {string} */
-        ControllerType: "UNKNOWN" | "MOUSE" | "KEYBOARD" | "GAMEPAD" | "RUDDER" | "STICK" | "HEADTRACKER" | "TRACKBALL" | "TRACKPAD" | "WHEEL";
-        /**
-         * Format: date
-         * @example 2022-03-10
-         */
-        Date: string;
-        Device: {
-            /** Format: int64 */
-            id?: number;
-            name: string;
-            switcherInput?: string | null;
-            components: components["schemas"]["ComponentPatchDto"];
-            feedback: {
-                [key: string]: components["schemas"]["ComponentFeedback"];
-            };
-        };
-        DeviceEntity: {
-            name?: string;
-            created?: components["schemas"]["LocalDateTime"];
-            updated?: components["schemas"]["LocalDateTime"];
-            /** Format: int64 */
-            id?: number;
-            switcherInput?: string;
-        };
-        DummyInputComponentSettings: {
-            descriptor?: components["schemas"]["DummyInputDescriptor"] | null;
-        };
-        DummyInputDescriptor: {
-            name?: string;
-        };
-        FaceIdEntity: {
-            name?: string;
-            previewImages?: components["schemas"]["FaceImage"][];
-            temporary?: boolean;
-            /** Format: int64 */
-            id?: number;
-        };
-        /** @description A face id with embeddings. */
-        FaceIdWithEmbeddings: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            embeddings?: unknown[];
-            temporary?: boolean;
-        };
-        FaceImage: {
-            base64Data?: string;
-        };
-        /** @enum {string} */
-        Flag: "DATA_COLLECTION_ENABLED" | "REACTIVATE_COMPONENTS_ON_STARTUP";
-        GUIUpdate: {
-            type?: components["schemas"]["GUIUpdateType"];
-            message?: string;
-            /** Format: int64 */
-            deviceId?: number;
-        };
-        /** @enum {string} */
-        GUIUpdateType: "ERROR" | "DEVICES_UPDATED" | "PERSONS_UPDATED" | "COMPONENTS_UPDATED" | "PROJECT_UPDATED" | "SWITCHER_STATE_UPDATED" | "SWITCHER_CONFIG_UPDATED" | "ACTIVE_PRESET_UPDATED" | "AUTO_CUT_UPDATED" | "GAME_CONTROLLER_UPDATED";
-        GameControllerDescriptor: {
-            name?: string;
-            type?: components["schemas"]["ControllerType"];
-        };
-        GameControllerSettings: {
-            actionMap?: {
-                [key: string]: components["schemas"]["ActionEntry"];
-            };
-            selectedController?: components["schemas"]["GameControllerDescriptor"] | null;
-            /** Format: int64 */
-            deviceId?: number;
-        };
-        /** @description Contains the current values of all relevant controller input values */
-        GameControllerState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "gameController";
-            states?: components["schemas"]["MappedControllerEvent"][];
-        };
-        /** @description Patch for HeadTrackingDirectorComponentSettings */
-        HEAD_DIRECTOR: {
-            enabled?: boolean | null;
-            ruleOfThirds?: boolean | null;
-            /** Format: float */
-            sensitivity?: number | null;
-            target?: components["schemas"]["Point"] | null;
-            borderLimits?: components["schemas"]["BorderLimits"] | null;
-            targetShotSize?: (string & components["schemas"]["ShotSize"]) | null;
-            panicBehavior?: (string & components["schemas"]["PanicBehaviorType"]) | null;
-            focusAssistEnabled?: boolean | null;
-            /** Format: double */
-            steadyRadius?: number | null;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "HEAD_DIRECTOR";
-        };
-        /** @enum {string} */
-        HeadDirection: "LEFT" | "RIGHT" | "FORWARD" | "BACKWARD";
-        HeadTrackingDirectorComponentSettings: {
-            ruleOfThirds?: boolean;
-            /** Format: float */
-            sensitivity?: number;
-            target: components["schemas"]["Point"];
-            borderLimits: components["schemas"]["BorderLimits"];
-            targetShotSize: components["schemas"]["ShotSize"];
-            panicBehavior: components["schemas"]["PanicBehaviorType"];
-            focusAssistEnabled?: boolean;
-            /** Format: double */
-            steadyRadius?: number;
-        };
-        /** @description Patch for LectureDirectorComponentSettings */
-        LECTURE_DIRECTOR: {
-            enabled?: boolean | null;
-            blackboardPresetIds?: number[] | null;
-            /** Format: int64 */
-            stagePresetId?: number | null;
-            /** Format: double */
-            trackingShotSize?: number | null;
-            /** Format: float */
-            trackingSensitivity?: number | null;
-            /** Format: double */
-            trackingSteadyRadius?: number | null;
-            /** Format: double */
-            timeTrackingSwitch?: number | null;
-            /** Format: double */
-            timeSceneChange?: number | null;
-            /** Format: double */
-            presetSpeed?: number | null;
-            borderLimits?: components["schemas"]["BorderLimits"] | null;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "LECTURE_DIRECTOR";
-        };
-        /** @enum {string} */
-        LaunchMode: "NORMAL" | "DEVELOPMENT" | "TEST";
-        LectureDirectorComponentSettings: {
-            blackboardPresetIds?: number[];
-            /** Format: int64 */
-            stagePresetId?: number;
-            /** Format: double */
-            trackingShotSize?: number;
-            /** Format: float */
-            trackingSensitivity?: number;
-            /** Format: double */
-            trackingSteadyRadius?: number;
-            /** Format: double */
-            timeTrackingSwitch?: number;
-            /** Format: double */
-            timeSceneChange?: number;
-            /** Format: double */
-            presetSpeed?: number;
-            borderLimits?: components["schemas"]["BorderLimits"];
-        };
-        LicenseDetails: {
-            uuid?: components["schemas"]["UUID"];
-            signedFor?: string;
-            signedBy?: string;
-            /** Format: int32 */
-            featureSet?: number;
-            expiryDate?: components["schemas"]["Date"];
-            signedDate?: components["schemas"]["Date"];
-            valid?: boolean;
-            expired?: boolean;
-        };
-        /**
-         * Format: date-time
-         * @example 2022-03-10T12:15:50
-         */
-        LocalDateTime: string;
-        MDNSDevice: {
-            type?: string;
-        } & (components["schemas"]["RawMjpegDevice"] | components["schemas"]["CanonPtzDevice"]);
-        /** @enum {string} */
-        MENumber: "P_P" | "ME1" | "ME2" | "ME3" | "ME4" | "ME5" | "ME6" | "ME7" | "ME8";
-        MJPEGInputComponentSettings: {
-            descriptor?: components["schemas"]["MJPEGInputDescriptor"] | null;
-        };
-        MJPEGInputDescriptor: {
-            ip: string;
-            type: components["schemas"]["MJPEGSourceType"];
-            credentials?: components["schemas"]["UserPassCredentials"] | null;
-        };
-        /** @enum {string} */
-        MJPEGSourceType: "RAW" | "PANASONIC" | "CANON" | "SONY";
-        MappedControllerEvent: {
-            action?: components["schemas"]["ControllerAction"];
-            /** Format: float */
-            value?: number;
-            type?: components["schemas"]["AxisType"];
-        };
-        MarshallViscaControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        Message: {
-            t?: string;
-        } & components["schemas"]["VideoFrameMessage"];
-        MoveCameraToPositionPresetCommand: {
-            /** Format: int64 */
-            deviceId?: number;
-            /** Format: double */
-            pan?: number;
-            /** Format: double */
-            tilt?: number;
-            /** Format: double */
-            zoom?: number;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "CAMPOS";
-        };
-        NDIInputComponentSettings: {
-            descriptor?: components["schemas"]["NDIInputDescriptor"] | null;
-        };
-        NDIInputDescriptor: {
-            name: string;
-        };
-        /** @description Output of the nvidia-smi command */
-        NvidiaSmiResponse: {
-            output?: string;
-        };
-        OnnxConfiguration: {
-            /** Format: int32 */
-            globalInterOpNumThreads?: number;
-            /** Format: int32 */
-            globalIntraOpNumThreads?: number;
-            allowSpinning?: boolean;
-            provider?: components["schemas"]["OnnxProvider"];
-        };
-        /** @enum {string} */
-        OnnxProvider: "AUTO" | "CPU" | "CUDA" | "TENSOR_RT" | "CORE_ML";
-        /** @description Summarizes the state of ONNX */
-        OnnxState: {
-            cudaProviderAvailable?: boolean;
-            cudaAllowed?: boolean;
-            usedProvider?: components["schemas"]["OnnxProvider"];
-        };
-        /** @enum {string} */
-        OrtProvider: "CPU" | "CUDA" | "DNNL" | "OPEN_VINO" | "VITIS_AI" | "TENSOR_RT" | "NNAPI" | "RK_NPU" | "DIRECT_ML" | "MI_GRAPH_X" | "ACL" | "ARM_NN" | "ROCM" | "CORE_ML" | "XNNPACK" | "AZURE";
-        /** @description Patch for PersonTrackerComponentSettings */
-        PERSON_TRACK: {
-            enabled?: boolean | null;
-            trackingMode?: (string & components["schemas"]["TrackingMode"]) | null;
-            /** Format: int32 */
-            targetFaceId?: number | null;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "PERSON_TRACK";
-        };
-        /** @enum {string} */
-        PTZDimension: "PAN" | "TILT" | "ZOOM";
-        PTZPosition: {
-            /** Format: double */
-            pan?: number;
-            /** Format: double */
-            tilt?: number;
-            /** Format: double */
-            fov?: number;
-        };
-        PTZState: {
-            /** Format: double */
-            panSpeed?: number;
-            /** Format: double */
-            tiltSpeed?: number;
-            /** Format: double */
-            zoomSpeed?: number;
-            /** Format: double */
-            panAngle?: number;
-            /** Format: double */
-            tiltAngle?: number;
-            /** Format: double */
-            horizontalFov?: number;
-            connectionState?: components["schemas"]["ConnectionState"];
-            model?: string | null;
-        };
-        PanasonicControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        /** @enum {string} */
-        PanasonicPTZCommandEndpoint: "PTZ" | "CAM";
-        /** @enum {string} */
-        PanicBehaviorType: "RETURN_TO_HOME" | "SLOWLY_STOP_AND_ZOOM_OUT";
-        /** @description A person; part of PersonTracker state. */
-        Person: {
-            /** Format: int32 */
-            id?: number;
-            body?: components["schemas"]["TrackingBoundingBox"];
-            head?: components["schemas"]["TrackingBoundingBox"];
-            face?: components["schemas"]["TrackingBoundingBox"];
-            faceCenter?: components["schemas"]["TrackingPoint"];
-            target?: boolean;
-            headDirection?: components["schemas"]["HeadDirection"];
-            /** Format: int64 */
-            faceId?: number;
-            faceIdName?: string;
-            isFaceVisible?: boolean;
-        };
-        PersonTrackerComponentSettings: {
-            trackingMode?: components["schemas"]["TrackingMode"];
-            /** Format: int32 */
-            targetFaceId?: number;
-        };
-        /** @description Person tracker state updated after a new prediction. */
-        PersonTrackerState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "personTracker";
-            /** Format: int64 */
-            deviceId?: number;
-            persons?: components["schemas"]["Person"][];
-        };
-        Point: {
-            /** Format: double */
-            x?: number;
-            /** Format: double */
-            y?: number;
-        };
-        PositionTimePair: {
-            /** Format: int32 */
-            position?: number;
-            /** Format: int64 */
-            millis?: number;
-        };
-        PresentationAnalyzerSettings: Record<string, never>;
-        PresentationAutoCutComponentSettings: Record<string, never>;
-        PresetCommand: {
-            /** @description Discriminator */
-            type?: string;
-        } & (components["schemas"]["MoveCameraToPositionPresetCommand"] | components["schemas"]["SetCameraGainPresetCommand"] | components["schemas"]["ChangeComponentSettingsCommand"]);
-        PresetEntity: {
-            name?: string;
-            created?: components["schemas"]["LocalDateTime"];
-            updated?: components["schemas"]["LocalDateTime"];
-            /** Format: int64 */
-            id?: number;
-            commands?: components["schemas"]["PresetCommand"][];
-            metadata?: {
-                [key: string]: string;
-            };
-            previewBase64?: string;
-        };
-        PresetFeedback: {
-            successful?: boolean;
-            message?: string;
-        };
-        /** @enum {string} */
-        PresetMoveResponse: "SUCCESSFUL" | "NO_ACTIVE_PRESET" | "NO_PTZ_CONTROLLER" | "NO_AVAILABLE_PRESETS";
-        PresetPatch: {
-            name?: string;
-            previewBase64?: string;
-            commands?: components["schemas"]["PresetCommand"][];
-            metadata?: {
-                [key: string]: string;
-            };
-        };
-        ProjectEntity: {
-            name?: string;
-            created?: components["schemas"]["LocalDateTime"];
-            updated?: components["schemas"]["LocalDateTime"];
-            /** Format: int64 */
-            id?: number;
-            devices?: components["schemas"]["DeviceEntity"][];
-            presets?: components["schemas"]["PresetEntity"][];
-            autoCut?: components["schemas"]["AutoCutDBO"];
-            switcherType?: components["schemas"]["SwitcherType"];
-        };
-        ProjectPatch: {
-            name?: string;
-        };
-        ProjectSummary: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            created?: components["schemas"]["LocalDateTime"];
-            updated?: components["schemas"]["LocalDateTime"];
-            /** Format: int64 */
-            deviceCount?: number;
-        };
-        PtzControlCommand: {
-            /** Format: float */
-            panSpeed?: number;
-            /** Format: float */
-            tiltSpeed?: number;
-            /** Format: float */
-            zoomSpeed?: number;
-            returnToHome?: boolean;
-        };
-        /** @description MJPEG source found via mDNS service. */
-        RawMjpegDevice: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "rawMjpeg";
-            path?: string;
-        };
-        RecorderComponentSettings: {
-            fileName: string;
-        };
-        /** @description General response to a REST request with a success value and message. */
-        Response: {
-            success?: boolean;
-            message?: string;
-        };
-        RolandV160Properties: {
-            ip?: string;
-            /** Format: int32 */
-            port?: number;
-            password?: string;
-            key1BackgroundInput?: string;
-            key2BackgroundInput?: string;
-            key3BackgroundInput?: string;
-            key4BackgroundInput?: string;
-        };
-        /** @enum {string} */
-        RossTalkModel: "CARBONITE" | "GRAPHITE" | "ACUITY" | "VISION" | "OPEN_GEAR" | "ULTRIX";
-        RossTalkProperties: {
-            ip?: string;
-            /** Format: int32 */
-            port?: number;
-            model?: components["schemas"]["RossTalkModel"];
-            me?: components["schemas"]["MENumber"];
-        };
-        SetCameraGainPresetCommand: {
-            /** Format: int64 */
-            deviceId?: number;
-            /** Format: double */
-            gain?: number;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "CAMGAIN";
-        };
-        /** @enum {string} */
-        ShotSize: "CLOSE_UP" | "MEDIUM" | "WIDE";
-        SimulatedCropControllerSettings: {
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        SimulatorProperties: {
-            name?: string;
-            failConnection?: boolean;
-        };
-        SonyCGIControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-            user: string;
-            pass: string;
-        };
-        SonyViscaControllerSettings: {
-            host: string;
-            home?: components["schemas"]["PTZPosition"] | null;
-            /** Format: int32 */
-            minFocalLength?: number;
-            /** Format: int32 */
-            maxFocalLength?: number;
-        };
-        SpeakerAutoCutComponentSettings: {
-            pipInput?: string;
-        };
-        StageAutoCutComponentSettings: Record<string, never>;
-        State: components["schemas"]["PersonTrackerState"] | components["schemas"]["BorderBrakeState"] | components["schemas"]["AudioLevelState"] | components["schemas"]["AudioLabelEvent"] | components["schemas"]["VideoCutState"] | components["schemas"]["AutoCutEvent"] | components["schemas"]["AutoCutState"] | components["schemas"]["SteadyModeState"] | components["schemas"]["GameControllerState"];
-        /** @enum {string} */
-        StateDto: "STAGE" | "SPEAKER" | "PIP" | "PRESENTATION" | "AUDIENCE";
-        /** @description Describes if a device with person tracking is in steady mode. */
-        SteadyModeState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "steadyMode";
-            /** Format: int64 */
-            deviceId?: number;
-            enabled?: boolean;
-        };
-        StreamingOutput: Record<string, never>;
-        /** @enum {string} */
-        SubState: "LOCKED" | "FREE" | "STALE";
-        SwitcherConfig: {
-            driver?: components["schemas"]["SwitcherDriver"];
-            /** @description Properties based on the driver type */
-            properties?: (components["schemas"]["SwitcherProperties"] & (components["schemas"]["AtemProperties"] | components["schemas"]["SimulatorProperties"] | components["schemas"]["RossTalkProperties"] | components["schemas"]["VMixProperties"] | components["schemas"]["RolandV160Properties"])) | null;
-        };
-        /** @enum {string} */
-        SwitcherConnectionResult: "CONNECTED" | "TIMEOUT" | "MALFORMED_HOST" | "CONNECTION_FAIL";
-        /** @enum {string} */
-        SwitcherDriver: "ATEM" | "SIMULATOR" | "ROSS_TALK" | "V_MIX" | "ROLAND_V160";
-        SwitcherInput: {
-            id?: string;
-            name?: string;
-        };
-        SwitcherProperties: Record<string, never>;
-        /** @enum {string} */
-        SwitcherRecordingState: "IDLE" | "RECORDING" | "STOPPING" | "UNKNOWN";
-        SwitcherState: {
-            programs?: string[];
-            preview?: string[];
-            availableInputs?: components["schemas"]["SwitcherInput"][];
-            connectionStatus?: components["schemas"]["ConnectionStatus"];
-            type?: components["schemas"]["SwitcherDriver"];
-            recordingState?: components["schemas"]["SwitcherRecordingState"];
-            streamingState?: components["schemas"]["SwitcherStreamingState"];
-        };
-        /** @enum {string} */
-        SwitcherStreamingState: "IDLE" | "CONNECTING" | "STOPPING" | "STREAMING" | "UNKNOWN";
-        /** @enum {string} */
-        SwitcherType: "ATEM" | "SIMULATOR" | "ROSS_TALK" | "V_MIX" | "ROLAND_V160";
-        /** @description A bounding box around a person in an image. */
-        TrackingBoundingBox: {
-            /** Format: float */
-            xmin?: number;
-            /** Format: float */
-            xmax?: number;
-            /** Format: float */
-            ymin?: number;
-            /** Format: float */
-            ymax?: number;
-            /** Format: float */
-            score?: number;
-            /** Format: int64 */
-            timeNotSeenNanos?: number;
-        };
-        /** @enum {string} */
-        TrackingMode: "ALL" | "MANUAL" | "SINGLE";
-        /** @description A point in the image that is being tracked. */
-        TrackingPoint: {
-            /** Format: double */
-            x?: number;
-            /** Format: double */
-            y?: number;
-            /** Format: double */
-            velocityX?: number;
-            /** Format: double */
-            velocityY?: number;
-        };
-        /** Format: uuid */
-        UUID: string;
-        UnrealEngineControllerSettings: {
-            /** Format: int32 */
-            port?: number;
-            home?: components["schemas"]["PTZPosition"] | null;
-        };
-        UpdateDeviceRequest: {
-            name?: string | null;
-            switcherInput?: string | null;
-            patch?: components["schemas"]["ComponentPatchDto"] | null;
-            /** @description If true, components that are not provided or null are uninstalled.
-             *     If false, components that are not provided or null are left unchanged.
-             *      */
-            uninstall?: boolean | null;
-        };
-        UserPassCredentials: {
-            username: string;
-            password: string;
-        };
-        VMixProperties: {
-            ip?: string;
-            /** Format: int32 */
-            port?: number;
-            /** Format: int32 */
-            transitionId?: number;
-        };
-        VersionDto: {
-            version?: string;
-        };
-        /** @description State of the video (none, cut, animation) */
-        VideoCutState: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            target: "videoCut";
-            /** Format: int64 */
-            deviceId?: number;
-            state?: components["schemas"]["VideoCutState1"];
-        };
-        /** @enum {string} */
-        VideoCutState1: "BLACK" | "CUT" | "ANIMATION" | "NONE";
-        VideoFrameMessage: {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            t: "vf";
-            /** Format: int64 */
-            device?: number;
-            b64?: string;
-        };
-        WebcamInputComponentSettings: {
-            descriptor?: components["schemas"]["WebcamInputDescriptor"] | null;
-        };
-        WebcamInputDescriptor: {
-            /** Format: int32 */
-            port?: number;
-            /** Format: int32 */
-            frameWidth?: number;
-            /** Format: int32 */
-            frameHeight?: number;
-            /** Format: int32 */
-            fps?: number;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+	schemas: {
+		/** @description Patch for AutoMoveDirectorComponentSettings */
+		AUTO_MOVE: {
+			enabled?: boolean | null
+			/** Format: double */
+			delaySeconds?: number | null
+			autoMoveVariant?: (string & components['schemas']['AutoMoveVariant']) | null
+			/** Format: double */
+			maxPanSpeed?: number | null
+			/** Format: double */
+			maxTiltSpeed?: number | null
+			/** Format: double */
+			maxZoomSpeed?: number | null
+			/** Format: double */
+			presetMoveMinDistanceDegrees?: number | null
+			/** Format: double */
+			presetMoveMaxDistanceDegrees?: number | null
+			presetRepeat?: boolean | null
+			/** Format: double */
+			presetMoveSpeed?: number | null
+			presetFilterKey?: string | null
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'AUTO_MOVE'
+		}
+		ActionEntry: {
+			action?: components['schemas']['ControllerAction']
+			axis?: string
+			inverted?: boolean
+			type?: components['schemas']['AxisType']
+			/** Format: float */
+			sensitivity?: number
+		}
+		ActivePreset: {
+			/** Format: int64 */
+			id?: number
+			automatic?: boolean
+			/** Format: int32 */
+			maxAppliedCommands?: number
+			applied?: boolean
+		}
+		AtemProperties: {
+			ip?: string
+		}
+		AudienceAutoCutComponentSettings: Record<string, never>
+		AudioAnalyzerSettings: Record<string, never>
+		AudioAutoCutComponentSettings: {
+			reactToAudienceSounds?: boolean
+			speakerPresets?: number[]
+		}
+		AudioInputComponentSettings: {
+			descriptor?: components['schemas']['AudioInputDescriptor'] | null
+			/** Format: int32 */
+			channel?: number
+		}
+		AudioInputDescriptor: {
+			name: string
+			hostApi: string
+			/** Format: int32 */
+			channels?: number
+			/** Format: int32 */
+			hostApiIndex?: number
+		}
+		/** @description Result of the audio classifier on an input signal. */
+		AudioLabelEvent: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'audioLabel'
+			/** Format: int64 */
+			deviceId?: number
+			labels?: {
+				[key: string]: number
+			}
+		}
+		/** @description Audio level state of a source. */
+		AudioLevelState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'audioLevel'
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			level?: number
+		}
+		AutoCutConfig: {
+			style?: components['schemas']['AutoCutStyle']
+			presentationEnabled?: boolean
+			pipEnabled?: boolean
+			speakerEnabled?: boolean
+			audienceEnabled?: boolean
+		}
+		AutoCutDBO: {
+			style?: components['schemas']['AutoCutStyle']
+			presentationEnabled?: boolean
+			pipEnabled?: boolean
+			speakerEnabled?: boolean
+			audienceEnabled?: boolean
+		}
+		/** @description AutoCut update event e.g. cut, detected person, etc. */
+		AutoCutEvent: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'autoCutEvent'
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: int64 */
+			timestamp?: number
+			type?: components['schemas']['AutoCutEventType']
+			msg?: string
+		}
+		/** @enum {string} */
+		AutoCutEventType:
+			| 'CUT'
+			| 'STATE_CHANGED'
+			| 'PRESENTATION_CHANGED'
+			| 'PERSON_TRACKING_CHANGED'
+			| 'AUDIO_CHANGED'
+			| 'DEBUG'
+			| 'PRESET_APPLIED'
+		AutoCutSettings: {
+			running?: boolean
+			config?: components['schemas']['AutoCutConfig']
+		}
+		/** @description State and substate of the AutoCut state machine. */
+		AutoCutState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'autoCutState'
+			state?: components['schemas']['StateDto']
+			subState?: components['schemas']['SubState']
+		}
+		/** @enum {string} */
+		AutoCutStyle: 'GRANDPA' | 'BALANCED' | 'GAMER'
+		AutoMoveDirectorComponentSettings: {
+			/** Format: double */
+			delaySeconds?: number
+			autoMoveVariant?: components['schemas']['AutoMoveVariant']
+			/** Format: double */
+			maxPanSpeed?: number
+			/** Format: double */
+			maxTiltSpeed?: number
+			/** Format: double */
+			maxZoomSpeed?: number
+			/** Format: double */
+			presetMoveMinDistanceDegrees?: number
+			/** Format: double */
+			presetMoveMaxDistanceDegrees?: number
+			presetRepeat?: boolean
+			/** Format: double */
+			presetMoveSpeed?: number
+			presetFilterKey: string
+		}
+		/** @enum {string} */
+		AutoMoveVariant: 'RANDOM' | 'PRESET_TRANSITION' | 'DISABLED'
+		/** @enum {string} */
+		AxisType: 'BUTTON' | 'AXIS'
+		BirdDogControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		/** @enum {string} */
+		Border: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM'
+		/** @description Describes the amount of deceleration on each border, resulting from the border limits. */
+		BorderBrakeState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'borderBrake'
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			top?: number
+			/** Format: double */
+			right?: number
+			/** Format: double */
+			bottom?: number
+			/** Format: double */
+			left?: number
+		}
+		BorderLimits: {
+			/** Format: double */
+			rightBorder?: number
+			/** Format: double */
+			leftBorder?: number
+			/** Format: double */
+			topBorder?: number
+			/** Format: double */
+			bottomBorder?: number
+		}
+		/** @description Calibration of a PTZ camera */
+		Calibration: {
+			ip?: string
+			dimension?: components['schemas']['PTZDimension']
+			/** Format: double */
+			progress?: number
+		}
+		/** @enum {string} */
+		CalibrationPtzVendor: 'CANON' | 'PANASONIC' | 'BIRD_DOG' | 'SONY' | 'MARSHALL'
+		/** @description Calibrator including calibration curve */
+		CalibrationWithCurve: {
+			ip?: string
+			dimension?: components['schemas']['PTZDimension']
+			/** Format: double */
+			progress?: number
+			curve?: {
+				[key: string]: components['schemas']['PositionTimePair'][]
+			}
+		}
+		CanonControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		/** @description Canon PTZ device found via mDNS service. */
+		CanonPtzDevice: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'canonPtz'
+			ip?: string
+			model?: string
+			serialNumber?: string
+		}
+		ChangeComponentSettingsCommand: {
+			/** Format: int64 */
+			deviceId?: number
+			settings?: components['schemas']['ComponentSettingsPatch']
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'COMPSET'
+		}
+		ComponentFeedback: {
+			state: components['schemas']['ComponentState']
+			message: string
+		}
+		/** @enum {string} */
+		ComponentId:
+			| 'INPUT_AUDIO'
+			| 'INPUT_DUMMY'
+			| 'INPUT_MJPEG'
+			| 'INPUT_NDI'
+			| 'INPUT_WEBCAM'
+			| 'AUDIO_ANALYZER'
+			| 'PERSON_TRACKER'
+			| 'PRESENTATION_ANALYZER'
+			| 'DIRECTOR_AUTO_MOVE'
+			| 'DIRECTOR_HEAD_TRACKING'
+			| 'DIRECTOR_LECTURE'
+			| 'CONTROLLER_SIMULATED_CROP'
+			| 'CONTROLLER_PANASONIC'
+			| 'CONTROLLER_CANON'
+			| 'CONTROLLER_BIRD_DOG'
+			| 'CONTROLLER_SONY_CGI'
+			| 'CONTROLLER_SONY_VISCA'
+			| 'CONTROLLER_MARSHALL_VISCA'
+			| 'CONTROLLER_UNREAL_ENGINE'
+			| 'RECORDER'
+			| 'AUTO_CUT_AUDIENCE'
+			| 'AUTO_CUT_AUDIO'
+			| 'AUTO_CUT_PRESENTATION'
+			| 'AUTO_CUT_SPEAKER'
+			| 'AUTO_CUT_STAGE'
+		ComponentPatchDto: {
+			audioInput?: components['schemas']['AudioInputComponentSettings'] | null
+			dummyInput?: components['schemas']['DummyInputComponentSettings'] | null
+			mjpegInput?: components['schemas']['MJPEGInputComponentSettings'] | null
+			ndiInput?: components['schemas']['NDIInputComponentSettings'] | null
+			webcamInput?: components['schemas']['WebcamInputComponentSettings'] | null
+			personTracker?: components['schemas']['PersonTrackerComponentSettings'] | null
+			presentationAnalyzer?: components['schemas']['PresentationAnalyzerSettings'] | null
+			audioAnalyzer?: components['schemas']['AudioAnalyzerSettings'] | null
+			autoMoveDirector?: components['schemas']['AutoMoveDirectorComponentSettings'] | null
+			headTrackingDirector?: components['schemas']['HeadTrackingDirectorComponentSettings'] | null
+			lectureDirector?: components['schemas']['LectureDirectorComponentSettings'] | null
+			simulatedCropController?: components['schemas']['SimulatedCropControllerSettings'] | null
+			panasonicController?: components['schemas']['PanasonicControllerSettings'] | null
+			canonController?: components['schemas']['CanonControllerSettings'] | null
+			birdDogController?: components['schemas']['BirdDogControllerSettings'] | null
+			sonyCGIController?: components['schemas']['SonyCGIControllerSettings'] | null
+			sonyViscaController?: components['schemas']['SonyViscaControllerSettings'] | null
+			marshallViscaController?: components['schemas']['MarshallViscaControllerSettings'] | null
+			unrealEngineController?: components['schemas']['UnrealEngineControllerSettings'] | null
+			recorder?: components['schemas']['RecorderComponentSettings'] | null
+			audienceAutoCut?: components['schemas']['AudienceAutoCutComponentSettings'] | null
+			audioAutoCut?: components['schemas']['AudioAutoCutComponentSettings'] | null
+			presentationAutoCut?: components['schemas']['PresentationAutoCutComponentSettings'] | null
+			speakerAutoCut?: components['schemas']['SpeakerAutoCutComponentSettings'] | null
+			stageAutoCut?: components['schemas']['StageAutoCutComponentSettings'] | null
+		}
+		ComponentSettingsPatch: {
+			/** @description Discriminator */
+			type?: string
+		} & (
+			| components['schemas']['PERSON_TRACK']
+			| components['schemas']['AUTO_MOVE']
+			| components['schemas']['HEAD_DIRECTOR']
+			| components['schemas']['LECTURE_DIRECTOR']
+		)
+		/** @enum {string} */
+		ComponentState: 'LOADING' | 'RUNNING' | 'WARN' | 'ERROR' | 'OFF'
+		/** @enum {string} */
+		ConnectionState: 'CONNECTING' | 'CONNECTED' | 'DISCONNECTED'
+		/** @enum {string} */
+		ConnectionStatus: 'CONNECTED' | 'DISCONNECTED' | 'DISCONNECTED_AUTHENTICATION_FAILED' | 'RECONNECT'
+		/** @enum {string} */
+		ControllerAction: 'PAN' | 'TILT' | 'ZOOM' | 'PREVIOUS_DEVICE' | 'NEXT_DEVICE'
+		/** @enum {string} */
+		ControllerType:
+			| 'UNKNOWN'
+			| 'MOUSE'
+			| 'KEYBOARD'
+			| 'GAMEPAD'
+			| 'RUDDER'
+			| 'STICK'
+			| 'HEADTRACKER'
+			| 'TRACKBALL'
+			| 'TRACKPAD'
+			| 'WHEEL'
+		/**
+		 * Format: date
+		 * @example 2022-03-10
+		 */
+		Date: string
+		Device: {
+			/** Format: int64 */
+			id?: number
+			name: string
+			switcherInput?: string | null
+			components: components['schemas']['ComponentPatchDto']
+			feedback: {
+				[key: string]: components['schemas']['ComponentFeedback']
+			}
+		}
+		DeviceEntity: {
+			name?: string
+			created?: components['schemas']['LocalDateTime']
+			updated?: components['schemas']['LocalDateTime']
+			/** Format: int64 */
+			id?: number
+			switcherInput?: string
+		}
+		DummyInputComponentSettings: {
+			descriptor?: components['schemas']['DummyInputDescriptor'] | null
+		}
+		DummyInputDescriptor: {
+			name?: string
+		}
+		FaceIdEntity: {
+			name?: string
+			previewImages?: components['schemas']['FaceImage'][]
+			temporary?: boolean
+			/** Format: int64 */
+			id?: number
+		}
+		/** @description A face id with embeddings. */
+		FaceIdWithEmbeddings: {
+			/** Format: int64 */
+			id?: number
+			name?: string
+			embeddings?: unknown[]
+			temporary?: boolean
+		}
+		FaceImage: {
+			base64Data?: string
+		}
+		/** @enum {string} */
+		Flag: 'DATA_COLLECTION_ENABLED' | 'REACTIVATE_COMPONENTS_ON_STARTUP'
+		GUIUpdate: {
+			type?: components['schemas']['GUIUpdateType']
+			message?: string
+			/** Format: int64 */
+			deviceId?: number
+		}
+		/** @enum {string} */
+		GUIUpdateType:
+			| 'ERROR'
+			| 'DEVICES_UPDATED'
+			| 'PERSONS_UPDATED'
+			| 'COMPONENTS_UPDATED'
+			| 'PROJECT_UPDATED'
+			| 'SWITCHER_STATE_UPDATED'
+			| 'SWITCHER_CONFIG_UPDATED'
+			| 'ACTIVE_PRESET_UPDATED'
+			| 'AUTO_CUT_UPDATED'
+			| 'GAME_CONTROLLER_UPDATED'
+		GameControllerDescriptor: {
+			name?: string
+			type?: components['schemas']['ControllerType']
+		}
+		GameControllerSettings: {
+			actionMap?: {
+				[key: string]: components['schemas']['ActionEntry']
+			}
+			selectedController?: components['schemas']['GameControllerDescriptor'] | null
+			/** Format: int64 */
+			deviceId?: number
+		}
+		/** @description Contains the current values of all relevant controller input values */
+		GameControllerState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'gameController'
+			states?: components['schemas']['MappedControllerEvent'][]
+		}
+		/** @description Patch for HeadTrackingDirectorComponentSettings */
+		HEAD_DIRECTOR: {
+			enabled?: boolean | null
+			ruleOfThirds?: boolean | null
+			/** Format: float */
+			sensitivity?: number | null
+			target?: components['schemas']['Point'] | null
+			borderLimits?: components['schemas']['BorderLimits'] | null
+			targetShotSize?: (string & components['schemas']['ShotSize']) | null
+			panicBehavior?: (string & components['schemas']['PanicBehaviorType']) | null
+			focusAssistEnabled?: boolean | null
+			/** Format: double */
+			steadyRadius?: number | null
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'HEAD_DIRECTOR'
+		}
+		/** @enum {string} */
+		HeadDirection: 'LEFT' | 'RIGHT' | 'FORWARD' | 'BACKWARD'
+		HeadTrackingDirectorComponentSettings: {
+			ruleOfThirds?: boolean
+			/** Format: float */
+			sensitivity?: number
+			target: components['schemas']['Point']
+			borderLimits: components['schemas']['BorderLimits']
+			targetShotSize: components['schemas']['ShotSize']
+			panicBehavior: components['schemas']['PanicBehaviorType']
+			focusAssistEnabled?: boolean
+			/** Format: double */
+			steadyRadius?: number
+		}
+		/** @description Patch for LectureDirectorComponentSettings */
+		LECTURE_DIRECTOR: {
+			enabled?: boolean | null
+			blackboardPresetIds?: number[] | null
+			/** Format: int64 */
+			stagePresetId?: number | null
+			/** Format: double */
+			trackingShotSize?: number | null
+			/** Format: float */
+			trackingSensitivity?: number | null
+			/** Format: double */
+			trackingSteadyRadius?: number | null
+			/** Format: double */
+			timeTrackingSwitch?: number | null
+			/** Format: double */
+			timeSceneChange?: number | null
+			/** Format: double */
+			presetSpeed?: number | null
+			borderLimits?: components['schemas']['BorderLimits'] | null
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'LECTURE_DIRECTOR'
+		}
+		/** @enum {string} */
+		LaunchMode: 'NORMAL' | 'DEVELOPMENT' | 'TEST'
+		LectureDirectorComponentSettings: {
+			blackboardPresetIds?: number[]
+			/** Format: int64 */
+			stagePresetId?: number
+			/** Format: double */
+			trackingShotSize?: number
+			/** Format: float */
+			trackingSensitivity?: number
+			/** Format: double */
+			trackingSteadyRadius?: number
+			/** Format: double */
+			timeTrackingSwitch?: number
+			/** Format: double */
+			timeSceneChange?: number
+			/** Format: double */
+			presetSpeed?: number
+			borderLimits?: components['schemas']['BorderLimits']
+		}
+		LicenseDetails: {
+			uuid?: components['schemas']['UUID']
+			signedFor?: string
+			signedBy?: string
+			/** Format: int32 */
+			featureSet?: number
+			expiryDate?: components['schemas']['Date']
+			signedDate?: components['schemas']['Date']
+			valid?: boolean
+			expired?: boolean
+		}
+		/**
+		 * Format: date-time
+		 * @example 2022-03-10T12:15:50
+		 */
+		LocalDateTime: string
+		MDNSDevice: {
+			type?: string
+		} & (components['schemas']['RawMjpegDevice'] | components['schemas']['CanonPtzDevice'])
+		/** @enum {string} */
+		MENumber: 'P_P' | 'ME1' | 'ME2' | 'ME3' | 'ME4' | 'ME5' | 'ME6' | 'ME7' | 'ME8'
+		MJPEGInputComponentSettings: {
+			descriptor?: components['schemas']['MJPEGInputDescriptor'] | null
+		}
+		MJPEGInputDescriptor: {
+			ip: string
+			type: components['schemas']['MJPEGSourceType']
+			credentials?: components['schemas']['UserPassCredentials'] | null
+		}
+		/** @enum {string} */
+		MJPEGSourceType: 'RAW' | 'PANASONIC' | 'CANON' | 'SONY'
+		MappedControllerEvent: {
+			action?: components['schemas']['ControllerAction']
+			/** Format: float */
+			value?: number
+			type?: components['schemas']['AxisType']
+		}
+		MarshallViscaControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		Message: {
+			t?: string
+		} & components['schemas']['VideoFrameMessage']
+		MoveCameraToPositionPresetCommand: {
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			pan?: number
+			/** Format: double */
+			tilt?: number
+			/** Format: double */
+			zoom?: number
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'CAMPOS'
+		}
+		NDIInputComponentSettings: {
+			descriptor?: components['schemas']['NDIInputDescriptor'] | null
+		}
+		NDIInputDescriptor: {
+			name: string
+		}
+		/** @description Output of the nvidia-smi command */
+		NvidiaSmiResponse: {
+			output?: string
+		}
+		OnnxConfiguration: {
+			/** Format: int32 */
+			globalInterOpNumThreads?: number
+			/** Format: int32 */
+			globalIntraOpNumThreads?: number
+			allowSpinning?: boolean
+			provider?: components['schemas']['OnnxProvider']
+		}
+		/** @enum {string} */
+		OnnxProvider: 'AUTO' | 'CPU' | 'CUDA' | 'TENSOR_RT' | 'CORE_ML'
+		/** @description Summarizes the state of ONNX */
+		OnnxState: {
+			cudaProviderAvailable?: boolean
+			cudaAllowed?: boolean
+			usedProvider?: components['schemas']['OnnxProvider']
+		}
+		/** @enum {string} */
+		OrtProvider:
+			| 'CPU'
+			| 'CUDA'
+			| 'DNNL'
+			| 'OPEN_VINO'
+			| 'VITIS_AI'
+			| 'TENSOR_RT'
+			| 'NNAPI'
+			| 'RK_NPU'
+			| 'DIRECT_ML'
+			| 'MI_GRAPH_X'
+			| 'ACL'
+			| 'ARM_NN'
+			| 'ROCM'
+			| 'CORE_ML'
+			| 'XNNPACK'
+			| 'AZURE'
+		/** @description Patch for PersonTrackerComponentSettings */
+		PERSON_TRACK: {
+			enabled?: boolean | null
+			trackingMode?: (string & components['schemas']['TrackingMode']) | null
+			/** Format: int32 */
+			targetFaceId?: number | null
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'PERSON_TRACK'
+		}
+		/** @enum {string} */
+		PTZDimension: 'PAN' | 'TILT' | 'ZOOM'
+		PTZPosition: {
+			/** Format: double */
+			pan?: number
+			/** Format: double */
+			tilt?: number
+			/** Format: double */
+			fov?: number
+		}
+		PTZState: {
+			/** Format: double */
+			panSpeed?: number
+			/** Format: double */
+			tiltSpeed?: number
+			/** Format: double */
+			zoomSpeed?: number
+			/** Format: double */
+			panAngle?: number
+			/** Format: double */
+			tiltAngle?: number
+			/** Format: double */
+			horizontalFov?: number
+			connectionState?: components['schemas']['ConnectionState']
+			model?: string | null
+		}
+		PanasonicControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		/** @enum {string} */
+		PanasonicPTZCommandEndpoint: 'PTZ' | 'CAM'
+		/** @enum {string} */
+		PanicBehaviorType: 'RETURN_TO_HOME' | 'SLOWLY_STOP_AND_ZOOM_OUT'
+		/** @description A person; part of PersonTracker state. */
+		Person: {
+			/** Format: int32 */
+			id?: number
+			body?: components['schemas']['TrackingBoundingBox']
+			head?: components['schemas']['TrackingBoundingBox']
+			face?: components['schemas']['TrackingBoundingBox']
+			faceCenter?: components['schemas']['TrackingPoint']
+			target?: boolean
+			headDirection?: components['schemas']['HeadDirection']
+			/** Format: int64 */
+			faceId?: number
+			faceIdName?: string
+			isFaceVisible?: boolean
+		}
+		PersonTrackerComponentSettings: {
+			trackingMode?: components['schemas']['TrackingMode']
+			/** Format: int32 */
+			targetFaceId?: number
+		}
+		/** @description Person tracker state updated after a new prediction. */
+		PersonTrackerState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'personTracker'
+			/** Format: int64 */
+			deviceId?: number
+			persons?: components['schemas']['Person'][]
+		}
+		Point: {
+			/** Format: double */
+			x?: number
+			/** Format: double */
+			y?: number
+		}
+		PositionTimePair: {
+			/** Format: int32 */
+			position?: number
+			/** Format: int64 */
+			millis?: number
+		}
+		PresentationAnalyzerSettings: Record<string, never>
+		PresentationAutoCutComponentSettings: Record<string, never>
+		PresetCommand: {
+			/** @description Discriminator */
+			type?: string
+		} & (
+			| components['schemas']['MoveCameraToPositionPresetCommand']
+			| components['schemas']['SetCameraGainPresetCommand']
+			| components['schemas']['ChangeComponentSettingsCommand']
+		)
+		PresetEntity: {
+			name?: string
+			created?: components['schemas']['LocalDateTime']
+			updated?: components['schemas']['LocalDateTime']
+			/** Format: int64 */
+			id?: number
+			commands?: components['schemas']['PresetCommand'][]
+			metadata?: {
+				[key: string]: string
+			}
+			previewBase64?: string
+		}
+		PresetFeedback: {
+			successful?: boolean
+			message?: string
+		}
+		/** @enum {string} */
+		PresetMoveResponse: 'SUCCESSFUL' | 'NO_ACTIVE_PRESET' | 'NO_PTZ_CONTROLLER' | 'NO_AVAILABLE_PRESETS'
+		PresetPatch: {
+			name?: string
+			previewBase64?: string
+			commands?: components['schemas']['PresetCommand'][]
+			metadata?: {
+				[key: string]: string
+			}
+		}
+		ProjectEntity: {
+			name?: string
+			created?: components['schemas']['LocalDateTime']
+			updated?: components['schemas']['LocalDateTime']
+			/** Format: int64 */
+			id?: number
+			devices?: components['schemas']['DeviceEntity'][]
+			presets?: components['schemas']['PresetEntity'][]
+			autoCut?: components['schemas']['AutoCutDBO']
+			switcherType?: components['schemas']['SwitcherType']
+		}
+		ProjectPatch: {
+			name?: string
+		}
+		ProjectSummary: {
+			/** Format: int64 */
+			id?: number
+			name?: string
+			created?: components['schemas']['LocalDateTime']
+			updated?: components['schemas']['LocalDateTime']
+			/** Format: int64 */
+			deviceCount?: number
+		}
+		PtzControlCommand: {
+			/** Format: float */
+			panSpeed?: number
+			/** Format: float */
+			tiltSpeed?: number
+			/** Format: float */
+			zoomSpeed?: number
+			returnToHome?: boolean
+		}
+		/** @description MJPEG source found via mDNS service. */
+		RawMjpegDevice: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'rawMjpeg'
+			path?: string
+		}
+		RecorderComponentSettings: {
+			fileName: string
+		}
+		/** @description General response to a REST request with a success value and message. */
+		Response: {
+			success?: boolean
+			message?: string
+		}
+		RolandV160Properties: {
+			ip?: string
+			/** Format: int32 */
+			port?: number
+			password?: string
+			key1BackgroundInput?: string
+			key2BackgroundInput?: string
+			key3BackgroundInput?: string
+			key4BackgroundInput?: string
+		}
+		/** @enum {string} */
+		RossTalkModel: 'CARBONITE' | 'GRAPHITE' | 'ACUITY' | 'VISION' | 'OPEN_GEAR' | 'ULTRIX'
+		RossTalkProperties: {
+			ip?: string
+			/** Format: int32 */
+			port?: number
+			model?: components['schemas']['RossTalkModel']
+			me?: components['schemas']['MENumber']
+		}
+		SetCameraGainPresetCommand: {
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			gain?: number
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			type: 'CAMGAIN'
+		}
+		/** @enum {string} */
+		ShotSize: 'CLOSE_UP' | 'MEDIUM' | 'WIDE'
+		SimulatedCropControllerSettings: {
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		SimulatorProperties: {
+			name?: string
+			failConnection?: boolean
+		}
+		SonyCGIControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+			user: string
+			pass: string
+		}
+		SonyViscaControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+			/** Format: int32 */
+			minFocalLength?: number
+			/** Format: int32 */
+			maxFocalLength?: number
+		}
+		SpeakerAutoCutComponentSettings: {
+			pipInput?: string
+		}
+		StageAutoCutComponentSettings: Record<string, never>
+		State:
+			| components['schemas']['PersonTrackerState']
+			| components['schemas']['BorderBrakeState']
+			| components['schemas']['AudioLevelState']
+			| components['schemas']['AudioLabelEvent']
+			| components['schemas']['VideoCutState']
+			| components['schemas']['AutoCutEvent']
+			| components['schemas']['AutoCutState']
+			| components['schemas']['SteadyModeState']
+			| components['schemas']['GameControllerState']
+		/** @enum {string} */
+		StateDto: 'STAGE' | 'SPEAKER' | 'PIP' | 'PRESENTATION' | 'AUDIENCE'
+		/** @description Describes if a device with person tracking is in steady mode. */
+		SteadyModeState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'steadyMode'
+			/** Format: int64 */
+			deviceId?: number
+			enabled?: boolean
+		}
+		StreamingOutput: Record<string, never>
+		/** @enum {string} */
+		SubState: 'LOCKED' | 'FREE' | 'STALE'
+		SwitcherConfig: {
+			driver?: components['schemas']['SwitcherDriver']
+			/** @description Properties based on the driver type */
+			properties?:
+				| (components['schemas']['SwitcherProperties'] &
+						(
+							| components['schemas']['AtemProperties']
+							| components['schemas']['SimulatorProperties']
+							| components['schemas']['RossTalkProperties']
+							| components['schemas']['VMixProperties']
+							| components['schemas']['RolandV160Properties']
+						))
+				| null
+		}
+		/** @enum {string} */
+		SwitcherConnectionResult: 'CONNECTED' | 'TIMEOUT' | 'MALFORMED_HOST' | 'CONNECTION_FAIL'
+		/** @enum {string} */
+		SwitcherDriver: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160'
+		SwitcherInput: {
+			id?: string
+			name?: string
+		}
+		SwitcherProperties: Record<string, never>
+		/** @enum {string} */
+		SwitcherRecordingState: 'IDLE' | 'RECORDING' | 'STOPPING' | 'UNKNOWN'
+		SwitcherState: {
+			programs?: string[]
+			preview?: string[]
+			availableInputs?: components['schemas']['SwitcherInput'][]
+			connectionStatus?: components['schemas']['ConnectionStatus']
+			type?: components['schemas']['SwitcherDriver']
+			recordingState?: components['schemas']['SwitcherRecordingState']
+			streamingState?: components['schemas']['SwitcherStreamingState']
+		}
+		/** @enum {string} */
+		SwitcherStreamingState: 'IDLE' | 'CONNECTING' | 'STOPPING' | 'STREAMING' | 'UNKNOWN'
+		/** @enum {string} */
+		SwitcherType: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160'
+		/** @description A bounding box around a person in an image. */
+		TrackingBoundingBox: {
+			/** Format: float */
+			xmin?: number
+			/** Format: float */
+			xmax?: number
+			/** Format: float */
+			ymin?: number
+			/** Format: float */
+			ymax?: number
+			/** Format: float */
+			score?: number
+			/** Format: int64 */
+			timeNotSeenNanos?: number
+		}
+		/** @enum {string} */
+		TrackingMode: 'ALL' | 'MANUAL' | 'SINGLE'
+		/** @description A point in the image that is being tracked. */
+		TrackingPoint: {
+			/** Format: double */
+			x?: number
+			/** Format: double */
+			y?: number
+			/** Format: double */
+			velocityX?: number
+			/** Format: double */
+			velocityY?: number
+		}
+		/** Format: uuid */
+		UUID: string
+		UnrealEngineControllerSettings: {
+			/** Format: int32 */
+			port?: number
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		UpdateDeviceRequest: {
+			name?: string | null
+			switcherInput?: string | null
+			patch?: components['schemas']['ComponentPatchDto'] | null
+			/** @description If true, components that are not provided or null are uninstalled.
+			 *     If false, components that are not provided or null are left unchanged.
+			 *      */
+			uninstall?: boolean | null
+		}
+		UserPassCredentials: {
+			username: string
+			password: string
+		}
+		VMixProperties: {
+			ip?: string
+			/** Format: int32 */
+			port?: number
+			/** Format: int32 */
+			transitionId?: number
+		}
+		VersionDto: {
+			version?: string
+		}
+		/** @description State of the video (none, cut, animation) */
+		VideoCutState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'videoCut'
+			/** Format: int64 */
+			deviceId?: number
+			state?: components['schemas']['VideoCutState1']
+		}
+		/** @enum {string} */
+		VideoCutState1: 'BLACK' | 'CUT' | 'ANIMATION' | 'NONE'
+		VideoFrameMessage: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			t: 'vf'
+			/** Format: int64 */
+			device?: number
+			b64?: string
+		}
+		WebcamInputComponentSettings: {
+			descriptor?: components['schemas']['WebcamInputDescriptor'] | null
+		}
+		WebcamInputDescriptor: {
+			/** Format: int32 */
+			port?: number
+			/** Format: int32 */
+			frameWidth?: number
+			/** Format: int32 */
+			frameHeight?: number
+			/** Format: int32 */
+			fps?: number
+		}
+	}
+	responses: never
+	parameters: never
+	requestBodies: never
+	headers: never
+	pathItems: never
 }
-export type $defs = Record<string, never>;
+export type $defs = Record<string, never>
 export interface operations {
-    getAutoCutSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutoCutSettings"];
-                };
-            };
-        };
-    };
-    setAutoCutConfig: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["AutoCutConfig"];
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getAutoCutHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AutoCutEvent"][];
-                };
-            };
-        };
-    };
-    startAutoCut: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    stopAutoCut: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getCredentialsRequired: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": boolean;
-                };
-            };
-        };
-    };
-    updateCredentials: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["UserPassCredentials"];
-            };
-        };
-        responses: {
-            /** @description Credentials updated. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getFlags: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Flag"][];
-                };
-            };
-        };
-    };
-    setFlag: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                flag: components["schemas"]["Flag"];
-                value: boolean;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getOnnxConfiguration: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OnnxConfiguration"];
-                };
-            };
-        };
-    };
-    setOnnxConfiguration: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["OnnxConfiguration"];
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getNvidiaSmi: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NvidiaSmiResponse"];
-                };
-            };
-        };
-    };
-    getOnnxProviders: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrtProvider"][];
-                };
-            };
-        };
-    };
-    resetCuda: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getOnnxState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OnnxState"];
-                };
-            };
-        };
-    };
-    getTargetShotSizeConfigs: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: number;
-                    };
-                };
-            };
-        };
-    };
-    setTargetShotSizeConfig: {
-        parameters: {
-            query?: {
-                diagonal?: number;
-                size?: components["schemas"]["ShotSize"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    resetTargetShotSizeConfigs: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    throwTestError: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-        };
-    };
-    listGameControllers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameControllerDescriptor"][];
-                };
-            };
-        };
-    };
-    getGameControllerSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GameControllerSettings"];
-                };
-            };
-        };
-    };
-    setGameControllerSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["GameControllerSettings"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    listDevices: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"][];
-                };
-            };
-        };
-    };
-    addDevice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    discoverAudio: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AudioInputDescriptor"][];
-                };
-            };
-        };
-    };
-    getDiscoveredDevices: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: components["schemas"]["MDNSDevice"];
-                    };
-                };
-            };
-        };
-    };
-    listRawServices: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string[];
-                };
-            };
-        };
-    };
-    discoverNDI: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NDIInputDescriptor"][];
-                };
-            };
-        };
-    };
-    discoverWebcam: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WebcamInputDescriptor"][];
-                };
-            };
-        };
-    };
-    getDeviceById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    updateDevice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["UpdateDeviceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    removeDevice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    addDeviceComponent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ComponentId"][];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    getPtzState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PTZState"];
-                };
-            };
-        };
-    };
-    controlPtz: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PtzControlCommand"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    controlPtzDirectly: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                endpoint: components["schemas"]["PanasonicPTZCommandEndpoint"];
-                id: number;
-                rawCommand: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-        };
-    };
-    saveHome: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    triggerRandomAutoMove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    learnBorderLimit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                border: components["schemas"]["Border"];
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    triggerRandomPresetMove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PresetMoveResponse"];
-                };
-            };
-        };
-    };
-    exitSteadyMode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    stopAutoMove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    streamVideo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "multipart/x-mixed-replace;boundary=--boundary": string[];
-                };
-            };
-        };
-    };
-    triggerLearnFace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FaceIdEntity"];
-                };
-            };
-        };
-    };
-    setTargetPerson: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-                person: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteDeviceComponent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                component: components["schemas"]["ComponentId"];
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Device"];
-                };
-            };
-        };
-    };
-    disableDeviceComponent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                component: components["schemas"]["ComponentId"];
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    enableDeviceComponent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                component: components["schemas"]["ComponentId"];
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    listFaceEmbeddings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FaceIdWithEmbeddings"][];
-                };
-            };
-        };
-    };
-    listFaces: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FaceIdEntity"][];
-                };
-            };
-        };
-    };
-    updateFaceIdName: {
-        parameters: {
-            query?: {
-                newName?: string;
-            };
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteFace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getFaceEmbeddings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown[];
-                };
-            };
-        };
-    };
-    getFaceImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getLicenseDetails: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Returns the license details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LicenseDetails"];
-                };
-            };
-            /** @description No license installed */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createLicense: {
-        parameters: {
-            query?: {
-                signedBy?: string;
-                signedFor?: string;
-                validForDays?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Returns the license file */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": components["schemas"]["StreamingOutput"];
-                };
-            };
-            /** @description Endpoint disabled in production mode */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    installLicense: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Returns the license details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LicenseDetails"];
-                };
-            };
-            /** @description Invalid or empty license file */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    reloadLicense: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Returns the license details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LicenseDetails"];
-                };
-            };
-            /** @description No license installed */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    uninstallLicense: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description License uninstalled */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    validateLicense: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Returns the license details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LicenseDetails"];
-                };
-            };
-            /** @description Invalid or empty license file */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    listProjects: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProjectSummary"][];
-                };
-            };
-        };
-    };
-    getProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Returns the active project */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProjectEntity"];
-                };
-            };
-            /** @description No active project */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateActiveProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ProjectPatch"];
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getActivePreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: components["schemas"]["ActivePreset"];
-                    };
-                };
-            };
-        };
-    };
-    addPreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PresetPatch"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    capturePreset: {
-        parameters: {
-            query?: {
-                gain?: boolean;
-            };
-            header?: never;
-            path: {
-                device: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PresetPatch"];
-                };
-            };
-        };
-    };
-    PresetResource_setGainDisabled: {
-        parameters: {
-            query?: {
-                disabled?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    playActivePreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                device: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PresetFeedback"][];
-                };
-            };
-        };
-    };
-    updatePreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PresetPatch"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PresetEntity"];
-                };
-            };
-        };
-    };
-    deletePreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    overwritePreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    playPreset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PresetFeedback"][];
-                };
-            };
-        };
-    };
-    createProject: {
-        parameters: {
-            query?: {
-                name?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": number;
-                };
-            };
-        };
-    };
-    loadProject: {
-        parameters: {
-            query?: {
-                id?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    updateProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ProjectPatch"];
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    deleteProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    listCalibrators: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Calibration"][];
-                };
-            };
-        };
-    };
-    startCalibration: {
-        parameters: {
-            query?: {
-                dimension?: components["schemas"]["PTZDimension"];
-                ip?: string;
-                vendor?: components["schemas"]["CalibrationPtzVendor"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": number;
-                };
-            };
-        };
-    };
-    startDummyCalibration: {
-        parameters: {
-            query?: {
-                dimension?: components["schemas"]["PTZDimension"];
-                instant?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": number;
-                };
-            };
-        };
-    };
-    stopCalibration: {
-        parameters: {
-            query?: {
-                index?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getCalibrator: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                index: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CalibrationWithCurve"];
-                };
-            };
-        };
-    };
-    streamState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["State"][];
-                };
-            };
-        };
-    };
-    GUIUpdateStreamResource_stream: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GUIUpdate"][];
-                };
-            };
-        };
-    };
-    getSwitcherState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SwitcherState"];
-                };
-            };
-        };
-    };
-    getSwitcherConfig: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SwitcherConfig"];
-                };
-            };
-        };
-    };
-    setSwitcherConfig: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["SwitcherConfig"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    connectSwitcher: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SwitcherConnectionResult"];
-                };
-            };
-        };
-    };
-    disconnectSwitcher: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    setPreview: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                input: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    setProgram: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                input: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    setRecording: {
-        parameters: {
-            query?: {
-                record?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    setStreaming: {
-        parameters: {
-            query?: {
-                stream?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    triggerTransition: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getDbVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-        };
-    };
-    gc: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LaunchMode"];
-                };
-            };
-        };
-    };
-    getTestStream: {
-        parameters: {
-            query?: {
-                val?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "multipart/x-mixed-replace;boundary=--boundary": string[];
-                };
-            };
-        };
-    };
-    shutdown: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VersionDto"];
-                };
-            };
-        };
-    };
+	getAutoCutSettings: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['AutoCutSettings']
+				}
+			}
+		}
+	}
+	setAutoCutConfig: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['AutoCutConfig']
+			}
+		}
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getAutoCutHistory: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['AutoCutEvent'][]
+				}
+			}
+		}
+	}
+	startAutoCut: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	stopAutoCut: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getCredentialsRequired: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': boolean
+				}
+			}
+		}
+	}
+	updateCredentials: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['UserPassCredentials']
+			}
+		}
+		responses: {
+			/** @description Credentials updated. */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getFlags: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Flag'][]
+				}
+			}
+		}
+	}
+	setFlag: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				flag: components['schemas']['Flag']
+				value: boolean
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getOnnxConfiguration: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['OnnxConfiguration']
+				}
+			}
+		}
+	}
+	setOnnxConfiguration: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['OnnxConfiguration']
+			}
+		}
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getNvidiaSmi: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['NvidiaSmiResponse']
+				}
+			}
+		}
+	}
+	getOnnxProviders: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['OrtProvider'][]
+				}
+			}
+		}
+	}
+	resetCuda: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getOnnxState: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['OnnxState']
+				}
+			}
+		}
+	}
+	getTargetShotSizeConfigs: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': {
+						[key: string]: number
+					}
+				}
+			}
+		}
+	}
+	setTargetShotSizeConfig: {
+		parameters: {
+			query?: {
+				diagonal?: number
+				size?: components['schemas']['ShotSize']
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	resetTargetShotSizeConfigs: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	throwTestError: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': string
+				}
+			}
+		}
+	}
+	listGameControllers: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['GameControllerDescriptor'][]
+				}
+			}
+		}
+	}
+	getGameControllerSettings: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['GameControllerSettings']
+				}
+			}
+		}
+	}
+	setGameControllerSettings: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['GameControllerSettings']
+			}
+		}
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	listDevices: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device'][]
+				}
+			}
+		}
+	}
+	addDevice: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	discoverAudio: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['AudioInputDescriptor'][]
+				}
+			}
+		}
+	}
+	getDiscoveredDevices: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': {
+						[key: string]: components['schemas']['MDNSDevice']
+					}
+				}
+			}
+		}
+	}
+	listRawServices: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': string[]
+				}
+			}
+		}
+	}
+	discoverNDI: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['NDIInputDescriptor'][]
+				}
+			}
+		}
+	}
+	discoverWebcam: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['WebcamInputDescriptor'][]
+				}
+			}
+		}
+	}
+	getDeviceById: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	updateDevice: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['UpdateDeviceRequest']
+			}
+		}
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	removeDevice: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	addDeviceComponent: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['ComponentId'][]
+			}
+		}
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	getPtzState: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PTZState']
+				}
+			}
+		}
+	}
+	controlPtz: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['PtzControlCommand']
+			}
+		}
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	controlPtzDirectly: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				endpoint: components['schemas']['PanasonicPTZCommandEndpoint']
+				id: number
+				rawCommand: string
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': string
+				}
+			}
+		}
+	}
+	saveHome: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	triggerRandomAutoMove: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	learnBorderLimit: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				border: components['schemas']['Border']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	triggerRandomPresetMove: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PresetMoveResponse']
+				}
+			}
+		}
+	}
+	exitSteadyMode: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	stopAutoMove: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	streamVideo: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'multipart/x-mixed-replace;boundary=--boundary': string[]
+				}
+			}
+		}
+	}
+	triggerLearnFace: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['FaceIdEntity']
+				}
+			}
+		}
+	}
+	setTargetPerson: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+				person: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	deleteDeviceComponent: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				component: components['schemas']['ComponentId']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+		}
+	}
+	disableDeviceComponent: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				component: components['schemas']['ComponentId']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	enableDeviceComponent: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				component: components['schemas']['ComponentId']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	listFaceEmbeddings: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['FaceIdWithEmbeddings'][]
+				}
+			}
+		}
+	}
+	listFaces: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['FaceIdEntity'][]
+				}
+			}
+		}
+	}
+	updateFaceIdName: {
+		parameters: {
+			query?: {
+				newName?: string
+			}
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	deleteFace: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getFaceEmbeddings: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': unknown[]
+				}
+			}
+		}
+	}
+	getFaceImage: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getLicenseDetails: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the license details */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['LicenseDetails']
+				}
+			}
+			/** @description No license installed */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	createLicense: {
+		parameters: {
+			query?: {
+				signedBy?: string
+				signedFor?: string
+				validForDays?: number
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the license file */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/octet-stream': components['schemas']['StreamingOutput']
+				}
+			}
+			/** @description Endpoint disabled in production mode */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	installLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'multipart/form-data': {
+					/** Format: binary */
+					file?: string
+				}
+			}
+		}
+		responses: {
+			/** @description Returns the license details */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['LicenseDetails']
+				}
+			}
+			/** @description Invalid or empty license file */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	reloadLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the license details */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['LicenseDetails']
+				}
+			}
+			/** @description No license installed */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	uninstallLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description License uninstalled */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	validateLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'multipart/form-data': {
+					/** Format: binary */
+					file?: string
+				}
+			}
+		}
+		responses: {
+			/** @description Returns the license details */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['LicenseDetails']
+				}
+			}
+			/** @description Invalid or empty license file */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	listProjects: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['ProjectSummary'][]
+				}
+			}
+		}
+	}
+	getProject: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the active project */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['ProjectEntity']
+				}
+			}
+			/** @description No active project */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	updateActiveProject: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['ProjectPatch']
+			}
+		}
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getActivePreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': {
+						[key: string]: components['schemas']['ActivePreset']
+					}
+				}
+			}
+		}
+	}
+	addPreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['PresetPatch']
+			}
+		}
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	capturePreset: {
+		parameters: {
+			query?: {
+				gain?: boolean
+			}
+			header?: never
+			path: {
+				device: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PresetPatch']
+				}
+			}
+		}
+	}
+	PresetResource_setGainDisabled: {
+		parameters: {
+			query?: {
+				disabled?: boolean
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	playActivePreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				device: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PresetFeedback'][]
+				}
+			}
+		}
+	}
+	updatePreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['PresetPatch']
+			}
+		}
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PresetEntity']
+				}
+			}
+		}
+	}
+	deletePreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	overwritePreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	playPreset: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['PresetFeedback'][]
+				}
+			}
+		}
+	}
+	createProject: {
+		parameters: {
+			query?: {
+				name?: string
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': number
+				}
+			}
+		}
+	}
+	loadProject: {
+		parameters: {
+			query?: {
+				id?: number
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	updateProject: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['ProjectPatch']
+			}
+		}
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	deleteProject: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	listCalibrators: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Calibration'][]
+				}
+			}
+		}
+	}
+	startCalibration: {
+		parameters: {
+			query?: {
+				dimension?: components['schemas']['PTZDimension']
+				ip?: string
+				vendor?: components['schemas']['CalibrationPtzVendor']
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': number
+				}
+			}
+		}
+	}
+	startDummyCalibration: {
+		parameters: {
+			query?: {
+				dimension?: components['schemas']['PTZDimension']
+				instant?: boolean
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': number
+				}
+			}
+		}
+	}
+	stopCalibration: {
+		parameters: {
+			query?: {
+				index?: number
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getCalibrator: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				index: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['CalibrationWithCurve']
+				}
+			}
+		}
+	}
+	streamState: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['State'][]
+				}
+			}
+		}
+	}
+	GUIUpdateStreamResource_stream: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['GUIUpdate'][]
+				}
+			}
+		}
+	}
+	getSwitcherState: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['SwitcherState']
+				}
+			}
+		}
+	}
+	getSwitcherConfig: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['SwitcherConfig']
+				}
+			}
+		}
+	}
+	setSwitcherConfig: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['SwitcherConfig']
+			}
+		}
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	connectSwitcher: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['SwitcherConnectionResult']
+				}
+			}
+		}
+	}
+	disconnectSwitcher: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	setPreview: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				input: string
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	setProgram: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				input: string
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	setRecording: {
+		parameters: {
+			query?: {
+				record?: boolean
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	setStreaming: {
+		parameters: {
+			query?: {
+				stream?: boolean
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	triggerTransition: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getDbVersion: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': string
+				}
+			}
+		}
+	}
+	gc: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getMode: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['LaunchMode']
+				}
+			}
+		}
+	}
+	getTestStream: {
+		parameters: {
+			query?: {
+				val?: string
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'multipart/x-mixed-replace;boundary=--boundary': string[]
+				}
+			}
+		}
+	}
+	shutdown: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getVersion: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['VersionDto']
+				}
+			}
+		}
+	}
 }
