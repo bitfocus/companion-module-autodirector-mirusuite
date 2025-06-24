@@ -1,5 +1,5 @@
 {
-	"id": "companion-module-autodirector-mirusuite",
+	"id": "autodirector-mirusuite",
 	"name": "MiruSuite",
 	"shortname": "MiruSuite",
 	"description": "A client for the MiruSuite automation software",
