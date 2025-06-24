@@ -6,3 +6,4 @@ package-lock.json
 DEBUG-*
 .DS_Store
 openapi.json
+*.tgz
