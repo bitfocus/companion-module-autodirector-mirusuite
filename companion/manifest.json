@@ -3,7 +3,7 @@
 	"name": "MiruSuite",
 	"shortname": "MiruSuite",
 	"description": "A client for the MiruSuite automation software",
-	"version": "0.4.5",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-autodirector-mirusuite.git",
 	"bugs": "https://github.com/bitfocus/companion-module-autodirector-mirusuite/issues",
@@ -26,5 +26,5 @@
 	},
 	"manufacturer": "AutoDirector",
 	"products": ["MiruSuite"],
-	"keywords": ["Automatic", "PTZ", "Switcher", "Person", "Tracking", "Panasonic", "Sony", "Canon"]
+	"keywords": ["Automatic", "PTZ", "Switcher", "Person", "Tracking"]
 }
