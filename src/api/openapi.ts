@@ -55,6 +55,24 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/autocut/overrideDominantSpeaker': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the current dominant speaker override status. */
+		get: operations['getOverrideDominantSpeaker']
+		put?: never
+		/** Set a person as dominant speaker manually. Useful when the audio setup fails for some reason. */
+		post: operations['overrideDominantSpeaker']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/autocut/start': {
 		parameters: {
 			query?: never
@@ -257,41 +275,6 @@ export interface paths {
 		put?: never
 		/** Throw a test error */
 		post: operations['throwTestError']
-		delete?: never
-		options?: never
-		head?: never
-		patch?: never
-		trace?: never
-	}
-	'/api/controller': {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		/** Get all available game controllers */
-		get: operations['listGameControllers']
-		put?: never
-		post?: never
-		delete?: never
-		options?: never
-		head?: never
-		patch?: never
-		trace?: never
-	}
-	'/api/controller/settings': {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		/** Get game controller settings */
-		get: operations['getGameControllerSettings']
-		put?: never
-		/** Update game controller settings */
-		post: operations['setGameControllerSettings']
 		delete?: never
 		options?: never
 		head?: never
@@ -524,6 +507,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/devices/{id}/director/adaptiveShotSize/exit': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Exit adaptive shot size mode for a lecture director */
+		post: operations['exitAdaptiveShotSizeMode']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/devices/{id}/director/automove': {
 		parameters: {
 			query?: never
@@ -612,6 +612,57 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/devices/{id}/framer/adjust': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Adjust the crop frame to the target person once. */
+		post: operations['adjustFramer']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/framer/position': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		/** Update the position of the crop frame manually. */
+		put: operations['setFramerPosition']
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/input/capture': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Capture a high-res image of the video feed */
+		get: operations['captureHighRes']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/devices/{id}/input/video': {
 		parameters: {
 			query?: never
@@ -640,6 +691,23 @@ export interface paths {
 		put?: never
 		/** Trigger learning of a new face on a PersonTracker */
 		post: operations['triggerLearnFace']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/tracker/limit/{border}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Update a person tracker's border limit according to the current PTZ position */
+		post: operations['learnDetectionLimit']
 		delete?: never
 		options?: never
 		head?: never
@@ -711,6 +779,23 @@ export interface paths {
 		put?: never
 		/** Enable an existing device component */
 		post: operations['enableDeviceComponent']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/{component}/reset': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Reset a device component's settings to default */
+		post: operations['resetDeviceComponent']
 		delete?: never
 		options?: never
 		head?: never
@@ -803,6 +888,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/faces/{id}/merge/{otherId}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Merge the first face ID into the second */
+		post: operations['mergeFaceIds']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/license': {
 		parameters: {
 			query?: never
@@ -810,7 +912,7 @@ export interface paths {
 			path?: never
 			cookie?: never
 		}
-		/** Get license details */
+		/** Get license details. If no active license is available return test license if possible */
 		get: operations['getLicenseDetails']
 		put?: never
 		post?: never
@@ -837,6 +939,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/license/fetch': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Fetch the license from the business backend */
+		post: operations['fetchLicense']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/license/install': {
 		parameters: {
 			query?: never
@@ -848,6 +967,23 @@ export interface paths {
 		/** Install a license */
 		put: operations['installLicense']
 		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/register': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Register this device for a given license */
+		post: operations['registerDevice']
 		delete?: never
 		options?: never
 		head?: never
@@ -1315,6 +1451,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/switcher/info': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get switcher information */
+		get: operations['getSwitcherInfo']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/switcher/preview/{input}': {
 		parameters: {
 			query?: never
@@ -1417,23 +1570,6 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
-	'/api/system/gc': {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		get?: never
-		put?: never
-		/** Run garbage collection */
-		post: operations['gc']
-		delete?: never
-		options?: never
-		head?: never
-		patch?: never
-		trace?: never
-	}
 	'/api/system/mode': {
 		parameters: {
 			query?: never
@@ -1443,23 +1579,6 @@ export interface paths {
 		}
 		/** Get the launch mode of the application */
 		get: operations['getMode']
-		put?: never
-		post?: never
-		delete?: never
-		options?: never
-		head?: never
-		patch?: never
-		trace?: never
-	}
-	'/api/system/sendstream': {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		/** Stream some stuff */
-		get: operations['getTestStream']
 		put?: never
 		post?: never
 		delete?: never
@@ -1532,30 +1651,41 @@ export interface components {
 			 */
 			type: 'AUTO_MOVE'
 		}
-		ActionEntry: {
-			action?: components['schemas']['ControllerAction']
-			axis?: string
-			inverted?: boolean
-			type?: components['schemas']['AxisType']
-			/** Format: float */
-			sensitivity?: number
-		}
 		ActivePreset: {
 			/** Format: int64 */
 			id?: number
 			automatic?: boolean
 			/** Format: int32 */
 			maxAppliedCommands?: number
+			trackingSinceUnapplied?: boolean
 			applied?: boolean
+		}
+		/** @description Current movement score and whether the shot size is reduced. */
+		AdaptiveShotSize: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'adaptiveShotSize'
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			score?: number
+			reduced?: boolean
 		}
 		AtemProperties: {
 			ip?: string
+			/** Format: int32 */
+			meIndex?: number
+			pipConfigList?: components['schemas']['PiPConfig'][]
 		}
 		AudienceAutoCutComponentSettings: Record<string, never>
 		AudioAnalyzerSettings: Record<string, never>
 		AudioAutoCutComponentSettings: {
 			reactToAudienceSounds?: boolean
 			speakerPresets?: number[]
+			/** Format: double */
+			baseDecibels?: number
 		}
 		AudioInputComponentSettings: {
 			descriptor?: components['schemas']['AudioInputDescriptor'] | null
@@ -1597,17 +1727,27 @@ export interface components {
 		}
 		AutoCutConfig: {
 			style?: components['schemas']['AutoCutStyle']
+			stageEnabled?: boolean
 			presentationEnabled?: boolean
 			pipEnabled?: boolean
 			speakerEnabled?: boolean
 			audienceEnabled?: boolean
+			keepSpeaker?: boolean
+			keepPresentation?: boolean
+			/** Format: int64 */
+			presetDelay?: number
 		}
 		AutoCutDBO: {
 			style?: components['schemas']['AutoCutStyle']
+			stageEnabled?: boolean
 			presentationEnabled?: boolean
 			pipEnabled?: boolean
 			speakerEnabled?: boolean
 			audienceEnabled?: boolean
+			keepSpeaker?: boolean
+			keepPresentation?: boolean
+			/** Format: int64 */
+			presetDelay?: number
 		}
 		/** @description AutoCut update event e.g. cut, detected person, etc. */
 		AutoCutEvent: {
@@ -1622,6 +1762,7 @@ export interface components {
 			timestamp?: number
 			type?: components['schemas']['AutoCutEventType']
 			msg?: string
+			payload?: unknown
 		}
 		/** @enum {string} */
 		AutoCutEventType:
@@ -1665,15 +1806,27 @@ export interface components {
 			presetRepeat?: boolean
 			/** Format: double */
 			presetMoveSpeed?: number
-			presetFilterKey: string
+			presetFilterKey?: string
 		}
 		/** @enum {string} */
 		AutoMoveVariant: 'RANDOM' | 'PRESET_TRANSITION' | 'DISABLED'
-		/** @enum {string} */
-		AxisType: 'BUTTON' | 'AXIS'
 		BirdDogControllerSettings: {
-			host: string
+			host?: string
+			model?: components['schemas']['BirdDogModel']
 			home?: components['schemas']['PTZPosition'] | null
+			/** Format: double */
+			basePanSpeed?: number
+			/** Format: double */
+			baseTiltSpeed?: number
+			/** Format: double */
+			baseZoomSpeed?: number
+		}
+		/** @enum {string} */
+		BirdDogModel: 'P100' | 'P200' | 'X1'
+		BlockedAxes: {
+			pan?: boolean
+			tilt?: boolean
+			zoom?: boolean
 		}
 		/** @enum {string} */
 		Border: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM'
@@ -1713,7 +1866,7 @@ export interface components {
 			progress?: number
 		}
 		/** @enum {string} */
-		CalibrationPtzVendor: 'CANON' | 'PANASONIC' | 'BIRD_DOG' | 'SONY' | 'MARSHALL'
+		CalibrationPtzVendor: 'CANON' | 'PANASONIC' | 'VISCA' | 'SONY' | 'MARSHALL'
 		/** @description Calibrator including calibration curve */
 		CalibrationWithCurve: {
 			ip?: string
@@ -1773,6 +1926,7 @@ export interface components {
 			| 'CONTROLLER_SONY_CGI'
 			| 'CONTROLLER_SONY_VISCA'
 			| 'CONTROLLER_MARSHALL_VISCA'
+			| 'CONTROLLER_TELYCAM_VISCA'
 			| 'CONTROLLER_UNREAL_ENGINE'
 			| 'RECORDER'
 			| 'AUTO_CUT_AUDIENCE'
@@ -1780,6 +1934,7 @@ export interface components {
 			| 'AUTO_CUT_PRESENTATION'
 			| 'AUTO_CUT_SPEAKER'
 			| 'AUTO_CUT_STAGE'
+			| 'FRAMER_VMIX'
 		ComponentPatchDto: {
 			audioInput?: components['schemas']['AudioInputComponentSettings'] | null
 			dummyInput?: components['schemas']['DummyInputComponentSettings'] | null
@@ -1799,6 +1954,7 @@ export interface components {
 			sonyCGIController?: components['schemas']['SonyCGIControllerSettings'] | null
 			sonyViscaController?: components['schemas']['SonyViscaControllerSettings'] | null
 			marshallViscaController?: components['schemas']['MarshallViscaControllerSettings'] | null
+			telycamViscaController?: components['schemas']['TelycamViscaControllerSettings'] | null
 			unrealEngineController?: components['schemas']['UnrealEngineControllerSettings'] | null
 			recorder?: components['schemas']['RecorderComponentSettings'] | null
 			audienceAutoCut?: components['schemas']['AudienceAutoCutComponentSettings'] | null
@@ -1806,6 +1962,7 @@ export interface components {
 			presentationAutoCut?: components['schemas']['PresentationAutoCutComponentSettings'] | null
 			speakerAutoCut?: components['schemas']['SpeakerAutoCutComponentSettings'] | null
 			stageAutoCut?: components['schemas']['StageAutoCutComponentSettings'] | null
+			vMixFramer?: components['schemas']['VMixFramerComponentSettings'] | null
 		}
 		ComponentSettingsPatch: {
 			/** @description Discriminator */
@@ -1822,20 +1979,34 @@ export interface components {
 		ConnectionState: 'CONNECTING' | 'CONNECTED' | 'DISCONNECTED'
 		/** @enum {string} */
 		ConnectionStatus: 'CONNECTED' | 'DISCONNECTED' | 'DISCONNECTED_AUTHENTICATION_FAILED' | 'RECONNECT'
-		/** @enum {string} */
-		ControllerAction: 'PAN' | 'TILT' | 'ZOOM' | 'PREVIOUS_DEVICE' | 'NEXT_DEVICE'
-		/** @enum {string} */
-		ControllerType:
-			| 'UNKNOWN'
-			| 'MOUSE'
-			| 'KEYBOARD'
-			| 'GAMEPAD'
-			| 'RUDDER'
-			| 'STICK'
-			| 'HEADTRACKER'
-			| 'TRACKBALL'
-			| 'TRACKPAD'
-			| 'WHEEL'
+		/** @description Describes the current crop frame as produced by a framer component. */
+		CropFrame: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'frame'
+			/** Format: int64 */
+			deviceId?: number
+			/** Format: double */
+			x1?: number
+			/** Format: double */
+			y1?: number
+			/** Format: double */
+			x2?: number
+			/** Format: double */
+			y2?: number
+		}
+		CropRect: {
+			/** Format: int32 */
+			x?: number
+			/** Format: int32 */
+			y?: number
+			/** Format: int32 */
+			width?: number
+			/** Format: int32 */
+			height?: number
+		}
 		/**
 		 * Format: date
 		 * @example 2022-03-10
@@ -1861,9 +2032,14 @@ export interface components {
 		}
 		DummyInputComponentSettings: {
 			descriptor?: components['schemas']['DummyInputDescriptor'] | null
+			crop?: components['schemas']['CropRect'] | null
 		}
 		DummyInputDescriptor: {
 			name?: string
+		}
+		ExtendedLicenseDetails: {
+			details?: components['schemas']['LicenseDetails']
+			productVariant?: components['schemas']['ProductVariant']
 		}
 		FaceIdEntity: {
 			name?: string
@@ -1883,8 +2059,17 @@ export interface components {
 		FaceImage: {
 			base64Data?: string
 		}
+		FingerprintDto: {
+			fingerprint?: string
+		}
 		/** @enum {string} */
 		Flag: 'DATA_COLLECTION_ENABLED' | 'REACTIVATE_COMPONENTS_ON_STARTUP'
+		FrameCoords: {
+			/** Format: double */
+			x?: number
+			/** Format: double */
+			y?: number
+		}
 		GUIUpdate: {
 			type?: components['schemas']['GUIUpdateType']
 			message?: string
@@ -1902,28 +2087,8 @@ export interface components {
 			| 'SWITCHER_CONFIG_UPDATED'
 			| 'ACTIVE_PRESET_UPDATED'
 			| 'AUTO_CUT_UPDATED'
-			| 'GAME_CONTROLLER_UPDATED'
-		GameControllerDescriptor: {
-			name?: string
-			type?: components['schemas']['ControllerType']
-		}
-		GameControllerSettings: {
-			actionMap?: {
-				[key: string]: components['schemas']['ActionEntry']
-			}
-			selectedController?: components['schemas']['GameControllerDescriptor'] | null
-			/** Format: int64 */
-			deviceId?: number
-		}
-		/** @description Contains the current values of all relevant controller input values */
-		GameControllerState: {
-			/**
-			 * @description discriminator enum property added by openapi-typescript
-			 * @enum {string}
-			 */
-			target: 'gameController'
-			states?: components['schemas']['MappedControllerEvent'][]
-		}
+			| 'AUTO_CUT_SPEAKER_OVERRIDE_UPDATED'
+			| 'TOKEN'
 		/** @description Patch for HeadTrackingDirectorComponentSettings */
 		HEAD_DIRECTOR: {
 			enabled?: boolean | null
@@ -1937,6 +2102,7 @@ export interface components {
 			focusAssistEnabled?: boolean | null
 			/** Format: double */
 			steadyRadius?: number | null
+			blockedAxes?: components['schemas']['BlockedAxes'] | null
 			/**
 			 * @description discriminator enum property added by openapi-typescript
 			 * @enum {string}
@@ -1949,14 +2115,17 @@ export interface components {
 			ruleOfThirds?: boolean
 			/** Format: float */
 			sensitivity?: number
-			target: components['schemas']['Point']
-			borderLimits: components['schemas']['BorderLimits']
-			targetShotSize: components['schemas']['ShotSize']
-			panicBehavior: components['schemas']['PanicBehaviorType']
+			target?: components['schemas']['Point']
+			borderLimits?: components['schemas']['BorderLimits']
+			targetShotSize?: components['schemas']['ShotSize']
+			panicBehavior?: components['schemas']['PanicBehaviorType']
 			focusAssistEnabled?: boolean
 			/** Format: double */
 			steadyRadius?: number
+			blockedAxes?: components['schemas']['BlockedAxes']
 		}
+		/** @enum {string} */
+		InputType: 'STANDARD' | 'UPSTREAM_KEY'
 		/** @description Patch for LectureDirectorComponentSettings */
 		LECTURE_DIRECTOR: {
 			enabled?: boolean | null
@@ -1969,6 +2138,7 @@ export interface components {
 			trackingSensitivity?: number | null
 			/** Format: double */
 			trackingSteadyRadius?: number | null
+			trackingTarget?: components['schemas']['Point'] | null
 			/** Format: double */
 			timeTrackingSwitch?: number | null
 			/** Format: double */
@@ -1976,6 +2146,23 @@ export interface components {
 			/** Format: double */
 			presetSpeed?: number | null
 			borderLimits?: components['schemas']['BorderLimits'] | null
+			adaptiveShotSizeEnabled?: boolean | null
+			/** Format: double */
+			minDizzinessScore?: number | null
+			/** Format: double */
+			maxDizzinessScore?: number | null
+			/** Format: int32 */
+			decreaseTargetHeadHeightSeconds?: number | null
+			/** Format: int32 */
+			increaseTargetHeadHeightSeconds?: number | null
+			wideTrackingTarget?: components['schemas']['Point'] | null
+			/** Format: double */
+			wideTrackingShotSize?: number | null
+			continuousBlackboard?: boolean | null
+			/** Format: double */
+			sensitiveBlackboardArea?: number | null
+			/** Format: double */
+			continuousBlackboardAcceleration?: number | null
 			/**
 			 * @description discriminator enum property added by openapi-typescript
 			 * @enum {string}
@@ -1994,6 +2181,7 @@ export interface components {
 			trackingSensitivity?: number
 			/** Format: double */
 			trackingSteadyRadius?: number
+			trackingTarget?: components['schemas']['Point']
 			/** Format: double */
 			timeTrackingSwitch?: number
 			/** Format: double */
@@ -2001,18 +2189,40 @@ export interface components {
 			/** Format: double */
 			presetSpeed?: number
 			borderLimits?: components['schemas']['BorderLimits']
+			adaptiveShotSizeEnabled?: boolean
+			/** Format: double */
+			minDizzinessScore?: number
+			/** Format: double */
+			maxDizzinessScore?: number
+			/** Format: int32 */
+			decreaseTargetHeadHeightSeconds?: number
+			/** Format: int32 */
+			increaseTargetHeadHeightSeconds?: number
+			wideTrackingTarget?: components['schemas']['Point']
+			/** Format: double */
+			wideTrackingShotSize?: number
+			continuousBlackboard?: boolean
+			/** Format: double */
+			sensitiveBlackboardArea?: number
+			/** Format: double */
+			continuousBlackboardAcceleration?: number
 		}
 		LicenseDetails: {
-			uuid?: components['schemas']['UUID']
-			signedFor?: string
-			signedBy?: string
-			/** Format: int32 */
-			featureSet?: number
-			expiryDate?: components['schemas']['Date']
+			uuid: components['schemas']['UUID']
+			signedFor: string
+			signedBy: string
+			licenseVariant?: components['schemas']['LicenseVariant']
+			startDate: components['schemas']['Date']
+			trialDate: components['schemas']['Date']
+			expiryDate: components['schemas']['Date']
 			signedDate?: components['schemas']['Date']
+			hardwareIdentifier?: string
 			valid?: boolean
 			expired?: boolean
+			validHardware?: boolean
 		}
+		/** @enum {string} */
+		LicenseVariant: 'SINGLE_TRACKING' | 'TRACKING' | 'AUTOCUT' | 'AUTOCUT_PRO' | 'EDUCATION'
 		/**
 		 * Format: date-time
 		 * @example 2022-03-10T12:15:50
@@ -2025,6 +2235,7 @@ export interface components {
 		MENumber: 'P_P' | 'ME1' | 'ME2' | 'ME3' | 'ME4' | 'ME5' | 'ME6' | 'ME7' | 'ME8'
 		MJPEGInputComponentSettings: {
 			descriptor?: components['schemas']['MJPEGInputDescriptor'] | null
+			crop?: components['schemas']['CropRect'] | null
 		}
 		MJPEGInputDescriptor: {
 			ip: string
@@ -2033,12 +2244,6 @@ export interface components {
 		}
 		/** @enum {string} */
 		MJPEGSourceType: 'RAW' | 'PANASONIC' | 'CANON' | 'SONY'
-		MappedControllerEvent: {
-			action?: components['schemas']['ControllerAction']
-			/** Format: float */
-			value?: number
-			type?: components['schemas']['AxisType']
-		}
 		MarshallViscaControllerSettings: {
 			host: string
 			home?: components['schemas']['PTZPosition'] | null
@@ -2046,6 +2251,11 @@ export interface components {
 		Message: {
 			t?: string
 		} & components['schemas']['VideoFrameMessage']
+		ModelInfo: {
+			name?: string
+			/** Format: int32 */
+			keyerCount?: number
+		}
 		MoveCameraToPositionPresetCommand: {
 			/** Format: int64 */
 			deviceId?: number
@@ -2063,6 +2273,7 @@ export interface components {
 		}
 		NDIInputComponentSettings: {
 			descriptor?: components['schemas']['NDIInputDescriptor'] | null
+			crop?: components['schemas']['CropRect'] | null
 		}
 		NDIInputDescriptor: {
 			name: string
@@ -2111,6 +2322,9 @@ export interface components {
 			trackingMode?: (string & components['schemas']['TrackingMode']) | null
 			/** Format: int32 */
 			targetFaceId?: number | null
+			reIdEnabled?: boolean | null
+			faceIdEnabled?: boolean | null
+			detectionLimits?: components['schemas']['BorderLimits'] | null
 			/**
 			 * @description discriminator enum property added by openapi-typescript
 			 * @enum {string}
@@ -2146,6 +2360,9 @@ export interface components {
 		PanasonicControllerSettings: {
 			host: string
 			home?: components['schemas']['PTZPosition'] | null
+			focusAfterPositionChange?: boolean
+			/** Format: int32 */
+			updateTimeMillis?: number
 		}
 		/** @enum {string} */
 		PanasonicPTZCommandEndpoint: 'PTZ' | 'CAM'
@@ -2170,6 +2387,9 @@ export interface components {
 			trackingMode?: components['schemas']['TrackingMode']
 			/** Format: int32 */
 			targetFaceId?: number
+			reIdEnabled?: boolean
+			faceIdEnabled?: boolean
+			detectionLimits?: components['schemas']['BorderLimits']
 		}
 		/** @description Person tracker state updated after a new prediction. */
 		PersonTrackerState: {
@@ -2181,6 +2401,12 @@ export interface components {
 			/** Format: int64 */
 			deviceId?: number
 			persons?: components['schemas']['Person'][]
+		}
+		PiPConfig: {
+			/** Format: int32 */
+			keyerIndex?: number
+			/** Format: int32 */
+			backgroundInputId?: number
 		}
 		Point: {
 			/** Format: double */
@@ -2230,6 +2456,17 @@ export interface components {
 				[key: string]: string
 			}
 		}
+		/** @enum {string} */
+		ProductVariant:
+			| 'NONE'
+			| 'SINGLE_TRACKING'
+			| 'SINGLE_TRACKING_AUTOCUT_TRIAL'
+			| 'TRACKING'
+			| 'TRACKING_AUTOCUT_TRIAL'
+			| 'AUTOCUT'
+			| 'AUTOCUT_PRO'
+			| 'EDUCATION'
+			| 'TEST'
 		ProjectEntity: {
 			name?: string
 			created?: components['schemas']['LocalDateTime']
@@ -2260,6 +2497,7 @@ export interface components {
 			tiltSpeed?: number
 			/** Format: float */
 			zoomSpeed?: number
+			position?: components['schemas']['PTZPosition']
 			returnToHome?: boolean
 		}
 		/** @description MJPEG source found via mDNS service. */
@@ -2334,6 +2572,8 @@ export interface components {
 		}
 		SpeakerAutoCutComponentSettings: {
 			pipInput?: string
+			/** Format: int64 */
+			stagePreset?: number
 		}
 		StageAutoCutComponentSettings: Record<string, never>
 		State:
@@ -2345,7 +2585,9 @@ export interface components {
 			| components['schemas']['AutoCutEvent']
 			| components['schemas']['AutoCutState']
 			| components['schemas']['SteadyModeState']
-			| components['schemas']['GameControllerState']
+			| components['schemas']['AdaptiveShotSize']
+			| components['schemas']['TestUsageState']
+			| components['schemas']['CropFrame']
 		/** @enum {string} */
 		StateDto: 'STAGE' | 'SPEAKER' | 'PIP' | 'PRESENTATION' | 'AUDIENCE'
 		/** @description Describes if a device with person tracking is in steady mode. */
@@ -2359,7 +2601,6 @@ export interface components {
 			deviceId?: number
 			enabled?: boolean
 		}
-		StreamingOutput: Record<string, never>
 		/** @enum {string} */
 		SubState: 'LOCKED' | 'FREE' | 'STALE'
 		SwitcherConfig: {
@@ -2383,6 +2624,7 @@ export interface components {
 		SwitcherInput: {
 			id?: string
 			name?: string
+			type?: components['schemas']['InputType']
 		}
 		SwitcherProperties: Record<string, never>
 		/** @enum {string} */
@@ -2400,6 +2642,23 @@ export interface components {
 		SwitcherStreamingState: 'IDLE' | 'CONNECTING' | 'STOPPING' | 'STREAMING' | 'UNKNOWN'
 		/** @enum {string} */
 		SwitcherType: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160'
+		TelycamViscaControllerSettings: {
+			host: string
+			home?: components['schemas']['PTZPosition'] | null
+		}
+		/** @enum {string} */
+		TestState: 'INACTIVE' | 'TESTING' | 'COOLDOWN'
+		/** @description Describes the current state of the test usage. Only used in test mode. Remaining seconds describes the remaining seconds in the current state */
+		TestUsageState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'testUsageState'
+			testState?: components['schemas']['TestState']
+			/** Format: int64 */
+			remainingSeconds?: number
+		}
 		/** @description A bounding box around a person in an image. */
 		TrackingBoundingBox: {
 			/** Format: float */
@@ -2448,12 +2707,31 @@ export interface components {
 			username: string
 			password: string
 		}
+		VMixFramerComponentSettings: {
+			/** Format: double */
+			frameWidth?: number
+			/** Format: double */
+			frameHeight?: number
+			input?: string
+			/** Format: int32 */
+			layer?: number
+			smooth?: boolean
+			/** Format: double */
+			speed?: number
+			/** Format: double */
+			sensitiveArea?: number
+			returnToCenterWhenLost?: boolean
+			useLayerSwap?: boolean
+			follow?: boolean
+		}
 		VMixProperties: {
 			ip?: string
 			/** Format: int32 */
 			port?: number
 			/** Format: int32 */
 			transitionId?: number
+			/** Format: int32 */
+			mixNumber?: number
 		}
 		VersionDto: {
 			version?: string
@@ -2483,6 +2761,7 @@ export interface components {
 		}
 		WebcamInputComponentSettings: {
 			descriptor?: components['schemas']['WebcamInputDescriptor'] | null
+			crop?: components['schemas']['CropRect'] | null
 		}
 		WebcamInputDescriptor: {
 			/** Format: int32 */
@@ -2562,6 +2841,54 @@ export interface operations {
 				content: {
 					'application/json': components['schemas']['AutoCutEvent'][]
 				}
+			}
+		}
+	}
+	getOverrideDominantSpeaker: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the device set as dominant speaker override. */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['Device']
+				}
+			}
+			/** @description No dominant speaker override set. */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	overrideDominantSpeaker: {
+		parameters: {
+			query?: {
+				audioDeviceId?: number
+				override?: boolean
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
 			}
 		}
 	}
@@ -2882,68 +3209,6 @@ export interface operations {
 				content: {
 					'application/json': string
 				}
-			}
-		}
-	}
-	listGameControllers: {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		requestBody?: never
-		responses: {
-			/** @description OK */
-			200: {
-				headers: {
-					[name: string]: unknown
-				}
-				content: {
-					'application/json': components['schemas']['GameControllerDescriptor'][]
-				}
-			}
-		}
-	}
-	getGameControllerSettings: {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		requestBody?: never
-		responses: {
-			/** @description OK */
-			200: {
-				headers: {
-					[name: string]: unknown
-				}
-				content: {
-					'application/json': components['schemas']['GameControllerSettings']
-				}
-			}
-		}
-	}
-	setGameControllerSettings: {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		requestBody?: {
-			content: {
-				'application/json': components['schemas']['GameControllerSettings']
-			}
-		}
-		responses: {
-			/** @description Created */
-			201: {
-				headers: {
-					[name: string]: unknown
-				}
-				content?: never
 			}
 		}
 	}
@@ -3277,6 +3542,26 @@ export interface operations {
 			}
 		}
 	}
+	exitAdaptiveShotSizeMode: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
 	triggerRandomAutoMove: {
 		parameters: {
 			query?: never
@@ -3380,6 +3665,72 @@ export interface operations {
 			}
 		}
 	}
+	adjustFramer: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	setFramerPosition: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: {
+			content: {
+				'application/json': components['schemas']['FrameCoords']
+			}
+		}
+		responses: {
+			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	captureHighRes: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'image/jpeg': string
+				}
+			}
+		}
+	}
 	streamVideo: {
 		parameters: {
 			query?: never
@@ -3421,6 +3772,27 @@ export interface operations {
 				content: {
 					'application/json': components['schemas']['FaceIdEntity']
 				}
+			}
+		}
+	}
+	learnDetectionLimit: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				border: components['schemas']['Border']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
 			}
 		}
 	}
@@ -3490,6 +3862,27 @@ export interface operations {
 		}
 	}
 	enableDeviceComponent: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				component: components['schemas']['ComponentId']
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	resetDeviceComponent: {
 		parameters: {
 			query?: never
 			header?: never
@@ -3634,6 +4027,27 @@ export interface operations {
 			}
 		}
 	}
+	mergeFaceIds: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+				otherId: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
 	getLicenseDetails: {
 		parameters: {
 			query?: never
@@ -3649,7 +4063,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['LicenseDetails']
+					'application/json': components['schemas']['ExtendedLicenseDetails']
 				}
 			}
 			/** @description No license installed */
@@ -3664,8 +4078,11 @@ export interface operations {
 	createLicense: {
 		parameters: {
 			query?: {
+				hardwareIdentifier?: string
+				licenseVariant?: components['schemas']['LicenseVariant']
 				signedBy?: string
 				signedFor?: string
+				trialDays?: number
 				validForDays?: number
 			}
 			header?: never
@@ -3679,16 +4096,52 @@ export interface operations {
 				headers: {
 					[name: string]: unknown
 				}
-				content: {
-					'application/octet-stream': components['schemas']['StreamingOutput']
-				}
+				content?: never
 			}
-			/** @description Endpoint disabled in production mode */
-			400: {
+		}
+	}
+	fetchLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description License fetched successfully */
+			200: {
 				headers: {
 					[name: string]: unknown
 				}
 				content?: never
+			}
+			/** @description Failed to fetch license */
+			500: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getHardwareIdentifier: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['FingerprintDto']
+				}
 			}
 		}
 	}
@@ -3714,11 +4167,61 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['LicenseDetails']
+					'application/json': components['schemas']['ExtendedLicenseDetails']
 				}
 			}
 			/** @description Invalid or empty license file */
 			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	registerDevice: {
+		parameters: {
+			query: {
+				/**
+				 * @description The name of the device for easier identification. Alphanumeric string.
+				 * @example Studio-PC-01
+				 */
+				deviceName: string
+				/**
+				 * @description License key for device registration. Format: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
+				 * @example ABCD-EFGH-IJKL-MNOP-QRST-UVWX
+				 */
+				licenseKey: string
+			}
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description License file returned */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Invalid request parameters */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Too many requests - rate limit exceeded */
+			429: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Internal server error */
+			500: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -3741,7 +4244,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['LicenseDetails']
+					'application/json': components['schemas']['ExtendedLicenseDetails']
 				}
 			}
 			/** @description No license installed */
@@ -3793,7 +4296,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['LicenseDetails']
+					'application/json': components['schemas']['ExtendedLicenseDetails']
 				}
 			}
 			/** @description Invalid or empty license file */
@@ -3964,7 +4467,9 @@ export interface operations {
 	}
 	playActivePreset: {
 		parameters: {
-			query?: never
+			query?: {
+				force?: boolean
+			}
 			header?: never
 			path: {
 				device: number
@@ -4052,7 +4557,9 @@ export interface operations {
 	}
 	playPreset: {
 		parameters: {
-			query?: never
+			query?: {
+				force?: boolean
+			}
 			header?: never
 			path: {
 				id: number
@@ -4184,6 +4691,7 @@ export interface operations {
 				dimension?: components['schemas']['PTZDimension']
 				ip?: string
 				vendor?: components['schemas']['CalibrationPtzVendor']
+				zoom?: number
 			}
 			header?: never
 			path?: never
@@ -4407,6 +4915,26 @@ export interface operations {
 			}
 		}
 	}
+	getSwitcherInfo: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['ModelInfo']
+				}
+			}
+		}
+	}
 	setPreview: {
 		parameters: {
 			query?: never
@@ -4525,24 +5053,6 @@ export interface operations {
 			}
 		}
 	}
-	gc: {
-		parameters: {
-			query?: never
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		requestBody?: never
-		responses: {
-			/** @description Created */
-			201: {
-				headers: {
-					[name: string]: unknown
-				}
-				content?: never
-			}
-		}
-	}
 	getMode: {
 		parameters: {
 			query?: never
@@ -4559,28 +5069,6 @@ export interface operations {
 				}
 				content: {
 					'application/json': components['schemas']['LaunchMode']
-				}
-			}
-		}
-	}
-	getTestStream: {
-		parameters: {
-			query?: {
-				val?: string
-			}
-			header?: never
-			path?: never
-			cookie?: never
-		}
-		requestBody?: never
-		responses: {
-			/** @description OK */
-			200: {
-				headers: {
-					[name: string]: unknown
-				}
-				content: {
-					'multipart/x-mixed-replace;boundary=--boundary': string[]
 				}
 			}
 		}

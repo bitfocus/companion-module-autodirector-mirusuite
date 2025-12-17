@@ -1,5 +1,5 @@
 import { DropdownChoice } from '@companion-module/base'
-import type { ComponentFeedback, ComponentId, Device, PresetEntity } from '../api/types.js'
+import type { ComponentFeedback, ComponentId, Device, PresetEntity, ShotSize } from '../api/types.js'
 import { MiruSuiteModuleInstance } from '../main.js'
 import { getInstrumentGroups } from './metadata.js'
 export type DeviceId2SwitcherInput = { [key: number]: string }
@@ -23,15 +23,15 @@ export function createFaceOptions(self: MiruSuiteModuleInstance): DropdownChoice
  * @param devices
  * @returns
  */
-export function createVideoDeviceOptions(devices: Device[]): DropdownChoice[] {
-	const videoDeviceChoices: { id: number; label: string }[] = []
+export function createDeviceOptions(devices: Device[]): DropdownChoice[] {
+	const deviceChoices: { id: number; label: string }[] = []
 	for (const device of devices) {
-		videoDeviceChoices.push({
+		deviceChoices.push({
 			id: device.id ?? -1,
 			label: device.name ?? 'Unknown',
 		})
 	}
-	return videoDeviceChoices
+	return deviceChoices
 }
 
 /**
@@ -121,12 +121,12 @@ export function getPresetSelector(self: MiruSuiteModuleInstance, presetChoices: 
 
 export function getDeviceSelector(
 	self: MiruSuiteModuleInstance,
-	videoDeviceChoices: DropdownChoice[],
+	deviceChoices: DropdownChoice[],
 	multi = false,
 	title = 'Device',
 ): any {
 	const offlineMode = self.getVariableValue('offlineMode') === 'true'
-	if (offlineMode || videoDeviceChoices.length === 0) {
+	if (offlineMode || deviceChoices.length === 0) {
 		let suffix = ''
 		if (multi) {
 			suffix = ' (comma separated)'
@@ -143,8 +143,8 @@ export function getDeviceSelector(
 			id: multi ? 'deviceIds' : 'deviceId',
 			type: multi ? 'multidropdown' : 'dropdown',
 			label: title,
-			default: videoDeviceChoices[0]?.id ?? -1,
-			choices: videoDeviceChoices,
+			default: deviceChoices[0]?.id ?? -1,
+			choices: deviceChoices,
 			tooltip:
 				'You can select multiple devices. To make a device available, you first need to create a device in MiruSuite and add a video input to it.',
 		}
@@ -277,4 +277,15 @@ export function getDirectorType(
 	else if (directorComponent === 'DIRECTOR_HEAD_TRACKING') return 'DIRECTOR_HEAD_TRACKING'
 	else if (directorComponent === 'DIRECTOR_LECTURE') return 'DIRECTOR_LECTURE'
 	else return 'DIRECTOR_AUTO_MOVE'
+}
+
+export function shotSizeToLabel(shotSize: ShotSize): string {
+	switch (shotSize) {
+		case 'WIDE':
+			return 'Wide'
+		case 'MEDIUM':
+			return 'Medium'
+		case 'CLOSE_UP':
+			return 'Close'
+	}
 }

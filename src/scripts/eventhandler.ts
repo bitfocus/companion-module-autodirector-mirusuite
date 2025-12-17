@@ -75,6 +75,17 @@ export default function setupEventHandler(self: MiruSuiteModuleInstance, baseUrl
 							self.log('error', 'Error loading autocut running - ' + error)
 						})
 					break
+				case 'AUTO_CUT_SPEAKER_OVERRIDE_UPDATED':
+					self.log('debug', 'AutoCut speaker override updated')
+					self.store
+						.loadOverrideDominantSpeaker()
+						.then(() => {
+							self.checkFeedbacks('dominantSpeakerOverride')
+						})
+						.catch((error) => {
+							self.log('error', 'Error loading autocut speaker overrides - ' + error)
+						})
+					break
 			}
 		}
 	}

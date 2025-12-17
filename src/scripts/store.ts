@@ -11,6 +11,7 @@ export class Store {
 	private liveInputs: string[] = []
 	private faces: FaceIdEntity[] = []
 	private autoCutEnabled = false
+	private dominantSpeakerOverride: number | null = null
 
 	constructor(self: MiruSuiteModuleInstance) {
 		this.self = self
@@ -52,6 +53,14 @@ export class Store {
 		return this.devices.filter((device) => getInputComponentType(device) === 'VIDEO')
 	}
 
+	getAudioDevices(): Device[] {
+		return this.devices.filter((device) => getInputComponentType(device) === 'AUDIO')
+	}
+
+	getVMixFramerDevices(): Device[] {
+		return this.devices.filter((device) => !!device.components?.vMixFramer)
+	}
+
 	async loadActivePresetMap(): Promise<void> {
 		this.activePresetMap = await this.backend.loadActivePresetMap()
 	}
@@ -90,5 +99,13 @@ export class Store {
 
 	isAutoCutRunning(): boolean {
 		return this.autoCutEnabled
+	}
+
+	async loadOverrideDominantSpeaker(): Promise<void> {
+		this.dominantSpeakerOverride = await this.backend.loadOverrideDominantSpeaker()
+	}
+
+	getDominantSpeakerOverride(): number | null {
+		return this.dominantSpeakerOverride
 	}
 }

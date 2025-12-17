@@ -12,6 +12,7 @@
 		"dev": "yarn run copyassets && tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",
 		"lint": "yarn run lint:raw .",
+		"lint:fix": "yarn run lint:raw --fix",
 		"generate-api": "npx openapi-typescript src/api/openapi.json --output src/api/openapi.ts",
 		"copyassets": "copyfiles -u 1 src/api/openapi.json src/static/icon.png dist/"
 	},

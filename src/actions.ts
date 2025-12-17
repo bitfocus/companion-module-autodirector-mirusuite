@@ -2,7 +2,7 @@ import { DropdownChoice } from '@companion-module/base'
 import { ShotSize, TrackingMode } from './api/types.js'
 import type { MiruSuiteModuleInstance } from './main.js'
 import {
-	createVideoDeviceOptions,
+	createDeviceOptions,
 	getDeviceSelector,
 	getFaceSelector,
 	getInstrumentGroupSelector,
@@ -27,7 +27,8 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const store = self.store
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
 	const videoDevices = store.getVideoDevices()
-	const videoDeviceOptions: DropdownChoice[] = createVideoDeviceOptions(videoDevices)
+	const videoDeviceOptions: DropdownChoice[] = createDeviceOptions(videoDevices)
+	const audioDeviceOptions: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceOptions)
 	const presets = store.getPresets()
 
@@ -137,22 +138,40 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 		playPreset: {
 			name: 'Play Preset',
 			description: 'Play a preset. ',
-			options: [getPresetSelector(self, presetChoices)],
+			options: [
+				getPresetSelector(self, presetChoices),
+				{
+					id: 'force',
+					type: 'checkbox',
+					label: 'Force play (even if camera is live)',
+					default: false,
+				},
+			],
 			async callback(event) {
 				const presetId = Number(event.options.preset)
-				self.log('info', 'Playing preset ' + presetId)
-				await backend?.playPreset(presetId)
+				const force = event.options.force as boolean
+				self.log('info', 'Playing preset ' + presetId + ' with force=' + force)
+				await backend?.playPreset(presetId, force)
 			},
 		},
 		playActivePreset: {
 			name: 'Play Active Preset',
 			description:
 				'Re-apply the active preset of a camera. Use this action if you want to return a camera to its active preset if it has moved away.',
-			options: [getDeviceSelector(self, videoDeviceOptions)],
+			options: [
+				getDeviceSelector(self, videoDeviceOptions),
+				{
+					id: 'force',
+					type: 'checkbox',
+					label: 'Force play (even if camera is live)',
+					default: false,
+				},
+			],
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
-				self.log('info', 'Re-applying preset of device ' + deviceId)
-				await backend?.playActivePreset(deviceId)
+				const force = event.options.force as boolean
+				self.log('info', 'Re-applying preset of device ' + deviceId + ' with force=' + force)
+				await backend?.playActivePreset(deviceId, force)
 			},
 		},
 		overwritePreset: {
@@ -238,7 +257,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 						return
 					}
 					const presetId = Number(preset?.id ?? -1)
-					await backend?.playPreset(presetId)
+					await backend?.playPreset(presetId, false)
 				}
 				self.checkFeedbacks('autoPreset', 'learnMode')
 			},
@@ -386,6 +405,160 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				await backend?.cutTo(event.options.input?.toString() ?? '')
+			},
+		},
+		updateTargetShotSizeConfig: {
+			name: 'Increase Target Shot Size (Config)',
+			description: 'Increase the target shot size of a selected shot size',
+			options: [
+				{
+					id: 'size',
+					type: 'dropdown',
+					label: 'Size',
+					choices: [
+						{ id: 'CLOSE_UP', label: 'Close' },
+						{ id: 'MEDIUM', label: 'Medium' },
+						{ id: 'WIDE', label: 'Wide' },
+					],
+					default: 'WIDE',
+				},
+				{
+					id: 'step',
+					type: 'number',
+					label: 'Step size',
+					default: 0.02,
+					min: 0.005,
+					max: 0.1,
+				},
+				{
+					id: 'increment',
+					type: 'dropdown',
+					label: 'Increment / Decrement',
+					choices: [
+						{ id: '1', label: 'Increment' },
+						{ id: '-1', label: 'Decrement' },
+					],
+					default: '1',
+				},
+			],
+			async callback(event) {
+				const size = event.options.size as ShotSize
+				const increment = Number(event.options.increment)
+				const step = Number(event.options.step)
+				self.log('info', 'Updating target shot size for size ' + size + ' by ' + increment + ' with step ' + step)
+				await backend?.updateTargetShotSizeConfig(size, increment === 1, step)
+			},
+		},
+		setOverrideDominantSpeaker: {
+			name: 'Set Dominant Speaker Override',
+			description: 'Set the dominant speaker override to a specific device or clear the override.',
+			options: [
+				getDeviceSelector(self, audioDeviceOptions),
+				{
+					id: 'mode',
+					type: 'dropdown',
+					label: 'Mode',
+					choices: [
+						{ id: 'enable', label: 'Enable Override' },
+						{ id: 'disable', label: 'Disable Override' },
+						{ id: 'toggle', label: 'Toggle Override' },
+					],
+					default: 'toggle',
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				const mode = event.options.mode
+				let override = true
+				if (mode === 'disable') {
+					override = false
+				} else if (mode === 'toggle') {
+					override = store.getDominantSpeakerOverride() !== deviceId
+				}
+				self.log('info', 'Setting dominant speaker override to device ' + deviceId + ': ' + override)
+				await backend?.setOverrideDominantSpeaker(device, override)
+			},
+		},
+		adjustFramer: {
+			name: 'vMix Framer: Adjust once',
+			description: 'Adjust the framer to the target person once.',
+			options: [getDeviceSelector(self, videoDeviceOptions)],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				if (device) {
+					self.log('info', 'Adjusting framer for device ' + deviceId)
+					await backend?.adjustFramer(device)
+				} else {
+					self.log('warn', 'Device not found: ' + deviceId)
+				}
+			},
+		},
+		moveTargetPoint: {
+			name: 'Move Tracking Target',
+			description:
+				'Move the target point of the head tracking director by the given deltas. Requires the head tracking director.',
+			options: [
+				getDeviceSelector(self, videoDeviceOptions),
+				{
+					id: 'deltaX',
+					type: 'number',
+					label: 'Delta X',
+					default: 0,
+					min: -1,
+					max: 1,
+				},
+				{
+					id: 'deltaY',
+					type: 'number',
+					label: 'Delta Y',
+					default: 0,
+					min: -1,
+					max: 1,
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				if (!device) {
+					self.log('warn', 'Moving tracking target: Device not found: ' + deviceId)
+					return
+				}
+				const deltaX = Number(event.options.deltaX)
+				const deltaY = Number(event.options.deltaY)
+				self.log(
+					'info',
+					'Moving tracking target for device ' + deviceId + ' by deltaX: ' + deltaX + ', deltaY: ' + deltaY,
+				)
+				await backend?.moveTargetPoint(device, deltaX, deltaY)
+			},
+		},
+		updateSensitivity: {
+			name: 'Update Sensitivity',
+			description: 'Update the sensitivity of a head tracking director.',
+			options: [
+				getDeviceSelector(self, videoDeviceOptions),
+				{
+					id: 'deltaSensitivity',
+					type: 'number',
+					label: 'Sensitivity',
+					default: 0.1,
+					min: -0.3,
+					max: 0.3,
+					step: 0.01,
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				if (!device) {
+					self.log('warn', 'Updating sensitivity: Device not found: ' + deviceId)
+					return
+				}
+				const deltaSensitivity = Number(event.options.deltaSensitivity)
+				self.log('info', 'Updating sensitivity for device ' + deviceId + ' by ' + deltaSensitivity)
+				await backend?.updateSensitivity(device, deltaSensitivity)
 			},
 		},
 	})

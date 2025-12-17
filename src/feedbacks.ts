@@ -12,7 +12,7 @@ import {
 	isDeviceLive,
 	isInputLive,
 	getDisplayableDeviceNamesFromPreset,
-	createVideoDeviceOptions,
+	createDeviceOptions,
 } from './scripts/helpers.js'
 import {
 	AutoConfiguredButton,
@@ -30,7 +30,8 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const backend = self.backend
 	const store = self.store
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
-	const videoDeviceChoices: DropdownChoice[] = createVideoDeviceOptions(store.getVideoDevices())
+	const videoDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getVideoDevices())
+	const audioDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceChoices)
 	const deviceId2SwitcherInput = getDeviceIdToSwitcherInputMap(self)
 	const presets = store.getPresets()
@@ -371,6 +372,21 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			options: [],
 			callback: (_) => {
 				return store.isAutoCutRunning()
+			},
+		},
+		dominantSpeakerOverride: {
+			name: 'Dominant Speaker Override Active',
+			type: 'boolean',
+			description: 'Check if Dominant Speaker Override is set.',
+			defaultStyle: {
+				bgcolor: 0x00ff00,
+				color: 0x000000,
+			},
+			options: [getDeviceSelector(self, audioDeviceChoices)],
+			callback: (feedback) => {
+				const override = store.getDominantSpeakerOverride()
+				const deviceId = Number(feedback.options.deviceId)
+				return override !== null && override === deviceId
 			},
 		},
 	})

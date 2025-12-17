@@ -134,15 +134,15 @@ export default class Backend {
 		return []
 	}
 
-	async playPreset(id: number): Promise<void> {
+	async playPreset(id: number, force: boolean): Promise<void> {
 		await this.client.POST('/api/projects/active/presets/{id}/play', {
-			params: { path: { id } },
+			params: { path: { id }, query: { force } },
 		})
 	}
 
-	async playActivePreset(device: number): Promise<void> {
+	async playActivePreset(device: number, force: boolean): Promise<void> {
 		await this.client.POST('/api/projects/active/presets/reapply/{device}', {
-			params: { path: { device } },
+			params: { path: { device }, query: { force } },
 		})
 	}
 
@@ -238,6 +238,115 @@ export default class Backend {
 	async exitSteadyMode(id: number): Promise<void> {
 		await this.client.POST('/api/devices/{id}/director/steady/exit', {
 			params: { path: { id } },
+		})
+	}
+
+	/**
+	 * Increment or decrement the target head height associated with a shot size.
+	 * @param shotSize Shot size to update
+	 * @param increment If true, increase the head height, if false, decrease it by step
+	 * @param step The amount to increase/decrease
+	 */
+	async updateTargetShotSizeConfig(shotSize: ShotSize, increment: boolean, step: number): Promise<void> {
+		const response = await this.client.GET('/api/config/shotsize')
+		if (response.data !== undefined) {
+			let size = response.data[shotSize]
+			if (increment) {
+				size += step
+			} else {
+				size -= step
+			}
+			size = Math.max(0, Math.min(1, size))
+			this.self.log('debug', 'Updating shot size ' + shotSize + ' to ' + size)
+
+			await this.client.POST('/api/config/shotsize', {
+				params: {
+					query: {
+						size: shotSize,
+						diagonal: size,
+					},
+				},
+			})
+		}
+	}
+
+	async loadOverrideDominantSpeaker(): Promise<number | null> {
+		const response = await this.client.GET('/api/autocut/overrideDominantSpeaker')
+		return response.data?.id ?? null
+	}
+
+	async setOverrideDominantSpeaker(device: Device | undefined, override: boolean): Promise<void> {
+		await this.client.POST('/api/autocut/overrideDominantSpeaker', {
+			params: {
+				query: {
+					audioDeviceId: device?.id ?? -1,
+					override: override,
+				},
+			},
+		})
+	}
+
+	/**
+	 * Adjust the crop frame to the target person once.
+	 * @param device device to adjust framer for
+	 */
+	async adjustFramer(device: Device): Promise<void> {
+		await this.client.POST('/api/devices/{id}/framer/adjust', {
+			params: { path: { id: device.id ?? -1 } },
+		})
+	}
+
+	/**
+	 * Move the target point of the head tracking director by the given deltas.
+	 * Requires a head tracking director component.
+	 * @param device device to move target point for
+	 * @param deltaX amount to move in x direction
+	 * @param deltaY amount to move in y direction
+	 */
+	async moveTargetPoint(device: Device, deltaX: number, deltaY: number): Promise<void> {
+		const settings = device.components?.headTrackingDirector
+		if (settings === null || settings === undefined) {
+			return
+		}
+		const x = Math.max(0, Math.min(1, (settings.target?.x ?? 0.5) + deltaX))
+		const y = Math.max(0, Math.min(1, (settings.target?.y ?? 0.5) + deltaY))
+		await this.client.PUT('/api/devices/{id}', {
+			params: { path: { id: device.id ?? -1 } },
+			body: {
+				patch: {
+					headTrackingDirector: {
+						...settings,
+						target: {
+							x: x,
+							y: y,
+						},
+					},
+				},
+			},
+		})
+	}
+
+	/**
+	 * Update the sensitivity of the head tracking director by the given delta.
+	 * @param device  device to update sensitivity for
+	 * @param deltaSensitivity amount to change sensitivity by
+	 */
+	async updateSensitivity(device: Device, deltaSensitivity: number): Promise<void> {
+		const settings = device.components?.headTrackingDirector
+		if (settings === null || settings === undefined) {
+			return
+		}
+		const sensitivity = Math.max(0.2, Math.min(0.8, (settings.sensitivity ?? 0.5) + deltaSensitivity))
+		await this.client.PUT('/api/devices/{id}', {
+			params: { path: { id: device.id ?? -1 } },
+			body: {
+				patch: {
+					headTrackingDirector: {
+						...settings,
+						sensitivity: sensitivity,
+					},
+				},
+			},
 		})
 	}
 }
