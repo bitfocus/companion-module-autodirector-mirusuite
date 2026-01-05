@@ -184,7 +184,7 @@ export default class Backend {
 	async getLiveInputs(): Promise<string[]> {
 		const response = await this.client.GET('/api/switcher')
 		if (response.data?.connectionStatus !== 'CONNECTED') {
-			this.self.log('warn', 'Switcher not connected')
+			this.self.log('debug', 'Switcher not connected')
 			return []
 		}
 		return response.data.programs ?? []

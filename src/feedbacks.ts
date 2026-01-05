@@ -181,7 +181,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				const device = store.getDeviceById(deviceId)
 				const headTrackingDirector = device?.components['headTrackingDirector']
 				if (headTrackingDirector) {
-					return headTrackingDirector.targetShotSize === feedback.options.sizef
+					return headTrackingDirector.targetShotSize === feedback.options.size
 				}
 				return false
 			},
