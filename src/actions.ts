@@ -498,15 +498,15 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 		toggleVMixFramer: {
 			name: 'Toggle vMix Framer',
 			description: 'Enable, disable, or toggle the vMix framer component of a device.',
-			options: [
-				getDeviceSelector(self, videoDeviceOptions),
-
-			],
+			options: [getDeviceSelector(self, videoDeviceOptions)],
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				if (device) {
-					self.log('info', 'Toggling vMix framer for device ' + deviceId + " with " + device.feedback['FRAMER_VMIX']?.state)
+					self.log(
+						'info',
+						'Toggling vMix framer for device ' + deviceId + ' with ' + device.feedback['FRAMER_VMIX']?.state,
+					)
 					await backend?.toggleVMixFramer(device)
 				} else {
 					self.log('warn', 'Device not found: ' + deviceId)

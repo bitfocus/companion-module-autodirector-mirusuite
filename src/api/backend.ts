@@ -98,7 +98,7 @@ export default class Backend {
 		if (device === undefined) {
 			return
 		}
-		const framer = device.components?.vMixFramer;
+		const framer = device.components?.vMixFramer
 		if (framer === null || framer === undefined) {
 			return
 		}

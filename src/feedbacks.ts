@@ -393,7 +393,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			name: 'vMix Framer Enabled',
 			type: 'boolean',
 			description:
-				'Is active when the device\'s vMix Framer component is enabled. To select a device, you first need to create a device in MiruSuite and add a video input to it. This action needs a vMix Framer be installed on the device.',
+				"Is active when the device's vMix Framer component is enabled. To select a device, you first need to create a device in MiruSuite and add a video input to it. This action needs a vMix Framer be installed on the device.",
 			defaultStyle: {
 				bgcolor: 0x00ff00,
 				color: 0x000000,
@@ -404,7 +404,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				const device = store.getDeviceById(deviceId)
 				return device?.feedback['FRAMER_VMIX']?.state === 'RUNNING'
 			},
-		}
+		},
 	})
 }
 async function displayLOGO(feedback: CompanionFeedbackAdvancedEvent) {
