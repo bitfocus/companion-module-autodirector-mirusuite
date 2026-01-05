@@ -7,6 +7,7 @@ import {
 	createFaceOptions,
 	getPresetChoices,
 	shotSizeToLabel,
+	getComponentOfType,
 } from './scripts/helpers.js'
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
@@ -61,8 +62,10 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		if (videoDevice?.components?.lectureDirector != null) {
 			addExitSteadyModePreset(presets, videoDeviceChoices, deviceId)
 		}
-		addReturnToHomeButton(presets, videoDeviceChoices, deviceId)
-		addReApplyPreset(presets, videoDeviceChoices, deviceId)
+		if (videoDevice != null && getComponentOfType(videoDevice, 'CONTROLLER') != null) {
+			addReturnToHomeButton(presets, videoDeviceChoices, deviceId)
+			addReApplyPreset(presets, videoDeviceChoices, deviceId)
+		}
 	}
 	for (const choice of audioDeviceChoices) {
 		const deviceId = Number(choice.id)
