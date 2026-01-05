@@ -495,6 +495,52 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				}
 			},
 		},
+		toggleVMixFramer: {
+			name: 'Toggle vMix Framer',
+			description: 'Enable, disable, or toggle the vMix framer component of a device.',
+			options: [
+				getDeviceSelector(self, videoDeviceOptions),
+
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				if (device) {
+					self.log('info', 'Toggling vMix framer for device ' + deviceId + " with " + device.feedback['FRAMER_VMIX']?.state)
+					await backend?.toggleVMixFramer(device)
+				} else {
+					self.log('warn', 'Device not found: ' + deviceId)
+				}
+			},
+		},
+		setVMixFramer: {
+			name: 'Set vMix Framer',
+			description: 'Enable or disable the vMix framer component of a device.',
+			options: [
+				getDeviceSelector(self, videoDeviceOptions),
+				{
+					id: 'enabled',
+					type: 'dropdown',
+					label: 'Enable',
+					choices: [
+						{ id: 'true', label: 'Enable' },
+						{ id: 'false', label: 'Disable' },
+					],
+					default: 'true',
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				const enable = event.options.enabled == 'true'
+				if (device) {
+					self.log('info', 'Setting vMix framer for device ' + deviceId + ' to ' + enable)
+					await backend?.toggleVMixFramer(device, enable)
+				} else {
+					self.log('warn', 'Device not found: ' + deviceId)
+				}
+			},
+		},
 		moveTargetPoint: {
 			name: 'Move Tracking Target',
 			description:

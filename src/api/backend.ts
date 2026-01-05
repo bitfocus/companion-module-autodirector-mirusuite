@@ -94,6 +94,21 @@ export default class Backend {
 		})
 	}
 
+	async toggleVMixFramer(device: Device | undefined, enabled?: boolean): Promise<void> {
+		if (device === undefined) {
+			return
+		}
+		const framer = device.components?.vMixFramer;
+		if (framer === null || framer === undefined) {
+			return
+		}
+		enabled ??= device.feedback['FRAMER_VMIX']?.state !== 'RUNNING'
+		console.log('Toggling vMix Framer to ' + enabled)
+		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
+			params: { path: { id: device.id ?? -1, component: 'FRAMER_VMIX' } },
+		})
+	}
+
 	async setShotSize(device: Device | undefined, shotSize: ShotSize): Promise<void> {
 		if (device === undefined) {
 			return
