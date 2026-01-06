@@ -99,11 +99,10 @@ export default class Backend {
 			return
 		}
 		const framer = device.components?.vMixFramer
-		if (framer === null || framer === undefined) {
+		if (framer === null) {
 			return
 		}
 		enabled ??= device.feedback['FRAMER_VMIX']?.state !== 'RUNNING'
-		console.log('Toggling vMix Framer to ' + enabled)
 		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
 			params: { path: { id: device.id ?? -1, component: 'FRAMER_VMIX' } },
 		})
