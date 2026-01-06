@@ -94,6 +94,20 @@ export default class Backend {
 		})
 	}
 
+	async toggleVMixFramer(device: Device | undefined, enabled?: boolean): Promise<void> {
+		if (device === undefined) {
+			return
+		}
+		const framer = device.components?.vMixFramer
+		if (framer === null) {
+			return
+		}
+		enabled ??= device.feedback['FRAMER_VMIX']?.state !== 'RUNNING'
+		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
+			params: { path: { id: device.id ?? -1, component: 'FRAMER_VMIX' } },
+		})
+	}
+
 	async setShotSize(device: Device | undefined, shotSize: ShotSize): Promise<void> {
 		if (device === undefined) {
 			return
@@ -184,7 +198,7 @@ export default class Backend {
 	async getLiveInputs(): Promise<string[]> {
 		const response = await this.client.GET('/api/switcher')
 		if (response.data?.connectionStatus !== 'CONNECTED') {
-			this.self.log('warn', 'Switcher not connected')
+			this.self.log('debug', 'Switcher not connected')
 			return []
 		}
 		return response.data.programs ?? []

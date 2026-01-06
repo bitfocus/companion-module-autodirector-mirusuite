@@ -181,7 +181,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				const device = store.getDeviceById(deviceId)
 				const headTrackingDirector = device?.components['headTrackingDirector']
 				if (headTrackingDirector) {
-					return headTrackingDirector.targetShotSize === feedback.options.sizef
+					return headTrackingDirector.targetShotSize === feedback.options.size
 				}
 				return false
 			},
@@ -387,6 +387,22 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				const override = store.getDominantSpeakerOverride()
 				const deviceId = Number(feedback.options.deviceId)
 				return override !== null && override === deviceId
+			},
+		},
+		vMixFramerEnabled: {
+			name: 'vMix Framer Enabled',
+			type: 'boolean',
+			description:
+				"Is active when the device's vMix Framer component is enabled. To select a device, you first need to create a device in MiruSuite and add a video input to it. This feedback requires a vMix Framer to be installed on the device.",
+			defaultStyle: {
+				bgcolor: 0x00ff00,
+				color: 0x000000,
+			},
+			options: [getDeviceSelector(self, videoDeviceChoices)],
+			callback: async (feedback) => {
+				const deviceId = Number(feedback.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				return device?.feedback['FRAMER_VMIX']?.state === 'RUNNING'
 			},
 		},
 	})

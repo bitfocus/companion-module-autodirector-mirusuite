@@ -7,6 +7,7 @@ import {
 	createFaceOptions,
 	getPresetChoices,
 	shotSizeToLabel,
+	getComponentOfType,
 } from './scripts/helpers.js'
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
@@ -61,8 +62,10 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		if (videoDevice?.components?.lectureDirector != null) {
 			addExitSteadyModePreset(presets, videoDeviceChoices, deviceId)
 		}
-		addReturnToHomeButton(presets, videoDeviceChoices, deviceId)
-		addReApplyPreset(presets, videoDeviceChoices, deviceId)
+		if (videoDevice != null && getComponentOfType(videoDevice, 'CONTROLLER') != null) {
+			addReturnToHomeButton(presets, videoDeviceChoices, deviceId)
+			addReApplyPreset(presets, videoDeviceChoices, deviceId)
+		}
 	}
 	for (const choice of audioDeviceChoices) {
 		const deviceId = Number(choice.id)
@@ -70,7 +73,7 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	}
 	for (const choice of vmixFramerDeviceChoices) {
 		const deviceId = Number(choice.id)
-		addVMixFramerAdjustFramePreset(presets, vmixFramerDeviceChoices, deviceId)
+		addVMixFramerPresets(presets, vmixFramerDeviceChoices, deviceId)
 	}
 	for (const devicePreset of devicePresets) {
 		self.log('info', 'Adding preset ' + devicePreset.label)
@@ -988,7 +991,7 @@ function addConfigureTargetShotSizes(presets: CompanionPresetDefinitions) {
 	}
 }
 
-function addVMixFramerAdjustFramePreset(
+function addVMixFramerPresets(
 	presets: CompanionPresetDefinitions,
 	vmixFramerDeviceChoices: DropdownChoice[],
 	deviceId: number,
@@ -1017,5 +1020,116 @@ function addVMixFramerAdjustFramePreset(
 			},
 		],
 		feedbacks: [],
+	}
+	presets['vMixFramerToggle-' + deviceId] = {
+		type: 'button',
+		category: 'vMix Framer',
+		name: 'Toggle Framer',
+		style: {
+			text: 'Toggle Framer\n' + vmixFramerDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
+			size: 'auto',
+			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'toggleVMixFramer',
+						options: {
+							deviceId: deviceId,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'vMixFramerEnabled',
+				options: {
+					deviceId: deviceId,
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+	presets['vMixFramerEnable-' + deviceId] = {
+		type: 'button',
+		category: 'vMix Framer',
+		name: 'Enable Framer',
+		style: {
+			text: 'Enable Framer\n' + vmixFramerDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
+			size: 'auto',
+			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'setVMixFramer',
+						options: {
+							deviceId: deviceId,
+							enabled: 'true',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'vMixFramerEnabled',
+				options: {
+					deviceId: deviceId,
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+	presets['vMixFramerDisable-' + deviceId] = {
+		type: 'button',
+		category: 'vMix Framer',
+		name: 'Disable Framer',
+		style: {
+			text: 'Disable Framer\n' + vmixFramerDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
+			size: 'auto',
+			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'setVMixFramer',
+						options: {
+							deviceId: deviceId,
+							enabled: 'false',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'vMixFramerEnabled',
+				options: {
+					deviceId: deviceId,
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
+				isInverted: true,
+			},
+		],
 	}
 }

@@ -32,10 +32,22 @@ export default function setupEventHandler(self: MiruSuiteModuleInstance, baseUrl
 								self.log('debug', '...and devices must be updated')
 								// Devices have changed, update the configuration
 								void self.updateConfiguration().then(() => {
-									self.checkFeedbacks('shotSize', 'trackingMode', 'enabledDirector', 'directorStatus')
+									self.checkFeedbacks(
+										'shotSize',
+										'trackingMode',
+										'enabledDirector',
+										'directorStatus',
+										'vMixFramerEnabled',
+									)
 								})
 							} else {
-								self.checkFeedbacks('shotSize', 'trackingMode', 'enabledDirector', 'directorStatus')
+								self.checkFeedbacks(
+									'shotSize',
+									'trackingMode',
+									'enabledDirector',
+									'directorStatus',
+									'vMixFramerEnabled',
+								)
 							}
 						})
 						.catch((error) => {
