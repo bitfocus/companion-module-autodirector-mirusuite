@@ -52,7 +52,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				const size = toShotSize(event.options.size)
-				if (size === undefined) {
+				if (!size) {
 					self.log('warn', 'Invalid shot size: ' + event.options.size)
 					return
 				}
@@ -120,7 +120,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				const mode = toTrackingMode(event.options.mode)
-				if (mode == undefined) {
+				if (!mode) {
 					self.log('warn', 'Invalid tracking mode: ' + event.options.mode)
 					return
 				}
@@ -290,7 +290,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				}
 				self.log('debug', 'Overwriting auto preset...')
 				const preset = getPresetToButton(presets, thisButton)
-				if (preset == undefined) {
+				if (preset === undefined) {
 					self.log('warn', 'Preset not set for button ' + index)
 					return
 				}
