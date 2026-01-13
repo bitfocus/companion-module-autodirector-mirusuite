@@ -1,3 +1,4 @@
+import type { InputValue } from '@companion-module/base'
 import type { components } from './openapi.js'
 
 export type Device = components['schemas']['Device']
@@ -12,16 +13,16 @@ export type TrackingMode = components['schemas']['TrackingMode']
 export type GUIUpdate = components['schemas']['GUIUpdate']
 export type ProjectEntity = components['schemas']['ProjectEntity']
 
-export function toShotSize(value: any): ShotSize | undefined {
-	if (['WIDE', 'MEDIUM', 'CLOSE_UP'].includes(value)) {
-		return value
-	}
+export function toShotSize(value: InputValue | undefined): ShotSize | undefined {
+	if (value == 'WIDE') return 'WIDE'
+	if (value == 'MEDIUM') return 'MEDIUM'
+	if (value == 'CLOSE_UP') return 'CLOSE_UP'
 	return undefined
 }
 
-export function toTrackingMode(value: any): TrackingMode | undefined {
-	if (['ALL', 'MANUAL', 'SINGLE'].includes(value)) {
-		return value
-	}
+export function toTrackingMode(value: InputValue | undefined): TrackingMode | undefined {
+	if (value == 'SINGLE') return 'SINGLE'
+	if (value == 'ALL') return 'ALL'
+	if (value == 'MANUAL') return 'MANUAL'
 	return undefined
 }
