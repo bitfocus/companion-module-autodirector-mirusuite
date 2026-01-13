@@ -1,5 +1,5 @@
 import { DropdownChoice } from '@companion-module/base'
-import { ShotSize, TrackingMode } from './api/types.js'
+import { toShotSize, toTrackingMode } from './api/types.js'
 import type { MiruSuiteModuleInstance } from './main.js'
 import {
 	createDeviceOptions,
@@ -51,7 +51,11 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				getDeviceSelector(self, videoDeviceOptions),
 			],
 			async callback(event) {
-				const size = event.options.size as ShotSize
+				const size = toShotSize(event.options.size)
+				if (!size) {
+					self.log('warn', 'Invalid shot size: ' + event.options.size)
+					return
+				}
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				self.log('info', 'Setting shot size for device ' + deviceId + ' to ' + size)
@@ -115,7 +119,11 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				getDeviceSelector(self, videoDeviceOptions),
 			],
 			async callback(event) {
-				const mode = event.options.mode as TrackingMode
+				const mode = toTrackingMode(event.options.mode)
+				if (!mode) {
+					self.log('warn', 'Invalid tracking mode: ' + event.options.mode)
+					return
+				}
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				const person = Number(event.options.person)
@@ -149,7 +157,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				const presetId = Number(event.options.preset)
-				const force = event.options.force as boolean
+				const force = event.options.force == true
 				self.log('info', 'Playing preset ' + presetId + ' with force=' + force)
 				await backend?.playPreset(presetId, force)
 			},
@@ -169,7 +177,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
-				const force = event.options.force as boolean
+				const force = event.options.force == true
 				self.log('info', 'Re-applying preset of device ' + deviceId + ' with force=' + force)
 				await backend?.playActivePreset(deviceId, force)
 			},
@@ -200,11 +208,13 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				if (self.getVariableValue('learningMode') === 'disabled') {
-					let devices = []
+					let devices: number[] = []
 					if (event.options.deviceIds instanceof String) {
-						devices = (event.options.deviceIds as string).split(',').map((id) => Number(id.trim()))
+						devices = event.options.deviceIds.split(',').map((id) => Number(id.trim()))
+					} else if (Array.isArray(event.options.deviceIds)) {
+						devices = event.options.deviceIds.map((id) => Number(id))
 					} else {
-						devices = event.options.deviceIds as number[]
+						self.log('warn', 'Empty or invalid deviceIds option for learnAutoButtons action')
 					}
 					self.log('debug', 'Learning auto preset buttons for ' + event.controlId)
 					self.log('debug', 'Selected devices: ' + JSON.stringify(devices))
@@ -215,8 +225,10 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 					self.setVariableValues({ learningMode: event.controlId })
 					clearLearnedButtons(self, event.controlId)
 					setSelectedDevices(self, event.controlId, devices)
-					setDisplayDeviceName(self, event.controlId, event.options.displayName as boolean)
-					const instrumentGroups = event.options.instrumentGroups as string[]
+					setDisplayDeviceName(self, event.controlId, event.options.displayName == true)
+					const instrumentGroups =
+						Array.isArray(event.options.instrumentGroups) &&
+						event.options.instrumentGroups.map((group) => String(group))
 					if (!instrumentGroups || instrumentGroups.includes('All')) {
 						setSelectedInstruments(self, event.controlId, [])
 					} else {
@@ -278,7 +290,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				}
 				self.log('debug', 'Overwriting auto preset...')
 				const preset = getPresetToButton(presets, thisButton)
-				if (preset == undefined) {
+				if (preset === undefined) {
 					self.log('warn', 'Preset not set for button ' + index)
 					return
 				}
@@ -442,7 +454,11 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				},
 			],
 			async callback(event) {
-				const size = event.options.size as ShotSize
+				const size = toShotSize(event.options.size)
+				if (!size) {
+					self.log('warn', 'Invalid shot size: ' + event.options.size)
+					return
+				}
 				const increment = Number(event.options.increment)
 				const step = Number(event.options.step)
 				self.log('info', 'Updating target shot size for size ' + size + ' by ' + increment + ' with step ' + step)
