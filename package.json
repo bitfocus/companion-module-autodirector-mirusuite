@@ -29,7 +29,7 @@
 		"openapi-fetch": "^0.13.5"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.2.2",
+		"@companion-module/tools": "^2.6.1",
 		"@types/jest": "^29.5.14",
 		"copyfiles": "^2.4.1",
 		"eslint": "^9.23.0",
