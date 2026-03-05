@@ -80,7 +80,11 @@ export default class Backend {
 	 * @param enabled true = enable, false = disable, undefined = toggle
 	 * @returns after completion
 	 */
-	async toggleComponent(device: Device | undefined, enabled?: boolean, type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' = 'DIRECTOR'): Promise<void> {
+	async toggleComponent(
+		device: Device | undefined,
+		enabled?: boolean,
+		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' = 'DIRECTOR',
+	): Promise<void> {
 		if (device === undefined) {
 			return
 		}

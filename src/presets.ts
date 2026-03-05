@@ -212,7 +212,7 @@ function enableDirectorPreset(
 				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
-					componentType: 'DIRECTOR'
+					componentType: 'DIRECTOR',
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -259,7 +259,7 @@ function disableDirectorPreset(
 				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
-					componentType: 'DIRECTOR'
+					componentType: 'DIRECTOR',
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -939,7 +939,7 @@ function addToggleAudioInputPreset(
 					bgcolor: combineRgb(0, 255, 0),
 					color: combineRgb(0, 0, 0),
 				},
-			}
+			},
 		],
 	}
 }

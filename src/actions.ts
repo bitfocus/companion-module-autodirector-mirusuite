@@ -140,7 +140,10 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				} else if (enabledOption === 'false') {
 					enabled = false
 				}
-				self.log('info', 'Setting component of type ' + componentType + ' for device ' + deviceId + ' to ' + (enabled ?? 'toggle'))
+				self.log(
+					'info',
+					'Setting component of type ' + componentType + ' for device ' + deviceId + ' to ' + (enabled ?? 'toggle'),
+				)
 				await backend?.toggleComponent(device, enabled, componentType)
 			},
 		},
