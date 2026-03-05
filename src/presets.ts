@@ -70,6 +70,7 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	for (const choice of audioDeviceChoices) {
 		const deviceId = Number(choice.id)
 		addOverrideDominantSpeakerPreset(presets, audioDeviceChoices, deviceId)
+		addToggleAudioInputPreset(presets, audioDeviceChoices, deviceId)
 	}
 	for (const choice of vmixFramerDeviceChoices) {
 		const deviceId = Number(choice.id)
@@ -208,9 +209,10 @@ function enableDirectorPreset(
 		],
 		feedbacks: [
 			{
-				feedbackId: 'enabledDirector',
+				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
+					componentType: 'DIRECTOR'
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -254,9 +256,10 @@ function disableDirectorPreset(
 		],
 		feedbacks: [
 			{
-				feedbackId: 'enabledDirector',
+				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
+					componentType: 'DIRECTOR'
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -891,6 +894,52 @@ function addOverrideDominantSpeakerPreset(
 					color: combineRgb(0, 0, 0),
 				},
 			},
+		],
+	}
+}
+
+function addToggleAudioInputPreset(
+	presets: CompanionPresetDefinitions,
+	audioDeviceChoices: DropdownChoice[],
+	deviceId: number,
+) {
+	presets['toggleAudioInput-' + deviceId] = {
+		type: 'button',
+		category: 'AutoCut',
+		name: 'Toggle Audio Input',
+		style: {
+			text: 'Toggle\n' + audioDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
+			size: 'auto',
+			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'setComponent',
+						options: {
+							deviceId: deviceId,
+							componentType: 'INPUT',
+							enabled: 'toggle',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'enabledComponentType',
+				options: {
+					deviceId: deviceId,
+					componentType: 'INPUT',
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			}
 		],
 	}
 }

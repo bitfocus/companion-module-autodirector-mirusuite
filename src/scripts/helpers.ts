@@ -246,6 +246,10 @@ export function getComponentOfType(device: Device, type: 'INPUT' | 'CONTROLLER' 
 	return Object.keys(device.feedback).find((component) => component.startsWith(type)) as ComponentId | undefined
 }
 
+export function getComponentsOfType(device: Device, type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR'): ComponentId[] {
+	return Object.keys(device.feedback).filter((component) => component.startsWith(type)) as ComponentId[]
+}
+
 export function getFeedbackForComponentOfType(
 	device: Device,
 	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR',

@@ -75,22 +75,26 @@ export default class Backend {
 	}
 
 	/**
-	 * Enables, disables or toggles the director component of a device.
+	 * Enables, disables or toggles the component with the given type of a device.
 	 * @param device device to update
 	 * @param enabled true = enable, false = disable, undefined = toggle
 	 * @returns after completion
 	 */
-	async toggleDirector(device: Device | undefined, enabled?: boolean): Promise<void> {
+	async toggleComponent(device: Device | undefined, enabled?: boolean, type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' = 'DIRECTOR'): Promise<void> {
 		if (device === undefined) {
 			return
 		}
-		const directorId = getComponentOfType(device, 'DIRECTOR')
-		if (!directorId) {
+		const componentId = getComponentOfType(device, type)
+		if (componentId === undefined) {
+			this.self.log('warn', 'Device ' + device.name + ' has no ' + type.toLowerCase() + ' component')
 			return
 		}
-		enabled ??= device.feedback[(directorId ?? '') as string]?.state !== 'RUNNING'
+
+		if (enabled === undefined) {
+			enabled = device.feedback?.[componentId as string]?.state !== 'RUNNING'
+		}
 		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
-			params: { path: { id: device.id ?? -1, component: directorId } },
+			params: { path: { id: device.id ?? -1, component: componentId } },
 		})
 	}
 
