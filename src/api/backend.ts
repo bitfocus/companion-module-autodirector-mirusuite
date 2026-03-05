@@ -83,7 +83,7 @@ export default class Backend {
 	async toggleComponent(
 		device: Device | undefined,
 		enabled?: boolean,
-		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' = 'DIRECTOR',
+		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' = 'DIRECTOR',
 	): Promise<void> {
 		if (device === undefined) {
 			return

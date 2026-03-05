@@ -114,6 +114,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 						{ id: 'INPUT', label: 'Input' },
 						{ id: 'CONTROLLER', label: 'Controller' },
 						{ id: 'DIRECTOR', label: 'Director' },
+						{ id: 'AUTO_CUT', label: 'AutoCut' },
 					],
 					default: 'DIRECTOR',
 				},
@@ -132,7 +133,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				const componentType = event.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR'
+				const componentType = event.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
 				const enabledOption = event.options.enabled
 				let enabled: boolean | undefined = undefined
 				if (enabledOption === 'true') {

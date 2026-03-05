@@ -57,6 +57,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 						{ id: 'INPUT', label: 'Input' },
 						{ id: 'CONTROLLER', label: 'Controller' },
 						{ id: 'DIRECTOR', label: 'Director' },
+						{ id: 'AUTO_CUT', label: 'AutoCut' },
 					],
 					default: 'DIRECTOR',
 				},
@@ -64,7 +65,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR'
+				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
 				const components = getComponentsOfType(device!, componentType)
 				return components.some((component) => device?.feedback[component]?.state === 'RUNNING')
 			},

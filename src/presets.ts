@@ -70,7 +70,7 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	for (const choice of audioDeviceChoices) {
 		const deviceId = Number(choice.id)
 		addOverrideDominantSpeakerPreset(presets, audioDeviceChoices, deviceId)
-		addToggleAudioInputPreset(presets, audioDeviceChoices, deviceId)
+		addToggleAutoCutAudioPreset(presets, audioDeviceChoices, deviceId)
 	}
 	for (const choice of vmixFramerDeviceChoices) {
 		const deviceId = Number(choice.id)
@@ -898,15 +898,15 @@ function addOverrideDominantSpeakerPreset(
 	}
 }
 
-function addToggleAudioInputPreset(
+function addToggleAutoCutAudioPreset(
 	presets: CompanionPresetDefinitions,
 	audioDeviceChoices: DropdownChoice[],
 	deviceId: number,
 ) {
-	presets['toggleAudioInput-' + deviceId] = {
+	presets['toggleAudioAnalyzer-' + deviceId] = {
 		type: 'button',
 		category: 'AutoCut',
-		name: 'Toggle Audio Input',
+		name: 'Toggle AutoCut Audio',
 		style: {
 			text: 'Toggle\n' + audioDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
 			size: 'auto',
@@ -920,7 +920,7 @@ function addToggleAudioInputPreset(
 						actionId: 'setComponent',
 						options: {
 							deviceId: deviceId,
-							componentType: 'INPUT',
+							componentType: 'AUTO_CUT',
 							enabled: 'toggle',
 						},
 					},
@@ -933,7 +933,7 @@ function addToggleAudioInputPreset(
 				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
-					componentType: 'INPUT',
+					componentType: 'AUTO_CUT',
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
