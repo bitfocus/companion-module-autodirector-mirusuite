@@ -472,7 +472,11 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		}
 	}
 
-	function addReApplyPreset(presets: CompanionPresetDefinitions, videoDeviceChoices: DropdownChoice[], deviceId: number) {
+	function addReApplyPreset(
+		presets: CompanionPresetDefinitions,
+		videoDeviceChoices: DropdownChoice[],
+		deviceId: number,
+	) {
 		const name = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 		presets['reapplyPreset-' + deviceId] = {
 			type: 'button',
