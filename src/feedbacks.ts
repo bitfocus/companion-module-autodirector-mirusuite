@@ -42,7 +42,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			name: 'Component Type Enabled',
 			type: 'boolean',
 			description:
-				'Is active when a component of the selected type is enabled. To select a device, you first need to create a device in MiruSuite and add a video input to it.',
+				'Is active when a component of the selected type is enabled. To select a device, you first need to create and configure a device in MiruSuite.',
 			defaultStyle: {
 				bgcolor: 0x00ff00,
 				color: 0x000000,
@@ -65,8 +65,11 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
+				if (!device) {
+					return false
+				}
 				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
-				const components = getComponentsOfType(device!, componentType)
+				const components = getComponentsOfType(device, componentType)
 				return components.some((component) => device?.feedback[component]?.state === 'RUNNING')
 			},
 		},

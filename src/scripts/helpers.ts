@@ -34,6 +34,10 @@ export function createDeviceOptions(devices: Device[]): DropdownChoice[] {
 	return deviceChoices
 }
 
+export function getDeviceById(devices: Device[], deviceId: number): Device | undefined {
+	return devices.find((device) => device.id === deviceId)
+}
+
 /**
  * Extract the device name from a list of video device choices
  * @param videoDeviceChoices all available video devices
