@@ -7,7 +7,7 @@
 		"postinstall": "husky",
 		"format": "prettier -w .",
 		"package": "yarn build && companion-module-build",
-		"build": "rimraf dist && yarn run build:main && yarn run copyassets",
+		"build": "yarn run build:main && yarn run copyassets",
 		"build:main": "tsc -p tsconfig.build.json",
 		"dev": "yarn run copyassets && tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",

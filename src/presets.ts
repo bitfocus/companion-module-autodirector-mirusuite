@@ -8,6 +8,7 @@ import {
 	getPresetChoices,
 	shotSizeToLabel,
 	getComponentOfType,
+	getDeviceById,
 } from './scripts/helpers.js'
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
@@ -19,7 +20,7 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 
 	self.log(
 		'debug',
-		'Updating presets with ' + videoDeviceChoices.length + ' devices and ' + devicePresets.length + ' presets',
+		'Updating presets with ' + videoDeviceChoices.length + ' devices and ' + devicePresets.length + ' device presets',
 	)
 	const presets: CompanionPresetDefinitions = {}
 
@@ -70,13 +71,15 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	for (const choice of audioDeviceChoices) {
 		const deviceId = Number(choice.id)
 		addOverrideDominantSpeakerPreset(presets, audioDeviceChoices, deviceId)
+		if (getDeviceById(self.store.getAudioDevices(), deviceId)?.components?.audioAutoCut) {
+			addToggleAutoCutAudioPreset(presets, audioDeviceChoices, deviceId)
+		}
 	}
 	for (const choice of vmixFramerDeviceChoices) {
 		const deviceId = Number(choice.id)
 		addVMixFramerPresets(presets, vmixFramerDeviceChoices, deviceId)
 	}
 	for (const devicePreset of devicePresets) {
-		self.log('info', 'Adding preset ' + devicePreset.label)
 		addPlayPresetPreset(presets, devicePreset)
 	}
 	addLearningModePreset(presets)
@@ -208,9 +211,10 @@ function enableDirectorPreset(
 		],
 		feedbacks: [
 			{
-				feedbackId: 'enabledDirector',
+				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
+					componentType: 'DIRECTOR',
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -254,9 +258,10 @@ function disableDirectorPreset(
 		],
 		feedbacks: [
 			{
-				feedbackId: 'enabledDirector',
+				feedbackId: 'enabledComponentType',
 				options: {
 					deviceId: deviceId,
+					componentType: 'DIRECTOR',
 				},
 				style: {
 					bgcolor: combineRgb(0, 255, 0),
@@ -467,7 +472,11 @@ function addPlayPresetPreset(presets: CompanionPresetDefinitions, preset: Dropdo
 	}
 }
 
-function addReApplyPreset(presets: CompanionPresetDefinitions, videoDeviceChoices: DropdownChoice[], deviceId: number) {
+function addReApplyPreset(
+	presets: CompanionPresetDefinitions,
+	videoDeviceChoices: DropdownChoice[],
+	deviceId: number,
+) {
 	const name = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 	presets['reapplyPreset-' + deviceId] = {
 		type: 'button',
@@ -888,6 +897,52 @@ function addOverrideDominantSpeakerPreset(
 				},
 				style: {
 					bgcolor: combineRgb(255, 255, 255),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+	}
+}
+
+function addToggleAutoCutAudioPreset(
+	presets: CompanionPresetDefinitions,
+	audioDeviceChoices: DropdownChoice[],
+	deviceId: number,
+) {
+	presets['toggleAudioAutoCut-' + deviceId] = {
+		type: 'button',
+		category: 'AutoCut',
+		name: 'Toggle AutoCut Audio',
+		style: {
+			text: 'Toggle\n' + audioDeviceChoices.find((d) => Number(d.id) === deviceId)?.label,
+			size: 'auto',
+			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(255, 255, 255),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'setComponent',
+						options: {
+							deviceId: deviceId,
+							componentType: 'AUTO_CUT',
+							enabled: 'toggle',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'enabledComponentType',
+				options: {
+					deviceId: deviceId,
+					componentType: 'AUTO_CUT',
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
 					color: combineRgb(0, 0, 0),
 				},
 			},

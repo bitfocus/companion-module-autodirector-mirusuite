@@ -78,7 +78,7 @@ export class MiruSuiteModuleInstance extends InstanceBase<ModuleConfig> {
 		this.checkFeedbacks(
 			'autoPreset',
 			'learnMode',
-			'enabledDirector',
+			'enabledComponentType',
 			'directorStatus',
 			'trackingMode',
 			'shotSize',

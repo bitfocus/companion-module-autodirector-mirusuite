@@ -29,6 +29,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const videoDevices = store.getVideoDevices()
 	const videoDeviceOptions: DropdownChoice[] = createDeviceOptions(videoDevices)
 	const audioDeviceOptions: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
+	const deviceOptions = videoDeviceOptions.concat(audioDeviceOptions)
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceOptions)
 	const presets = store.getPresets()
 
@@ -71,7 +72,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				self.log('info', 'Toggling director for device ' + deviceId)
-				await backend?.toggleDirector(device)
+				await backend?.toggleComponent(device, undefined, 'DIRECTOR')
 			},
 		},
 		setDirector: {
@@ -96,7 +97,55 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				const device = store.getDeviceById(deviceId)
 				const enable = event.options.enabled == 'true'
 				self.log('info', 'Setting director for device ' + deviceId + ' to ' + enable)
-				await backend?.toggleDirector(device, enable)
+				await backend?.toggleComponent(device, enable, 'DIRECTOR')
+			},
+		},
+		setComponent: {
+			name: 'Set/Toggle Component',
+			description:
+				'Enables/disables a component of a given type. This action needs a component of the specific type to be installed on the device.',
+			options: [
+				getDeviceSelector(self, deviceOptions),
+				{
+					id: 'componentType',
+					type: 'dropdown',
+					label: 'Component Type',
+					choices: [
+						{ id: 'INPUT', label: 'Input' },
+						{ id: 'CONTROLLER', label: 'Controller' },
+						{ id: 'DIRECTOR', label: 'Director' },
+						{ id: 'AUTO_CUT', label: 'AutoCut' },
+					],
+					default: 'DIRECTOR',
+				},
+				{
+					id: 'enabled',
+					type: 'dropdown',
+					label: 'Enable',
+					choices: [
+						{ id: 'toggle', label: 'Toggle' },
+						{ id: 'true', label: 'Enable' },
+						{ id: 'false', label: 'Disable' },
+					],
+					default: 'toggle',
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const device = store.getDeviceById(deviceId)
+				const componentType = event.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
+				const enabledOption = event.options.enabled
+				let enabled: boolean | undefined = undefined
+				if (enabledOption === 'true') {
+					enabled = true
+				} else if (enabledOption === 'false') {
+					enabled = false
+				}
+				self.log(
+					'info',
+					'Setting component of type ' + componentType + ' for device ' + deviceId + ' to ' + (enabled ?? 'toggle'),
+				)
+				await backend?.toggleComponent(device, enabled, componentType)
 			},
 		},
 		setTrackingMode: {
