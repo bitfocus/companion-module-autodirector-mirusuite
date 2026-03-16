@@ -35,7 +35,7 @@ export default function setupEventHandler(self: MiruSuiteModuleInstance, baseUrl
 									self.checkFeedbacks(
 										'shotSize',
 										'trackingMode',
-										'enabledDirector',
+										'enabledComponentType',
 										'directorStatus',
 										'vMixFramerEnabled',
 									)
@@ -44,7 +44,7 @@ export default function setupEventHandler(self: MiruSuiteModuleInstance, baseUrl
 								self.checkFeedbacks(
 									'shotSize',
 									'trackingMode',
-									'enabledDirector',
+									'enabledComponentType',
 									'directorStatus',
 									'vMixFramerEnabled',
 								)

@@ -34,6 +34,10 @@ export function createDeviceOptions(devices: Device[]): DropdownChoice[] {
 	return deviceChoices
 }
 
+export function getDeviceById(devices: Device[], deviceId: number): Device | undefined {
+	return devices.find((device) => device.id === deviceId)
+}
+
 /**
  * Extract the device name from a list of video device choices
  * @param videoDeviceChoices all available video devices
@@ -242,13 +246,23 @@ export function getComponentFeedback(device: Device, component: ComponentId): Co
 	return device?.feedback[component]
 }
 
-export function getComponentOfType(device: Device, type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR'): ComponentId | undefined {
+export function getComponentOfType(
+	device: Device,
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+): ComponentId | undefined {
 	return Object.keys(device.feedback).find((component) => component.startsWith(type)) as ComponentId | undefined
+}
+
+export function getComponentsOfType(
+	device: Device,
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+): ComponentId[] {
+	return Object.keys(device.feedback).filter((component) => component.startsWith(type)) as ComponentId[]
 }
 
 export function getFeedbackForComponentOfType(
 	device: Device,
-	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR',
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
 ): ComponentFeedback | undefined {
 	const componentId = getComponentOfType(device, type)
 	if (componentId) {
@@ -257,7 +271,10 @@ export function getFeedbackForComponentOfType(
 	return undefined
 }
 
-export function isComponentOfTypeEnabled(device: Device, type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR'): boolean {
+export function isComponentOfTypeEnabled(
+	device: Device,
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+): boolean {
 	const feedback = getFeedbackForComponentOfType(device, type)
 	return feedback !== undefined && feedback?.state !== 'OFF'
 }

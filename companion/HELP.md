@@ -39,4 +39,4 @@ You can find explanations for all presets in the following table:
 For more help visit the [MiruSuite Docs](https://docs.mirusuite.de/advanced/companion.html).
 
 ### Compatibility
-This version of the plugin was tested with MiruSuite v0.4.5.
+This version of the plugin was tested with MiruSuite v1.2.0.

@@ -13,6 +13,7 @@ import {
 	isInputLive,
 	getDisplayableDeviceNamesFromPreset,
 	createDeviceOptions,
+	getComponentsOfType,
 } from './scripts/helpers.js'
 import {
 	AutoConfiguredButton,
@@ -32,28 +33,44 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
 	const videoDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getVideoDevices())
 	const audioDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
+	const deviceOptions = videoDeviceChoices.concat(audioDeviceChoices)
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceChoices)
 	const deviceId2SwitcherInput = getDeviceIdToSwitcherInputMap(self)
 	const presets = store.getPresets()
 	self.setFeedbackDefinitions({
-		enabledDirector: {
-			name: 'Director Enabled',
+		enabledComponentType: {
+			name: 'Component Type Enabled',
 			type: 'boolean',
 			description:
-				"Is active when the device's director component is enabled. To select a device, you first need to create a device in MiruSuite and add a video input to it. This action needs a director be installed on the device.",
+				'Is active when a component of the selected type is enabled. To select a device, you first need to create and configure a device in MiruSuite.',
 			defaultStyle: {
 				bgcolor: 0x00ff00,
 				color: 0x000000,
 			},
-			options: [getDeviceSelector(self, videoDeviceChoices)],
+			options: [
+				getDeviceSelector(self, deviceOptions),
+				{
+					id: 'componentType',
+					type: 'dropdown',
+					label: 'Component Type',
+					choices: [
+						{ id: 'INPUT', label: 'Input' },
+						{ id: 'CONTROLLER', label: 'Controller' },
+						{ id: 'DIRECTOR', label: 'Director' },
+						{ id: 'AUTO_CUT', label: 'AutoCut' },
+					],
+					default: 'DIRECTOR',
+				},
+			],
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				return (
-					device?.feedback['DIRECTOR_HEAD_TRACKING']?.state === 'RUNNING' ||
-					device?.feedback['DIRECTOR_LECTURE']?.state === 'RUNNING' ||
-					device?.feedback['DIRECTOR_AUTO_MOVE']?.state === 'RUNNING'
-				)
+				if (!device) {
+					return false
+				}
+				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
+				const components = getComponentsOfType(device, componentType)
+				return components.some((component) => device?.feedback[component]?.state === 'RUNNING')
 			},
 		},
 		directorStatus: {
