@@ -94,9 +94,7 @@ export default class Backend {
 			return
 		}
 
-		if (enabled === undefined) {
-			enabled = device.feedback?.[componentId as string]?.state !== 'RUNNING'
-		}
+		enabled ??= device.feedback?.[componentId]?.state !== 'RUNNING'
 		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
 			params: { path: { id: device.id ?? -1, component: componentId } },
 		})

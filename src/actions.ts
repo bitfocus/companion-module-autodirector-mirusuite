@@ -29,7 +29,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const videoDevices = store.getVideoDevices()
 	const videoDeviceOptions: DropdownChoice[] = createDeviceOptions(videoDevices)
 	const audioDeviceOptions: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
-	const deviceOptions = videoDeviceOptions.concat(audioDeviceOptions)
+	const deviceOptions = [...videoDeviceOptions, ...audioDeviceOptions]
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceOptions)
 	const presets = store.getPresets()
 
