@@ -41,16 +41,16 @@ export function hasPTZController(device: Device | undefined): boolean {
 
 	return Boolean(
 		device.components?.panasonicController ??
-		device.components?.canonController ??
-		device.components?.birdDogController ??
-		device.components?.sonyCGIController ??
-		device.components?.sonyViscaController ??
-		device.components?.marshallViscaController ??
-		device.components?.telycamViscaController ??
-		device.components?.unrealEngineController ??
-		device.components?.simulatedCropController ??
-		device.components?.zCamViscaController ??
-		device.components?.obsbotViscaController,
+			device.components?.canonController ??
+			device.components?.birdDogController ??
+			device.components?.sonyCGIController ??
+			device.components?.sonyViscaController ??
+			device.components?.marshallViscaController ??
+			device.components?.telycamViscaController ??
+			device.components?.unrealEngineController ??
+			device.components?.simulatedCropController ??
+			device.components?.zCamViscaController ??
+			device.components?.obsbotViscaController,
 	)
 }
 
