@@ -108,7 +108,7 @@ export default class Backend {
 		if (framer === null) {
 			return
 		}
-		enabled ??= device.feedback['FRAMER_VMIX']?.state !== 'RUNNING'
+		enabled ??= device.feedback?.['FRAMER_VMIX']?.state !== 'RUNNING'
 		await this.client.POST(enabled ? '/api/devices/{id}/{component}/enable' : '/api/devices/{id}/{component}/disable', {
 			params: { path: { id: device.id ?? -1, component: 'FRAMER_VMIX' } },
 		})
@@ -181,7 +181,7 @@ export default class Backend {
 		if (device === undefined) {
 			return
 		}
-		const { personTracker } = device.components
+		const personTracker = device.components?.personTracker
 		if (personTracker !== undefined && personTracker !== null) {
 			personTracker.trackingMode = mode
 			personTracker.targetFaceId = targetFaceId
@@ -232,6 +232,13 @@ export default class Backend {
 		await this.client.POST('/api/devices/{id}/controller/control', {
 			params: { path: { id } },
 			body: { returnToHome: true },
+		})
+	}
+
+	async moveCamera(id: number, panSpeed: number, tiltSpeed: number, zoomSpeed: number): Promise<void> {
+		await this.client.POST('/api/devices/{id}/controller/control', {
+			params: { path: { id } },
+			body: { panSpeed, tiltSpeed, zoomSpeed },
 		})
 	}
 

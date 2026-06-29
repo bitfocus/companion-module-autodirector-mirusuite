@@ -34,6 +34,30 @@ export function createDeviceOptions(devices: Device[]): DropdownChoice[] {
 	return deviceChoices
 }
 
+export function hasPTZController(device: Device | undefined): boolean {
+	if (device === undefined) {
+		return false
+	}
+
+	return Boolean(
+		device.components?.panasonicController ??
+		device.components?.canonController ??
+		device.components?.birdDogController ??
+		device.components?.sonyCGIController ??
+		device.components?.sonyViscaController ??
+		device.components?.marshallViscaController ??
+		device.components?.telycamViscaController ??
+		device.components?.unrealEngineController ??
+		device.components?.simulatedCropController ??
+		device.components?.zCamViscaController ??
+		device.components?.obsbotViscaController,
+	)
+}
+
+export function getPTZCapableDevices(devices: Device[]): Device[] {
+	return devices.filter((device) => hasPTZController(device))
+}
+
 export function getDeviceById(devices: Device[], deviceId: number): Device | undefined {
 	return devices.find((device) => device.id === deviceId)
 }
@@ -243,21 +267,21 @@ export function getDeviceIdToSwitcherInputMap(self: MiruSuiteModuleInstance): De
 }
 
 export function getComponentFeedback(device: Device, component: ComponentId): ComponentFeedback | undefined {
-	return device?.feedback[component]
+	return device.feedback?.[component]
 }
 
 export function getComponentOfType(
 	device: Device,
 	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
 ): ComponentId | undefined {
-	return Object.keys(device.feedback).find((component) => component.startsWith(type)) as ComponentId | undefined
+	return Object.keys(device.feedback ?? {}).find((component) => component.startsWith(type)) as ComponentId | undefined
 }
 
 export function getComponentsOfType(
 	device: Device,
 	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
 ): ComponentId[] {
-	return Object.keys(device.feedback).filter((component) => component.startsWith(type)) as ComponentId[]
+	return Object.keys(device.feedback ?? {}).filter((component) => component.startsWith(type)) as ComponentId[]
 }
 
 export function getFeedbackForComponentOfType(

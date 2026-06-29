@@ -9,6 +9,7 @@ import {
 	shotSizeToLabel,
 	getComponentOfType,
 	getDeviceById,
+	hasPTZController,
 } from './scripts/helpers.js'
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
@@ -66,6 +67,10 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		if (videoDevice != null && getComponentOfType(videoDevice, 'CONTROLLER') != null) {
 			addReturnToHomeButton(presets, videoDeviceChoices, deviceId)
 			addReApplyPreset(presets, videoDeviceChoices, deviceId)
+		}
+		if (hasPTZController(videoDevice)) {
+			addPTZDirectionPresets(presets, videoDeviceChoices, deviceId)
+			addPTZZoomPresets(presets, videoDeviceChoices, deviceId)
 		}
 	}
 	for (const choice of audioDeviceChoices) {
@@ -632,6 +637,122 @@ function addReturnToHomeButton(
 			},
 		],
 		feedbacks: [],
+	}
+}
+
+function addPTZDirectionPresets(
+	presets: CompanionPresetDefinitions,
+	videoDeviceChoices: DropdownChoice[],
+	deviceId: number,
+) {
+	const speed = 0.2
+	const diagonalSpeed = speed / Math.sqrt(2)
+	const directions = [
+		{ id: 'topLeft', label: '↖️', pan: -diagonalSpeed, tilt: diagonalSpeed },
+		{ id: 'top', label: '⬆️', pan: 0, tilt: speed },
+		{ id: 'topRight', label: '↗️', pan: diagonalSpeed, tilt: diagonalSpeed },
+		{ id: 'left', label: '⬅️', pan: -speed, tilt: 0 },
+		{ id: 'right', label: '➡️', pan: speed, tilt: 0 },
+		{ id: 'bottomLeft', label: '↙️', pan: -diagonalSpeed, tilt: -diagonalSpeed },
+		{ id: 'bottom', label: '⬇️', pan: 0, tilt: -speed },
+		{ id: 'bottomRight', label: '↘️', pan: diagonalSpeed, tilt: -diagonalSpeed },
+	]
+	const deviceName = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
+
+	for (const direction of directions) {
+		const text = direction.label + '\n' + deviceName
+		presets['ptzMove-' + direction.id + '-' + deviceId] = {
+			type: 'button',
+			category: 'PTZ',
+			name: text,
+			style: {
+				text: text,
+				size: 'auto',
+				bgcolor: combineRgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'moveCamera',
+							options: {
+								deviceId: deviceId,
+								pan: direction.pan,
+								tilt: direction.tilt,
+								zoom: 0,
+							},
+						},
+					],
+					up: [
+						{
+							actionId: 'moveCamera',
+							options: {
+								deviceId: deviceId,
+								pan: 0,
+								tilt: 0,
+								zoom: 0,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+}
+
+function addPTZZoomPresets(
+	presets: CompanionPresetDefinitions,
+	videoDeviceChoices: DropdownChoice[],
+	deviceId: number,
+) {
+	const zoomDirections = [
+		{ id: 'in', label: '➕', zoom: 0.5 },
+		{ id: 'out', label: '➖', zoom: -0.5 },
+	]
+	const deviceName = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
+
+	for (const direction of zoomDirections) {
+		const text = direction.label + '\n' + deviceName
+		presets['ptzZoom-' + direction.id + '-' + deviceId] = {
+			type: 'button',
+			category: 'PTZ',
+			name: text,
+			style: {
+				text: text,
+				size: 'auto',
+				bgcolor: combineRgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'moveCamera',
+							options: {
+								deviceId: deviceId,
+								pan: 0,
+								tilt: 0,
+								zoom: direction.zoom,
+							},
+						},
+					],
+					up: [
+						{
+							actionId: 'moveCamera',
+							options: {
+								deviceId: deviceId,
+								pan: 0,
+								tilt: 0,
+								zoom: 0,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
 	}
 }
 

@@ -70,7 +70,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				}
 				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
 				const components = getComponentsOfType(device, componentType)
-				return components.some((component) => device?.feedback[component]?.state === 'RUNNING')
+				return components.some((component) => device.feedback?.[component]?.state === 'RUNNING')
 			},
 		},
 		directorStatus: {
@@ -82,18 +82,18 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				const headTrackingDirector = device?.feedback['DIRECTOR_HEAD_TRACKING']
+				const headTrackingDirector = device?.feedback?.['DIRECTOR_HEAD_TRACKING']
 				let state: ComponentState = 'OFF'
 				if (headTrackingDirector) {
-					state = headTrackingDirector.state
+					state = headTrackingDirector.state ?? 'OFF'
 				}
-				const autoMoveDirector = device?.feedback['DIRECTOR_AUTO_MOVE']
+				const autoMoveDirector = device?.feedback?.['DIRECTOR_AUTO_MOVE']
 				if (autoMoveDirector) {
-					state = autoMoveDirector.state
+					state = autoMoveDirector.state ?? 'OFF'
 				}
-				const lectureDirector = device?.feedback['DIRECTOR_LECTURE']
+				const lectureDirector = device?.feedback?.['DIRECTOR_LECTURE']
 				if (lectureDirector) {
-					state = lectureDirector.state
+					state = lectureDirector.state ?? 'OFF'
 				}
 				if (state == 'RUNNING') {
 					return {
@@ -136,7 +136,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback, _) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				const personTracker = device?.components['personTracker']
+				const personTracker = device?.components?.personTracker
 				const person = personTracker?.targetFaceId
 				const mode = personTracker?.trackingMode
 				if (feedback.options.mode == 'SINGLE') {
@@ -196,7 +196,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				const headTrackingDirector = device?.components['headTrackingDirector']
+				const headTrackingDirector = device?.components?.headTrackingDirector
 				if (headTrackingDirector) {
 					return headTrackingDirector.targetShotSize === feedback.options.size
 				}
@@ -419,7 +419,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
-				return device?.feedback['FRAMER_VMIX']?.state === 'RUNNING'
+				return device?.feedback?.['FRAMER_VMIX']?.state === 'RUNNING'
 			},
 		},
 	})
