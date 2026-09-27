@@ -38,6 +38,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/autocut/dominantSpeaker': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the current dominant speaker. */
+		get: operations['getDominantSpeaker']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/autocut/history': {
 		parameters: {
 			query?: never
@@ -255,7 +272,7 @@ export interface paths {
 		/** Get the shot size targets */
 		get: operations['getTargetShotSizeConfigs']
 		put?: never
-		/** Set the shot size targSoet size for a given size */
+		/** Set the shot size target size for a given size */
 		post: operations['setTargetShotSizeConfig']
 		/** Reset the shot size targets to the default values */
 		delete: operations['resetTargetShotSizeConfigs']
@@ -275,6 +292,23 @@ export interface paths {
 		put?: never
 		/** Throw a test error */
 		post: operations['throwTestError']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/debug/visca/exchange': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Run a one-shot VISCA debug exchange */
+		post: operations['debugViscaExchange']
 		delete?: never
 		options?: never
 		head?: never
@@ -332,6 +366,40 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/devices/discover/decklink': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** List all available DeckLink devices */
+		get: operations['discoverDeckLink']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/decklink/availability': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Check whether DeckLink capture is available */
+		get: operations['getDeckLinkAvailability']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/devices/discover/mdns': {
 		parameters: {
 			query?: never
@@ -375,6 +443,23 @@ export interface paths {
 		}
 		/** List all available NDI sources */
 		get: operations['discoverNDI']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/discover/network': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Stream network devices discovered by all discoverers */
+		get: operations['discoverNetworkDevices']
 		put?: never
 		post?: never
 		delete?: never
@@ -464,6 +549,23 @@ export interface paths {
 		put?: never
 		/** Send manual commands to the PTZ controller of a source */
 		post: operations['controlPtz']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/devices/{id}/controller/control/direct/visca': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Send raw pan/tilt/zoom VISCA position commands */
+		post: operations['controlPtzDirectlyVisca']
 		delete?: never
 		options?: never
 		head?: never
@@ -734,6 +836,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/devices/{id}/trigger/limit/{border}': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Update the positional trigger's border limit according to the current PTZ position */
+		post: operations['learnTriggerAreaLimit']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/devices/{id}/{component}': {
 		parameters: {
 			query?: never
@@ -939,6 +1058,40 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/license/dev/invalidateTest': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Invalidate the current test license */
+		post: operations['invalidateTestLicense']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/dev/resetTest': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		get?: never
+		put?: never
+		/** Reset the first started date for the test license (Reactivate test mode) */
+		post: operations['reactivateTestMode']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/license/fetch': {
 		parameters: {
 			query?: never
@@ -950,6 +1103,23 @@ export interface paths {
 		put?: never
 		/** Fetch the license from the business backend */
 		post: operations['fetchLicense']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/license/hardwareIdentifier': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the hardware identifier of this system */
+		get: operations['getHardwareIdentifier']
+		put?: never
+		post?: never
 		delete?: never
 		options?: never
 		head?: never
@@ -1127,16 +1297,18 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
-	'/api/projects/active/presets/gaindisabled': {
+	'/api/projects/active/presets/gaincontrol': {
 		parameters: {
 			query?: never
 			header?: never
 			path?: never
 			cookie?: never
 		}
-		get?: never
+		/** Get whether gain control is enabled */
+		get: operations['isGainControlEnabled']
 		put?: never
-		post: operations['PresetResource_setGainDisabled']
+		/** Enable or disable gain control */
+		post: operations['setGainControlEnabled']
 		delete?: never
 		options?: never
 		head?: never
@@ -1373,6 +1545,7 @@ export interface paths {
 			path?: never
 			cookie?: never
 		}
+		/** Stream */
 		get: operations['GUIUpdateStreamResource_stream']
 		put?: never
 		post?: never
@@ -1587,6 +1760,23 @@ export interface paths {
 		patch?: never
 		trace?: never
 	}
+	'/api/system/network': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the network configuration of the server */
+		get: operations['getNetworkConfiguration']
+		put?: never
+		post?: never
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
 	'/api/system/shutdown': {
 		parameters: {
 			query?: never
@@ -1598,6 +1788,23 @@ export interface paths {
 		put?: never
 		/** Shutdown the application */
 		post: operations['shutdown']
+		delete?: never
+		options?: never
+		head?: never
+		patch?: never
+		trace?: never
+	}
+	'/api/system/threads': {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		/** Get the list of active threads */
+		get: operations['getThreads']
+		put?: never
+		post?: never
 		delete?: never
 		options?: never
 		head?: never
@@ -1630,7 +1837,7 @@ export interface components {
 			enabled?: boolean | null
 			/** Format: double */
 			delaySeconds?: number | null
-			autoMoveVariant?: (string & components['schemas']['AutoMoveVariant']) | null
+			autoMoveVariant?: components['schemas']['AutoMoveVariant'] | null
 			/** Format: double */
 			maxPanSpeed?: number | null
 			/** Format: double */
@@ -1679,13 +1886,16 @@ export interface components {
 			meIndex?: number
 			pipConfigList?: components['schemas']['PiPConfig'][]
 		}
-		AudienceAutoCutComponentSettings: Record<string, never>
+		AudienceAutoCutComponentSettings: {
+			programTimeOverride?: components['schemas']['ProgramTimeOverride'] | null
+		}
 		AudioAnalyzerSettings: Record<string, never>
 		AudioAutoCutComponentSettings: {
 			reactToAudienceSounds?: boolean
 			speakerPresets?: number[]
 			/** Format: double */
 			baseDecibels?: number
+			staticSpeakerDeviceIds?: number[]
 		}
 		AudioInputComponentSettings: {
 			descriptor?: components['schemas']['AudioInputDescriptor'] | null
@@ -1693,12 +1903,11 @@ export interface components {
 			channel?: number
 		}
 		AudioInputDescriptor: {
-			name: string
-			hostApi: string
+			name?: string
+			hostApi?: string
 			/** Format: int32 */
 			channels?: number
-			/** Format: int32 */
-			hostApiIndex?: number
+			isDefaultHostApi?: boolean
 		}
 		/** @description Result of the audio classifier on an input signal. */
 		AudioLabelEvent: {
@@ -1736,6 +1945,10 @@ export interface components {
 			keepPresentation?: boolean
 			/** Format: int64 */
 			presetDelay?: number
+			/** Format: double */
+			lockedTime?: number
+			stageSchedulingPolicy?: components['schemas']['AutoCutStageSchedulingPolicy']
+			disableOnManualCut?: boolean
 		}
 		AutoCutDBO: {
 			style?: components['schemas']['AutoCutStyle']
@@ -1748,6 +1961,10 @@ export interface components {
 			keepPresentation?: boolean
 			/** Format: int64 */
 			presetDelay?: number
+			/** Format: double */
+			lockedTime?: number
+			stageSchedulingPolicy?: components['schemas']['AutoCutStageSchedulingPolicy']
+			disableOnManualCut?: boolean
 		}
 		/** @description AutoCut update event e.g. cut, detected person, etc. */
 		AutoCutEvent: {
@@ -1777,6 +1994,8 @@ export interface components {
 			running?: boolean
 			config?: components['schemas']['AutoCutConfig']
 		}
+		/** @enum {string} */
+		AutoCutStageSchedulingPolicy: 'PREEMPTIVE' | 'ON_DEMAND'
 		/** @description State and substate of the AutoCut state machine. */
 		AutoCutState: {
 			/**
@@ -1786,6 +2005,10 @@ export interface components {
 			target: 'autoCutState'
 			state?: components['schemas']['StateDto']
 			subState?: components['schemas']['SubState']
+			/** Format: double */
+			scheduledTime?: number
+			/** Format: double */
+			remainingTime?: number
 		}
 		/** @enum {string} */
 		AutoCutStyle: 'GRANDPA' | 'BALANCED' | 'GAMER'
@@ -1820,9 +2043,16 @@ export interface components {
 			baseTiltSpeed?: number
 			/** Format: double */
 			baseZoomSpeed?: number
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			panTiltSpeedAccuracy?: components['schemas']['BirdDogPanTiltSpeedAccuracy']
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		/** @enum {string} */
-		BirdDogModel: 'P100' | 'P200' | 'X1'
+		BirdDogModel: 'P100' | 'P200' | 'X1' | 'XL_ULTRA' | 'XL_ULTRA_LEGACY'
+		/** @enum {string} */
+		BirdDogPanTiltSpeedAccuracy: 'SMOOTH' | 'MEDIUM' | 'ACCURATE'
 		BlockedAxes: {
 			pan?: boolean
 			tilt?: boolean
@@ -1864,21 +2094,61 @@ export interface components {
 			dimension?: components['schemas']['PTZDimension']
 			/** Format: double */
 			progress?: number
+			status?: components['schemas']['CalibrationStatus']
+			vendor?: string
+			/** Format: int32 */
+			zoom?: number
+			/** Format: int32 */
+			speedMode?: number
+			ndiSourceNameSubstring?: string
+			createdAt?: components['schemas']['Instant']
+			startedAt?: components['schemas']['Instant']
+			completedAt?: components['schemas']['Instant']
+			/** Format: int64 */
+			estimatedTimeRemainingMillis?: number
+			sourceFile?: string
 		}
 		/** @enum {string} */
-		CalibrationPtzVendor: 'CANON' | 'PANASONIC' | 'VISCA' | 'SONY' | 'MARSHALL'
+		CalibrationPtzVendor: 'CANON' | 'PANASONIC' | 'VISCA' | 'VISCA_NDI' | 'SONY' | 'MARSHALL' | 'Z_CAM' | 'OBSBOT'
+		/** @enum {string} */
+		CalibrationStatus: 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'STOPPED' | 'FAILED'
 		/** @description Calibrator including calibration curve */
 		CalibrationWithCurve: {
 			ip?: string
 			dimension?: components['schemas']['PTZDimension']
 			/** Format: double */
 			progress?: number
+			status?: components['schemas']['CalibrationStatus']
+			vendor?: string
+			/** Format: int32 */
+			zoom?: number
+			/** Format: int32 */
+			speedMode?: number
+			ndiSourceNameSubstring?: string
+			createdAt?: components['schemas']['Instant']
+			startedAt?: components['schemas']['Instant']
+			completedAt?: components['schemas']['Instant']
+			/** Format: int64 */
+			estimatedTimeRemainingMillis?: number
+			sourceFile?: string
 			curve?: {
 				[key: string]: components['schemas']['PositionTimePair'][]
 			}
 		}
+		CamSyncDirectorComponentSettings: {
+			/** Format: int64 */
+			parentDeviceId?: number
+			/** Format: double */
+			offsetX?: number
+			/** Format: double */
+			offsetY?: number
+			/** Format: double */
+			offsetZ?: number
+			/** Format: double */
+			followSpeed?: number
+		}
 		CanonControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
 		}
 		/** @description Canon PTZ device found via mDNS service. */
@@ -1903,12 +2173,13 @@ export interface components {
 			type: 'COMPSET'
 		}
 		ComponentFeedback: {
-			state: components['schemas']['ComponentState']
-			message: string
+			state?: components['schemas']['ComponentState']
+			message?: string
 		}
 		/** @enum {string} */
 		ComponentId:
 			| 'INPUT_AUDIO'
+			| 'INPUT_DECKLINK'
 			| 'INPUT_DUMMY'
 			| 'INPUT_MJPEG'
 			| 'INPUT_NDI'
@@ -1919,6 +2190,7 @@ export interface components {
 			| 'DIRECTOR_AUTO_MOVE'
 			| 'DIRECTOR_HEAD_TRACKING'
 			| 'DIRECTOR_LECTURE'
+			| 'DIRECTOR_CAM_SYNC'
 			| 'CONTROLLER_SIMULATED_CROP'
 			| 'CONTROLLER_PANASONIC'
 			| 'CONTROLLER_CANON'
@@ -1927,6 +2199,8 @@ export interface components {
 			| 'CONTROLLER_SONY_VISCA'
 			| 'CONTROLLER_MARSHALL_VISCA'
 			| 'CONTROLLER_TELYCAM_VISCA'
+			| 'CONTROLLER_Z_CAM_VISCA'
+			| 'CONTROLLER_OBSBOT_VISCA'
 			| 'CONTROLLER_UNREAL_ENGINE'
 			| 'RECORDER'
 			| 'AUTO_CUT_AUDIENCE'
@@ -1935,8 +2209,10 @@ export interface components {
 			| 'AUTO_CUT_SPEAKER'
 			| 'AUTO_CUT_STAGE'
 			| 'FRAMER_VMIX'
+			| 'POSITIONAL_TRIGGER'
 		ComponentPatchDto: {
 			audioInput?: components['schemas']['AudioInputComponentSettings'] | null
+			deckLinkInput?: components['schemas']['DeckLinkInputComponentSettings'] | null
 			dummyInput?: components['schemas']['DummyInputComponentSettings'] | null
 			mjpegInput?: components['schemas']['MJPEGInputComponentSettings'] | null
 			ndiInput?: components['schemas']['NDIInputComponentSettings'] | null
@@ -1947,6 +2223,7 @@ export interface components {
 			autoMoveDirector?: components['schemas']['AutoMoveDirectorComponentSettings'] | null
 			headTrackingDirector?: components['schemas']['HeadTrackingDirectorComponentSettings'] | null
 			lectureDirector?: components['schemas']['LectureDirectorComponentSettings'] | null
+			camSyncDirector?: components['schemas']['CamSyncDirectorComponentSettings'] | null
 			simulatedCropController?: components['schemas']['SimulatedCropControllerSettings'] | null
 			panasonicController?: components['schemas']['PanasonicControllerSettings'] | null
 			canonController?: components['schemas']['CanonControllerSettings'] | null
@@ -1955,6 +2232,8 @@ export interface components {
 			sonyViscaController?: components['schemas']['SonyViscaControllerSettings'] | null
 			marshallViscaController?: components['schemas']['MarshallViscaControllerSettings'] | null
 			telycamViscaController?: components['schemas']['TelycamViscaControllerSettings'] | null
+			zCamViscaController?: components['schemas']['ZCamViscaControllerSettings'] | null
+			obsbotViscaController?: components['schemas']['ObsbotViscaControllerSettings'] | null
 			unrealEngineController?: components['schemas']['UnrealEngineControllerSettings'] | null
 			recorder?: components['schemas']['RecorderComponentSettings'] | null
 			audienceAutoCut?: components['schemas']['AudienceAutoCutComponentSettings'] | null
@@ -1963,6 +2242,7 @@ export interface components {
 			speakerAutoCut?: components['schemas']['SpeakerAutoCutComponentSettings'] | null
 			stageAutoCut?: components['schemas']['StageAutoCutComponentSettings'] | null
 			vMixFramer?: components['schemas']['VMixFramerComponentSettings'] | null
+			positionalTrigger?: components['schemas']['PositionalTriggerComponentSettings'] | null
 		}
 		ComponentSettingsPatch: {
 			/** @description Discriminator */
@@ -2007,28 +2287,171 @@ export interface components {
 			/** Format: int32 */
 			height?: number
 		}
-		/**
-		 * Format: date
-		 * @example 2022-03-10
-		 */
+		/** Format: date */
 		Date: string
+		DebugViscaCommandDto: {
+			commandType?: string
+			name?: string
+			details?: string
+			parsedValue?: string
+		}
+		DebugViscaDecodedPacketDto: {
+			summary?: string
+			viscaOverIp?: components['schemas']['DebugViscaOverIpDto']
+			viscaPayload?: components['schemas']['DebugViscaPayloadDto']
+			reply?: components['schemas']['DebugViscaReplyDto']
+			command?: components['schemas']['DebugViscaCommandDto']
+		}
+		DebugViscaExchangeRequestDto: {
+			host: string
+			/**
+			 * Format: int32
+			 * @default 52381
+			 */
+			port: number
+			payloadHex?: string
+			payloadTypeHex?: string
+			/** @default true */
+			resetSequenceBeforeSend: boolean
+			/**
+			 * Format: int32
+			 * @default 500
+			 */
+			firstResponseTimeoutMs: number
+			/**
+			 * Format: int32
+			 * @default 150
+			 */
+			interResponseTimeoutMs: number
+			/**
+			 * Format: int32
+			 * @default 8
+			 */
+			maxResponses: number
+		}
+		DebugViscaExchangeResponseDto: {
+			steps?: components['schemas']['DebugViscaExchangeStepDto'][]
+		}
+		DebugViscaExchangeStepDto: {
+			kind?: string
+			remoteHost?: string
+			/** Format: int32 */
+			remotePort?: number
+			/** Format: int64 */
+			startedAtEpochMs?: number
+			/** Format: int64 */
+			completedAtEpochMs?: number
+			/** Format: int64 */
+			durationMs?: number
+			sentPacket?: components['schemas']['DebugViscaPacketDto']
+			receivedPackets?: components['schemas']['DebugViscaPacketDto'][]
+		}
+		DebugViscaOverIpDto: {
+			packetKind?: string
+			payloadTypeHex?: string
+			/** Format: int32 */
+			payloadLength?: number
+			/** Format: int64 */
+			sequenceNumber?: number
+			controlPacket?: boolean
+			replyPacket?: boolean
+			classification?: string
+			notes?: string
+		}
+		DebugViscaPacketDto: {
+			direction?: string
+			hex?: string
+			remoteHost?: string
+			/** Format: int32 */
+			remotePort?: number
+			/** Format: int64 */
+			timestampEpochMs?: number
+			/** Format: int64 */
+			offsetMs?: number
+			decoded?: components['schemas']['DebugViscaDecodedPacketDto']
+		}
+		DebugViscaPayloadDto: {
+			rawHex?: string
+			/** Format: int32 */
+			length?: number
+			terminatorPresent?: boolean
+			/** Format: int32 */
+			destinationNibble?: number
+			/** Format: int32 */
+			sourceNibble?: number
+			/** Format: int32 */
+			categoryByte?: number
+			/** Format: int32 */
+			opcodeByte?: number
+			dataBytes?: number[]
+			dataNibbles?: number[]
+			structure?: string
+		}
+		DebugViscaReplyDto: {
+			replyType?: string
+			/** Format: int32 */
+			socketNumber?: number
+			/** Format: int32 */
+			errorCode?: number
+			errorName?: string
+			details?: string
+		}
+		DeckLinkAvailabilityDto: {
+			available?: boolean
+		}
+		DeckLinkInputComponentSettings: {
+			descriptor?: components['schemas']['DeckLinkInputDescriptor'] | null
+			crop?: components['schemas']['CropRect'] | null
+		}
+		DeckLinkInputDescriptor: {
+			/** Format: int64 */
+			persistentId?: number
+			/** Format: int32 */
+			index?: number
+			modelName?: string
+			displayName?: string
+		}
 		Device: {
 			/** Format: int64 */
 			id?: number
-			name: string
+			name?: string
 			switcherInput?: string | null
-			components: components['schemas']['ComponentPatchDto']
-			feedback: {
+			components?: components['schemas']['ComponentPatchDto']
+			feedback?: {
 				[key: string]: components['schemas']['ComponentFeedback']
 			}
 		}
 		DeviceEntity: {
+			/** Format: int64 */
+			id?: number
 			name?: string
 			created?: components['schemas']['LocalDateTime']
 			updated?: components['schemas']['LocalDateTime']
+			switcherInput?: string
+		}
+		DeviceSummary: {
 			/** Format: int64 */
 			id?: number
-			switcherInput?: string
+			name?: string
+			switcherInput?: string | null
+		}
+		DirectViscaControlCommand: {
+			/** Format: int32 */
+			pan?: number
+			/** Format: int32 */
+			tilt?: number
+			/** Format: int32 */
+			zoom?: number
+		}
+		DiscoveredDevice: {
+			vendor?: string
+			deviceType?: string
+			ipAddress?: string
+			macAddress?: string | null
+			model?: string | null
+			serialNumber?: string | null
+			name?: string | null
+			softwareVersion?: string | null
 		}
 		DummyInputComponentSettings: {
 			descriptor?: components['schemas']['DummyInputDescriptor'] | null
@@ -2040,20 +2463,21 @@ export interface components {
 		ExtendedLicenseDetails: {
 			details?: components['schemas']['LicenseDetails']
 			productVariant?: components['schemas']['ProductVariant']
+			licenseOrigin?: components['schemas']['LicenseOrigin']
 		}
 		FaceIdEntity: {
+			/** Format: int64 */
+			id?: number
 			name?: string
 			previewImages?: components['schemas']['FaceImage'][]
 			temporary?: boolean
-			/** Format: int64 */
-			id?: number
 		}
 		/** @description A face id with embeddings. */
 		FaceIdWithEmbeddings: {
 			/** Format: int64 */
 			id?: number
 			name?: string
-			embeddings?: unknown[]
+			embeddings?: number[][]
 			temporary?: boolean
 		}
 		FaceImage: {
@@ -2063,7 +2487,7 @@ export interface components {
 			fingerprint?: string
 		}
 		/** @enum {string} */
-		Flag: 'DATA_COLLECTION_ENABLED' | 'REACTIVATE_COMPONENTS_ON_STARTUP'
+		Flag: 'DATA_COLLECTION_ENABLED' | 'REACTIVATE_COMPONENTS_ON_STARTUP' | 'GAIN_CONTROL'
 		FrameCoords: {
 			/** Format: double */
 			x?: number
@@ -2097,12 +2521,13 @@ export interface components {
 			sensitivity?: number | null
 			target?: components['schemas']['Point'] | null
 			borderLimits?: components['schemas']['BorderLimits'] | null
-			targetShotSize?: (string & components['schemas']['ShotSize']) | null
-			panicBehavior?: (string & components['schemas']['PanicBehaviorType']) | null
+			targetShotSize?: components['schemas']['ShotSize'] | null
+			panicBehavior?: components['schemas']['PanicBehaviorType'] | null
 			focusAssistEnabled?: boolean | null
 			/** Format: double */
 			steadyRadius?: number | null
 			blockedAxes?: components['schemas']['BlockedAxes'] | null
+			blockMovementWhenLive?: boolean | null
 			/**
 			 * @description discriminator enum property added by openapi-typescript
 			 * @enum {string}
@@ -2123,9 +2548,38 @@ export interface components {
 			/** Format: double */
 			steadyRadius?: number
 			blockedAxes?: components['schemas']['BlockedAxes']
+			blockMovementWhenLive?: boolean
 		}
 		/** @enum {string} */
 		InputType: 'STANDARD' | 'UPSTREAM_KEY'
+		/** Format: date-time */
+		Instant: string
+		JsonNode: {
+			empty?: boolean
+			valueNode?: boolean
+			containerNode?: boolean
+			missingNode?: boolean
+			array?: boolean
+			object?: boolean
+			nodeType?: components['schemas']['JsonNodeType']
+			pojo?: boolean
+			number?: boolean
+			integralNumber?: boolean
+			floatingPointNumber?: boolean
+			short?: boolean
+			int?: boolean
+			long?: boolean
+			float?: boolean
+			double?: boolean
+			bigDecimal?: boolean
+			bigInteger?: boolean
+			textual?: boolean
+			boolean?: boolean
+			null?: boolean
+			binary?: boolean
+		}
+		/** @enum {string} */
+		JsonNodeType: 'ARRAY' | 'BINARY' | 'BOOLEAN' | 'MISSING' | 'NULL' | 'NUMBER' | 'OBJECT' | 'POJO' | 'STRING'
 		/** @description Patch for LectureDirectorComponentSettings */
 		LECTURE_DIRECTOR: {
 			enabled?: boolean | null
@@ -2163,6 +2617,7 @@ export interface components {
 			sensitiveBlackboardArea?: number | null
 			/** Format: double */
 			continuousBlackboardAcceleration?: number | null
+			gestureAnalysis?: boolean | null
 			/**
 			 * @description discriminator enum property added by openapi-typescript
 			 * @enum {string}
@@ -2170,7 +2625,7 @@ export interface components {
 			type: 'LECTURE_DIRECTOR'
 		}
 		/** @enum {string} */
-		LaunchMode: 'NORMAL' | 'DEVELOPMENT' | 'TEST'
+		LaunchMode: 'NORMAL' | 'RUN' | 'DEVELOPMENT' | 'TEST'
 		LectureDirectorComponentSettings: {
 			blackboardPresetIds?: number[]
 			/** Format: int64 */
@@ -2206,12 +2661,15 @@ export interface components {
 			sensitiveBlackboardArea?: number
 			/** Format: double */
 			continuousBlackboardAcceleration?: number
+			gestureAnalysis?: boolean
 		}
 		LicenseDetails: {
 			uuid: components['schemas']['UUID']
 			signedFor: string
 			signedBy: string
 			licenseVariant?: components['schemas']['LicenseVariant']
+			/** Format: int32 */
+			maxDevices?: number
 			startDate: components['schemas']['Date']
 			trialDate: components['schemas']['Date']
 			expiryDate: components['schemas']['Date']
@@ -2220,13 +2678,14 @@ export interface components {
 			valid?: boolean
 			expired?: boolean
 			validHardware?: boolean
+			stripeSubscriptionId?: string
+			licenseKey?: string
 		}
 		/** @enum {string} */
+		LicenseOrigin: 'STRIPE' | 'LIFETIME' | 'RESELLER' | 'MANUAL'
+		/** @enum {string} */
 		LicenseVariant: 'SINGLE_TRACKING' | 'TRACKING' | 'AUTOCUT' | 'AUTOCUT_PRO' | 'EDUCATION'
-		/**
-		 * Format: date-time
-		 * @example 2022-03-10T12:15:50
-		 */
+		/** Format: date-time */
 		LocalDateTime: string
 		MDNSDevice: {
 			type?: string
@@ -2238,19 +2697,40 @@ export interface components {
 			crop?: components['schemas']['CropRect'] | null
 		}
 		MJPEGInputDescriptor: {
-			ip: string
-			type: components['schemas']['MJPEGSourceType']
+			ip?: string
+			type?: components['schemas']['MJPEGSourceType']
 			credentials?: components['schemas']['UserPassCredentials'] | null
 		}
 		/** @enum {string} */
 		MJPEGSourceType: 'RAW' | 'PANASONIC' | 'CANON' | 'SONY'
 		MarshallViscaControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		Message: {
 			t?: string
 		} & components['schemas']['VideoFrameMessage']
+		MinMaxSlidingWindow: {
+			maxDeque?: number[]
+			minDeque?: number[]
+			buffer?: number[]
+			/** Format: int32 */
+			capacity?: number
+			/** Format: int32 */
+			size?: number
+			/** Format: int32 */
+			head?: number
+			/** Format: double */
+			max?: number
+			/** Format: double */
+			min?: number
+			/** Format: double */
+			mean?: number
+		}
 		ModelInfo: {
 			name?: string
 			/** Format: int32 */
@@ -2274,13 +2754,54 @@ export interface components {
 		NDIInputComponentSettings: {
 			descriptor?: components['schemas']['NDIInputDescriptor'] | null
 			crop?: components['schemas']['CropRect'] | null
+			highBandwidth?: boolean
 		}
 		NDIInputDescriptor: {
-			name: string
+			name?: string
+			webControl?: string | null
+			metadata?: string | null
+		}
+		NetworkAddressDto: {
+			ipAddress?: string
+			/** Format: int16 */
+			prefixLength?: number
+			broadcastAddress?: string
+			addressFamily?: string
+		}
+		NetworkConfigurationDto: {
+			interfaces?: components['schemas']['NetworkInterfaceDto'][]
+		}
+		NetworkInterfaceDto: {
+			name?: string
+			displayName?: string | null
+			up?: boolean
+			loopback?: boolean
+			virtual?: boolean
+			/** Format: int32 */
+			mtu?: number
+			macAddress?: string | null
+			addresses?: components['schemas']['NetworkAddressDto'][]
 		}
 		/** @description Output of the nvidia-smi command */
 		NvidiaSmiResponse: {
 			output?: string
+		}
+		OBSProperties: {
+			host?: string
+			/** Format: int32 */
+			port?: number
+			password?: string
+		}
+		/** @enum {string} */
+		OCRLanguage: 'DEU' | 'ENG' | 'FRA' | 'SPA'
+		ObsbotViscaControllerSettings: {
+			host?: string
+			home?: components['schemas']['PTZPosition'] | null
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			isUpsideDown?: boolean
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		OnnxConfiguration: {
 			/** Format: int32 */
@@ -2319,7 +2840,7 @@ export interface components {
 		/** @description Patch for PersonTrackerComponentSettings */
 		PERSON_TRACK: {
 			enabled?: boolean | null
-			trackingMode?: (string & components['schemas']['TrackingMode']) | null
+			trackingMode?: components['schemas']['TrackingMode'] | null
 			/** Format: int32 */
 			targetFaceId?: number | null
 			reIdEnabled?: boolean | null
@@ -2332,7 +2853,7 @@ export interface components {
 			type: 'PERSON_TRACK'
 		}
 		/** @enum {string} */
-		PTZDimension: 'PAN' | 'TILT' | 'ZOOM'
+		PTZDimension: 'PAN' | 'TILT' | 'ZOOM' | 'PRESET_FAST_PAN' | 'PRESET_SLOW_PAN'
 		PTZPosition: {
 			/** Format: double */
 			pan?: number
@@ -2354,20 +2875,24 @@ export interface components {
 			tiltAngle?: number
 			/** Format: double */
 			horizontalFov?: number
+			/** Format: double */
+			frameAspectRatio?: number
 			connectionState?: components['schemas']['ConnectionState']
 			model?: string | null
 		}
 		PanasonicControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
 			focusAfterPositionChange?: boolean
 			/** Format: int32 */
 			updateTimeMillis?: number
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		/** @enum {string} */
 		PanasonicPTZCommandEndpoint: 'PTZ' | 'CAM'
 		/** @enum {string} */
-		PanicBehaviorType: 'RETURN_TO_HOME' | 'SLOWLY_STOP_AND_ZOOM_OUT'
+		PanicBehaviorType: 'RETURN_TO_HOME' | 'SLOWLY_STOP_AND_ZOOM_OUT' | 'DO_NOTHING'
 		/** @description A person; part of PersonTracker state. */
 		Person: {
 			/** Format: int32 */
@@ -2375,13 +2900,16 @@ export interface components {
 			body?: components['schemas']['TrackingBoundingBox']
 			head?: components['schemas']['TrackingBoundingBox']
 			face?: components['schemas']['TrackingBoundingBox']
-			faceCenter?: components['schemas']['TrackingPoint']
+			trackingPoint?: components['schemas']['TrackingPoint']
 			target?: boolean
 			headDirection?: components['schemas']['HeadDirection']
 			/** Format: int64 */
 			faceId?: number
 			faceIdName?: string
 			isFaceVisible?: boolean
+			ptzPosition?: components['schemas']['SlidingPTZPosition'] | null
+			/** Format: int32 */
+			identityId?: number
 		}
 		PersonTrackerComponentSettings: {
 			trackingMode?: components['schemas']['TrackingMode']
@@ -2400,6 +2928,10 @@ export interface components {
 			target: 'personTracker'
 			/** Format: int64 */
 			deviceId?: number
+			/** Format: int32 */
+			frameWidth?: number
+			/** Format: int32 */
+			frameHeight?: number
 			persons?: components['schemas']['Person'][]
 		}
 		PiPConfig: {
@@ -2420,8 +2952,35 @@ export interface components {
 			/** Format: int64 */
 			millis?: number
 		}
-		PresentationAnalyzerSettings: Record<string, never>
-		PresentationAutoCutComponentSettings: Record<string, never>
+		PositionalTriggerComponentSettings: {
+			triggerArea?: components['schemas']['BorderLimits']
+			/** Format: double */
+			delaySeconds?: number
+		}
+		/** @description Event emitted when a positional trigger fires and switches the switcher input */
+		PositionalTriggerState: {
+			/**
+			 * @description discriminator enum property added by openapi-typescript
+			 * @enum {string}
+			 */
+			target: 'positionalTrigger'
+			/** Format: int64 */
+			deviceId?: number
+			switcherInput?: string
+		}
+		PresentationAnalyzerSettings: {
+			ocrEnabled?: boolean
+			languages?: components['schemas']['OCRLanguage'][]
+			inclusionKeywords?: string[]
+			exclusionKeywords?: string[]
+			/** Format: int32 */
+			lotsOfTextThreshold?: number
+			/** Format: int32 */
+			lotsOfDigitsThreshold?: number
+		}
+		PresentationAutoCutComponentSettings: {
+			programTimeOverride?: components['schemas']['ProgramTimeOverride'] | null
+		}
 		PresetCommand: {
 			/** @description Discriminator */
 			type?: string
@@ -2431,11 +2990,11 @@ export interface components {
 			| components['schemas']['ChangeComponentSettingsCommand']
 		)
 		PresetEntity: {
+			/** Format: int64 */
+			id?: number
 			name?: string
 			created?: components['schemas']['LocalDateTime']
 			updated?: components['schemas']['LocalDateTime']
-			/** Format: int64 */
-			id?: number
 			commands?: components['schemas']['PresetCommand'][]
 			metadata?: {
 				[key: string]: string
@@ -2467,12 +3026,18 @@ export interface components {
 			| 'AUTOCUT_PRO'
 			| 'EDUCATION'
 			| 'TEST'
+		ProgramTimeOverride: {
+			/** Format: int32 */
+			minProgramTimeSeconds?: number
+			/** Format: int32 */
+			maxProgramTimeSeconds?: number
+		}
 		ProjectEntity: {
+			/** Format: int64 */
+			id?: number
 			name?: string
 			created?: components['schemas']['LocalDateTime']
 			updated?: components['schemas']['LocalDateTime']
-			/** Format: int64 */
-			id?: number
 			devices?: components['schemas']['DeviceEntity'][]
 			presets?: components['schemas']['PresetEntity'][]
 			autoCut?: components['schemas']['AutoCutDBO']
@@ -2510,7 +3075,7 @@ export interface components {
 			path?: string
 		}
 		RecorderComponentSettings: {
-			fileName: string
+			fileName?: string
 		}
 		/** @description General response to a REST request with a success value and message. */
 		Response: {
@@ -2556,26 +3121,48 @@ export interface components {
 			name?: string
 			failConnection?: boolean
 		}
+		SlidingPTZPosition: {
+			panWindow?: components['schemas']['MinMaxSlidingWindow']
+			tiltWindow?: components['schemas']['MinMaxSlidingWindow']
+			currentPosition?: components['schemas']['PTZPosition']
+			/** Format: double */
+			minPan?: number
+			/** Format: double */
+			maxPan?: number
+			/** Format: double */
+			minTilt?: number
+			/** Format: double */
+			maxTilt?: number
+		}
 		SonyCGIControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
-			user: string
-			pass: string
+			user?: string
+			pass?: string
 		}
 		SonyViscaControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
 			/** Format: int32 */
 			minFocalLength?: number
 			/** Format: int32 */
 			maxFocalLength?: number
+			/** Format: double */
+			zoomSpeedFactor?: number
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		SpeakerAutoCutComponentSettings: {
 			pipInput?: string
-			/** Format: int64 */
-			stagePreset?: number
+			stagePresetIds?: number[]
+			programTimeOverride?: components['schemas']['ProgramTimeOverride'] | null
+			pipProgramTimeOverride?: components['schemas']['ProgramTimeOverride'] | null
 		}
-		StageAutoCutComponentSettings: Record<string, never>
+		StageAutoCutComponentSettings: {
+			programTimeOverride?: components['schemas']['ProgramTimeOverride'] | null
+		}
 		State:
 			| components['schemas']['PersonTrackerState']
 			| components['schemas']['BorderBrakeState']
@@ -2588,6 +3175,7 @@ export interface components {
 			| components['schemas']['AdaptiveShotSize']
 			| components['schemas']['TestUsageState']
 			| components['schemas']['CropFrame']
+			| components['schemas']['PositionalTriggerState']
 		/** @enum {string} */
 		StateDto: 'STAGE' | 'SPEAKER' | 'PIP' | 'PRESENTATION' | 'AUDIENCE'
 		/** @description Describes if a device with person tracking is in steady mode. */
@@ -2606,21 +3194,20 @@ export interface components {
 		SwitcherConfig: {
 			driver?: components['schemas']['SwitcherDriver']
 			/** @description Properties based on the driver type */
-			properties?:
-				| (components['schemas']['SwitcherProperties'] &
-						(
-							| components['schemas']['AtemProperties']
-							| components['schemas']['SimulatorProperties']
-							| components['schemas']['RossTalkProperties']
-							| components['schemas']['VMixProperties']
-							| components['schemas']['RolandV160Properties']
-						))
-				| null
+			properties?: (null | components['schemas']['SwitcherProperties']) &
+				(
+					| components['schemas']['AtemProperties']
+					| components['schemas']['SimulatorProperties']
+					| components['schemas']['RossTalkProperties']
+					| components['schemas']['VMixProperties']
+					| components['schemas']['RolandV160Properties']
+					| components['schemas']['OBSProperties']
+				)
 		}
 		/** @enum {string} */
 		SwitcherConnectionResult: 'CONNECTED' | 'TIMEOUT' | 'MALFORMED_HOST' | 'CONNECTION_FAIL'
 		/** @enum {string} */
-		SwitcherDriver: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160'
+		SwitcherDriver: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160' | 'OBS'
 		SwitcherInput: {
 			id?: string
 			name?: string
@@ -2641,10 +3228,17 @@ export interface components {
 		/** @enum {string} */
 		SwitcherStreamingState: 'IDLE' | 'CONNECTING' | 'STOPPING' | 'STREAMING' | 'UNKNOWN'
 		/** @enum {string} */
-		SwitcherType: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160'
+		SwitcherType: 'ATEM' | 'SIMULATOR' | 'ROSS_TALK' | 'V_MIX' | 'ROLAND_V160' | 'OBS'
+		/** @enum {string} */
+		TelycamModel: 'EXPLORE_XE' | 'EXPLORE_SE'
 		TelycamViscaControllerSettings: {
-			host: string
+			host?: string
 			home?: components['schemas']['PTZPosition'] | null
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			model?: components['schemas']['TelycamModel']
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 		/** @enum {string} */
 		TestState: 'INACTIVE' | 'TESTING' | 'COOLDOWN'
@@ -2704,8 +3298,8 @@ export interface components {
 			uninstall?: boolean | null
 		}
 		UserPassCredentials: {
-			username: string
-			password: string
+			username?: string
+			password?: string
 		}
 		VMixFramerComponentSettings: {
 			/** Format: double */
@@ -2759,6 +3353,11 @@ export interface components {
 			device?: number
 			b64?: string
 		}
+		WebcamDiscoveryDto: {
+			descriptor?: components['schemas']['WebcamInputDescriptor']
+			previewImage?: string | null
+			backendName?: string | null
+		}
 		WebcamInputComponentSettings: {
 			descriptor?: components['schemas']['WebcamInputDescriptor'] | null
 			crop?: components['schemas']['CropRect'] | null
@@ -2772,6 +3371,14 @@ export interface components {
 			frameHeight?: number
 			/** Format: int32 */
 			fps?: number
+		}
+		ZCamViscaControllerSettings: {
+			host?: string
+			home?: components['schemas']['PTZPosition'] | null
+			/** Format: int32 */
+			stateUpdateIntervalMillis?: number
+			/** Format: double */
+			returnToHomeSpeed?: number
 		}
 	}
 	responses: never
@@ -2809,13 +3416,47 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['AutoCutConfig']
 			}
 		}
 		responses: {
 			/** @description No Content */
+			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	getDominantSpeaker: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Returns the device currently detected as dominant speaker. */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['DeviceSummary']
+				}
+			}
+			/** @description No dominant speaker detected. */
 			204: {
 				headers: {
 					[name: string]: unknown
@@ -2859,7 +3500,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['Device']
+					'application/json': components['schemas']['DeviceSummary']
 				}
 			}
 			/** @description No dominant speaker override set. */
@@ -2968,6 +3609,13 @@ export interface operations {
 				}
 				content?: never
 			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
 		}
 	}
 	getFlags: {
@@ -3038,7 +3686,7 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['OnnxConfiguration']
 			}
@@ -3046,6 +3694,13 @@ export interface operations {
 		responses: {
 			/** @description No Content */
 			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -3212,6 +3867,37 @@ export interface operations {
 			}
 		}
 	}
+	debugViscaExchange: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['DebugViscaExchangeRequestDto']
+			}
+		}
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['DebugViscaExchangeResponseDto']
+				}
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
 	listDevices: {
 		parameters: {
 			query?: never
@@ -3268,6 +3954,46 @@ export interface operations {
 				}
 				content: {
 					'application/json': components['schemas']['AudioInputDescriptor'][]
+				}
+			}
+		}
+	}
+	discoverDeckLink: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['DeckLinkInputDescriptor'][]
+				}
+			}
+		}
+	}
+	getDeckLinkAvailability: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['DeckLinkAvailabilityDto']
 				}
 			}
 		}
@@ -3334,6 +4060,26 @@ export interface operations {
 			}
 		}
 	}
+	discoverNetworkDevices: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'text/event-stream': components['schemas']['DiscoveredDevice'][]
+				}
+			}
+		}
+	}
 	discoverWebcam: {
 		parameters: {
 			query?: never
@@ -3349,7 +4095,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': components['schemas']['WebcamInputDescriptor'][]
+					'application/json': components['schemas']['WebcamDiscoveryDto'][]
 				}
 			}
 		}
@@ -3385,7 +4131,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['UpdateDeviceRequest']
 			}
@@ -3399,6 +4145,13 @@ export interface operations {
 				content: {
 					'application/json': components['schemas']['Device']
 				}
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
 			}
 		}
 	}
@@ -3433,7 +4186,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['ComponentId'][]
 			}
@@ -3447,6 +4200,13 @@ export interface operations {
 				content: {
 					'application/json': components['schemas']['Device']
 				}
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
 			}
 		}
 	}
@@ -3481,7 +4241,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['PtzControlCommand']
 			}
@@ -3489,6 +4249,44 @@ export interface operations {
 		responses: {
 			/** @description Created */
 			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	controlPtzDirectlyVisca: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				id: number
+			}
+			cookie?: never
+		}
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['DirectViscaControlCommand']
+			}
+		}
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -3694,7 +4492,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['FrameCoords']
 			}
@@ -3702,6 +4500,13 @@ export interface operations {
 		responses: {
 			/** @description No Content */
 			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -3803,6 +4608,27 @@ export interface operations {
 			path: {
 				id: number
 				person: number
+			}
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	learnTriggerAreaLimit: {
+		parameters: {
+			query?: never
+			header?: never
+			path: {
+				border: components['schemas']['Border']
+				id: number
 			}
 			cookie?: never
 		}
@@ -4002,7 +4828,7 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content: {
-					'application/json': unknown[]
+					'application/json': number[][]
 				}
 			}
 		}
@@ -4023,7 +4849,9 @@ export interface operations {
 				headers: {
 					[name: string]: unknown
 				}
-				content?: never
+				content: {
+					'image/jpeg': unknown
+				}
 			}
 		}
 	}
@@ -4080,6 +4908,7 @@ export interface operations {
 			query?: {
 				hardwareIdentifier?: string
 				licenseVariant?: components['schemas']['LicenseVariant']
+				maxDevices?: number
 				signedBy?: string
 				signedFor?: string
 				trialDays?: number
@@ -4093,6 +4922,44 @@ export interface operations {
 		responses: {
 			/** @description Returns the license file */
 			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/octet-stream': unknown
+				}
+			}
+		}
+	}
+	invalidateTestLicense: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+		}
+	}
+	reactivateTestMode: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description Created */
+			201: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -4152,7 +5019,7 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'multipart/form-data': {
 					/** Format: binary */
@@ -4204,7 +5071,9 @@ export interface operations {
 				headers: {
 					[name: string]: unknown
 				}
-				content?: never
+				content: {
+					'application/json': unknown
+				}
 			}
 			/** @description Invalid request parameters */
 			400: {
@@ -4281,7 +5150,7 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'multipart/form-data': {
 					/** Format: binary */
@@ -4362,7 +5231,7 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['ProjectPatch']
 			}
@@ -4370,6 +5239,13 @@ export interface operations {
 		responses: {
 			/** @description No Content */
 			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -4406,7 +5282,7 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['PresetPatch']
 			}
@@ -4414,6 +5290,13 @@ export interface operations {
 		responses: {
 			/** @description Created */
 			201: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -4445,10 +5328,30 @@ export interface operations {
 			}
 		}
 	}
-	PresetResource_setGainDisabled: {
+	isGainControlEnabled: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': boolean
+				}
+			}
+		}
+	}
+	setGainControlEnabled: {
 		parameters: {
 			query?: {
-				disabled?: boolean
+				enabled?: boolean
 			}
 			header?: never
 			path?: never
@@ -4498,7 +5401,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['PresetPatch']
 			}
@@ -4512,6 +5415,13 @@ export interface operations {
 				content: {
 					'application/json': components['schemas']['PresetEntity']
 				}
+			}
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
 			}
 		}
 	}
@@ -4559,6 +5469,7 @@ export interface operations {
 		parameters: {
 			query?: {
 				force?: boolean
+				speed?: number
 			}
 			header?: never
 			path: {
@@ -4630,7 +5541,7 @@ export interface operations {
 			}
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['ProjectPatch']
 			}
@@ -4638,6 +5549,13 @@ export interface operations {
 		responses: {
 			/** @description No Content */
 			204: {
+				headers: {
+					[name: string]: unknown
+				}
+				content?: never
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -4690,6 +5608,8 @@ export interface operations {
 			query?: {
 				dimension?: components['schemas']['PTZDimension']
 				ip?: string
+				ndiSourceNameSubstring?: string
+				speedMode?: number
 				vendor?: components['schemas']['CalibrationPtzVendor']
 				zoom?: number
 			}
@@ -4862,14 +5782,23 @@ export interface operations {
 			path?: never
 			cookie?: never
 		}
-		requestBody?: {
+		requestBody: {
 			content: {
 				'application/json': components['schemas']['SwitcherConfig']
 			}
 		}
 		responses: {
-			/** @description Created */
-			201: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': unknown
+				}
+			}
+			/** @description Bad Request */
+			400: {
 				headers: {
 					[name: string]: unknown
 				}
@@ -5073,6 +6002,26 @@ export interface operations {
 			}
 		}
 	}
+	getNetworkConfiguration: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': components['schemas']['NetworkConfigurationDto']
+				}
+			}
+		}
+	}
 	shutdown: {
 		parameters: {
 			query?: never
@@ -5088,6 +6037,26 @@ export interface operations {
 					[name: string]: unknown
 				}
 				content?: never
+			}
+		}
+	}
+	getThreads: {
+		parameters: {
+			query?: never
+			header?: never
+			path?: never
+			cookie?: never
+		}
+		requestBody?: never
+		responses: {
+			/** @description OK */
+			200: {
+				headers: {
+					[name: string]: unknown
+				}
+				content: {
+					'application/json': string[]
+				}
 			}
 		}
 	}

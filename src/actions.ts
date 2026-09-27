@@ -9,6 +9,7 @@ import {
 	getPresetSelector,
 	createFaceOptions,
 	getPresetChoices,
+	getPTZCapableDevices,
 } from './scripts/helpers.js'
 import {
 	AutoConfiguredButton,
@@ -28,6 +29,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
 	const videoDevices = store.getVideoDevices()
 	const videoDeviceOptions: DropdownChoice[] = createDeviceOptions(videoDevices)
+	const ptzDeviceOptions: DropdownChoice[] = createDeviceOptions(getPTZCapableDevices(videoDevices))
 	const audioDeviceOptions: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
 	const deviceOptions = [...videoDeviceOptions, ...audioDeviceOptions]
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceOptions)
@@ -388,10 +390,56 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 		triggerReturnToHome: {
 			name: 'Return to home',
 			description: 'Return device to home position. This action needs a PTZ controller to be installed on the device.',
-			options: [getDeviceSelector(self, videoDeviceOptions)],
+			options: [getDeviceSelector(self, ptzDeviceOptions)],
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				await backend?.triggerReturnToHome(deviceId)
+			},
+		},
+		moveCamera: {
+			name: 'Move Camera',
+			description:
+				'Send direct PTZ speed commands to a camera. This action needs a PTZ controller to be installed on the device.',
+			options: [
+				getDeviceSelector(self, ptzDeviceOptions),
+				{
+					id: 'pan',
+					type: 'number',
+					label: 'Pan speed',
+					default: 0,
+					min: -1,
+					max: 1,
+					step: 0.01,
+					range: false,
+				},
+				{
+					id: 'tilt',
+					type: 'number',
+					label: 'Tilt speed',
+					default: 0,
+					min: -1,
+					max: 1,
+					step: 0.01,
+					range: false,
+				},
+				{
+					id: 'zoom',
+					type: 'number',
+					label: 'Zoom speed',
+					default: 0,
+					min: -1,
+					max: 1,
+					step: 0.01,
+					range: false,
+				},
+			],
+			async callback(event) {
+				const deviceId = Number(event.options.deviceId)
+				const pan = Math.max(-1, Math.min(1, Number(event.options.pan) || 0))
+				const tilt = Math.max(-1, Math.min(1, Number(event.options.tilt) || 0))
+				const zoom = Math.max(-1, Math.min(1, Number(event.options.zoom) || 0))
+				self.log('info', 'Moving camera ' + deviceId + ' with pan=' + pan + ', tilt=' + tilt + ', zoom=' + zoom)
+				await backend?.moveCamera(deviceId, pan, tilt, zoom)
 			},
 		},
 		exitSteadyMode: {
@@ -570,7 +618,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				if (device) {
 					self.log(
 						'info',
-						'Toggling vMix framer for device ' + deviceId + ' with ' + device.feedback['FRAMER_VMIX']?.state,
+						'Toggling vMix framer for device ' + deviceId + ' with ' + device.feedback?.['FRAMER_VMIX']?.state,
 					)
 					await backend?.toggleVMixFramer(device)
 				} else {
