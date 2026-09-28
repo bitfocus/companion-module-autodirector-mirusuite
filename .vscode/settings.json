@@ -1,4 +1,7 @@
 {
 	"files.eol": "\n",
-	"editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"terminal.integrated.env.windows": {
+		"PATH": "${env:NVM_HOME}\\v22.21.1;${env:PATH}"
+	}
 }

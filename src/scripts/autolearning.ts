@@ -167,7 +167,12 @@ export function isDisplayDeviceName(btn: AutoConfiguredButton): boolean {
 export function addAutoButton(self: MiruSuiteModuleInstance, bankId: string, button: AutoConfiguredButton): void {
 	self.log('debug', 'Added auto preset button: ' + JSON.stringify(button) + ' to learning mode ' + bankId)
 	let autoMap: AutoConfiguredBankMap = config.get('autoConfiguredMap', {}) as AutoConfiguredBankMap
-	const bank = autoMap[bankId] ?? { buttons: [], devices: [] }
+	const bank = autoMap[bankId] ?? {
+		buttons: [],
+		devices: [],
+		instrumentGroups: [],
+		displayDeviceName: false,
+	}
 	autoMap = removeAutoButtonFromAnyBank(self, button)
 	bank.buttons.push(button)
 	autoMap[bankId] = bank

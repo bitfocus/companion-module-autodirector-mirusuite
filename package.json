@@ -22,7 +22,7 @@
 		"url": "git+https://github.com/bitfocus/companion-module-autodirector-mirusuite"
 	},
 	"dependencies": {
-		"@companion-module/base": "~v1.5",
+		"@companion-module/base": "~v1.11",
 		"conf": "^13.1.0",
 		"eventsource": "^2.0.2",
 		"jimp": "^0.22.12",
