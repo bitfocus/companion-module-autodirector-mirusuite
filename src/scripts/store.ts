@@ -25,14 +25,6 @@ export class Store {
 		throw new Error('Backend not initialized')
 	}
 
-	async loadDevices(): Promise<boolean> {
-		const data = await this.backend.loadDevices()
-		const oldSignature = this.getDefinitionSignature(this.devices)
-		const newSignature = this.getDefinitionSignature(data)
-		this.devices = data
-		return oldSignature !== newSignature
-	}
-
 	getDeviceById(id: number): Device | undefined {
 		return this.devices.find((device) => device.id === id)
 	}

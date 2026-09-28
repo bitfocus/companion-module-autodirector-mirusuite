@@ -15,6 +15,8 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 	backend: Backend | null = null
 	store: Store = new Store(this)
 	connectionState = 'Connecting'
+	manualMoveSpeed = 0.2
+	ptzArrowImagesInitialized = false
 	private eventHandler: EventHandler | null = null
 
 	constructor(internal: unknown) {
@@ -102,6 +104,12 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 
 	updateVariableValues(): void {
 		UpdateVariableValues(this)
+	}
+
+	adjustManualMoveSpeed(delta: number): void {
+		const nextSpeed = this.manualMoveSpeed + delta
+		this.manualMoveSpeed = Math.round(Math.min(1, Math.max(0.01, nextSpeed)) * 100) / 100
+		this.updateVariableValues()
 	}
 
 	getConfigFields(): SomeCompanionConfigField[] {

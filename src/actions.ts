@@ -270,7 +270,7 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 		moveCamera: {
 			name: 'Move Camera',
 			description:
-				'Send direct PTZ speed commands to a camera. This action needs a PTZ controller to be installed on the device.',
+				'Send PTZ direction values scaled by the shared manual movement speed. This action needs a PTZ controller to be installed on the device.',
 			options: [
 				getDeviceSelector(self, ptzDeviceOptions),
 				{
@@ -306,11 +306,52 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 			],
 			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
-				const pan = Math.max(-1, Math.min(1, Number(event.options.pan) || 0))
-				const tilt = Math.max(-1, Math.min(1, Number(event.options.tilt) || 0))
-				const zoom = Math.max(-1, Math.min(1, Number(event.options.zoom) || 0))
+				const speed = self.manualMoveSpeed
+				const pan = Math.max(-1, Math.min(1, Number(event.options.pan) || 0)) * speed
+				const tilt = Math.max(-1, Math.min(1, Number(event.options.tilt) || 0)) * speed
+				const zoom = Math.max(-1, Math.min(1, Number(event.options.zoom) || 0)) * speed
 				self.log('info', 'Moving camera ' + deviceId + ' with pan=' + pan + ', tilt=' + tilt + ', zoom=' + zoom)
 				await backend?.moveCamera(deviceId, pan, tilt, zoom)
+			},
+		},
+		increaseMoveSpeed: {
+			name: 'Increase Manual Movement Speed',
+			description: 'Increase the shared pan, tilt, and zoom movement speed.',
+			options: [
+				{
+					id: 'step',
+					type: 'number',
+					label: 'Increase by',
+					default: 0.05,
+					min: 0.01,
+					max: 0.5,
+					step: 0.01,
+					range: false,
+				},
+			],
+			callback(event) {
+				self.adjustManualMoveSpeed(Math.max(0.01, Number(event.options.step) || 0.05))
+				self.log('info', `Manual movement speed increased to ${Math.round(self.manualMoveSpeed * 100)}%`)
+			},
+		},
+		decreaseMoveSpeed: {
+			name: 'Decrease Manual Movement Speed',
+			description: 'Decrease the shared pan, tilt, and zoom movement speed.',
+			options: [
+				{
+					id: 'step',
+					type: 'number',
+					label: 'Decrease by',
+					default: 0.05,
+					min: 0.01,
+					max: 0.5,
+					step: 0.01,
+					range: false,
+				},
+			],
+			callback(event) {
+				self.adjustManualMoveSpeed(-Math.max(0.01, Number(event.options.step) || 0.05))
+				self.log('info', `Manual movement speed decreased to ${Math.round(self.manualMoveSpeed * 100)}%`)
 			},
 		},
 		exitSteadyMode: {

@@ -1,4 +1,9 @@
-import { DropdownChoice, combineRgb, type CompanionPresetDefinitions as ModernPresetDefinitions, type CompanionPresetSection } from '@companion-module/base'
+import {
+	DropdownChoice,
+	combineRgb,
+	type CompanionPresetDefinitions as ModernPresetDefinitions,
+	type CompanionPresetSection,
+} from '@companion-module/base'
 import { MiruSuiteModuleInstance } from './main.js'
 import type { MiruSuiteInstanceTypes } from './instance-types.js'
 import type { ShotSize, TrackingMode } from './api/types.js'
@@ -14,7 +19,28 @@ import {
 } from './scripts/helpers.js'
 
 type CompanionPresetDefinitions = Record<string, any>
-const LARGE_PRESET_ICONS = new Set(['+', '-', '−', '↖', '⬆', '↗', '⬅', '➡', '↙', '⬇', '↘', '➕', '➖', '↑', '↓', '←', '→', '↔', '↕', '⏻'])
+const LARGE_PRESET_ICONS = new Set([
+	'+',
+	'-',
+	'−',
+	'↖',
+	'⬆',
+	'↗',
+	'⬅',
+	'➡',
+	'↙',
+	'⬇',
+	'↘',
+	'➕',
+	'➖',
+	'↑',
+	'↓',
+	'←',
+	'→',
+	'↔',
+	'↕',
+	'⏻',
+])
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
@@ -85,6 +111,9 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		const deviceId = Number(choice.id)
 		addVMixFramerPresets(presets, vmixFramerDeviceChoices, deviceId)
 	}
+	if (videoDeviceChoices.some((choice) => hasPTZController(self.store.getDeviceById(Number(choice.id))))) {
+		addManualMoveSpeedPresets(presets)
+	}
 	for (const devicePreset of devicePresets) {
 		addPlayPresetPreset(presets, devicePreset)
 	}
@@ -97,25 +126,55 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 function convertLegacyPresets(
 	self: MiruSuiteModuleInstance,
 	legacyPresets: CompanionPresetDefinitions,
-): { structure: CompanionPresetSection<MiruSuiteInstanceTypes>[]; definitions: ModernPresetDefinitions<MiruSuiteInstanceTypes> } {
+): {
+	structure: CompanionPresetSection<MiruSuiteInstanceTypes>[]
+	definitions: ModernPresetDefinitions<MiruSuiteInstanceTypes>
+} {
 	type Target = { id: number; sectionName: string; name: string }
 	type Group = { id: string; type: 'simple'; name: string; presets: string[] }
 	type Section = { id: string; name: string; groups: Map<string, Group> }
 
 	const videoDevices = new Map(
-		self.store.getVideoDevices().flatMap((device) =>
-			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'Video', name: device.name ?? `Device ${device.id}` } as Target]],
-		),
+		self.store
+			.getVideoDevices()
+			.flatMap((device) =>
+				device.id === undefined
+					? []
+					: [
+						[
+							device.id,
+							{ id: device.id, sectionName: 'Video', name: device.name ?? `Device ${device.id}` } as Target,
+						],
+					],
+			),
 	)
 	const audioDevices = new Map(
-		self.store.getAudioDevices().flatMap((device) =>
-			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'Audio', name: device.name ?? `Device ${device.id}` } as Target]],
-		),
+		self.store
+			.getAudioDevices()
+			.flatMap((device) =>
+				device.id === undefined
+					? []
+					: [
+						[
+							device.id,
+							{ id: device.id, sectionName: 'Audio', name: device.name ?? `Device ${device.id}` } as Target,
+						],
+					],
+			),
 	)
 	const framerDevices = new Map(
-		self.store.getVMixFramerDevices().flatMap((device) =>
-			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'vMix Framer', name: device.name ?? `Device ${device.id}` } as Target]],
-		),
+		self.store
+			.getVMixFramerDevices()
+			.flatMap((device) =>
+				device.id === undefined
+					? []
+					: [
+						[
+							device.id,
+							{ id: device.id, sectionName: 'vMix Framer', name: device.name ?? `Device ${device.id}` } as Target,
+						],
+					],
+			),
 	)
 	const allDeviceMaps = [videoDevices, audioDevices, framerDevices]
 	const sections = new Map<string, Section>()
@@ -125,8 +184,11 @@ function convertLegacyPresets(
 		if (!legacy || legacy.type !== 'button') continue
 		const category = String(legacy.category ?? 'General')
 		const target = getLegacyPresetTarget(self, presetId, legacy, category, allDeviceMaps)
-		const sectionName = target ? `${target.sectionName}: ${target.name}` : 'Module-wide'
-		const sectionId = target ? `device-${target.sectionName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${target.id}` : 'module-wide'
+		const deviceLabel = getLegacyPresetDeviceLabel(self, presetId, legacy, target, videoDevices)
+		const sectionName = target ? `${target.sectionName}: ${target.name}` : 'Application'
+		const sectionId = target
+			? `device-${target.sectionName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${target.id}`
+			: 'module-wide'
 		const displayGroup = category === 'Presets' ? 'Saved Presets' : category
 		const groupId = `${sectionId}-${displayGroup.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 		let section = sections.get(sectionId)
@@ -140,7 +202,7 @@ function convertLegacyPresets(
 			section.groups.set(groupId, group)
 		}
 		group.presets.push(presetId)
-		definitions[presetId] = createModernPreset(legacy, target?.name)
+		definitions[presetId] = createModernPreset(legacy, deviceLabel, getPresetArrowAsset(presetId))
 	}
 
 	const structure: CompanionPresetSection<MiruSuiteInstanceTypes>[] = [...sections.values()].map((section) => ({
@@ -151,6 +213,37 @@ function convertLegacyPresets(
 	return { structure, definitions }
 }
 
+function getLegacyPresetDeviceLabel(
+	self: MiruSuiteModuleInstance,
+	presetId: string,
+	legacy: any,
+	target: { id: number; sectionName: string; name: string } | undefined,
+	videoDevices: Map<number, { id: number; sectionName: string; name: string }>,
+): string {
+	if (presetId.startsWith('playPreset-')) {
+		const preset = self.store.getPresetById(Number(presetId.slice('playPreset-'.length)))
+		const names = [
+			...new Set(
+				(preset?.commands ?? [])
+					.map((command) => (command.deviceId === undefined ? undefined : videoDevices.get(command.deviceId)?.name))
+					.filter((name): name is string => Boolean(name)),
+			),
+		]
+		if (names.length > 0) return names.join(', ')
+	}
+	if (target) return target.name
+
+	const lines = String(legacy.style?.text ?? '')
+		.split('\n')
+		.map((line) => line.trim())
+	const lastLine = lines.at(-1) ?? ''
+	const parenthetical = lastLine.match(/^\((.+)\)$/)
+	if (parenthetical) return parenthetical[1].trim()
+	const trailingParenthetical = lastLine.match(/\(([^()]+)\)\s*$/)
+	if (trailingParenthetical) return trailingParenthetical[1].trim()
+	return ''
+}
+
 function getLegacyPresetTarget(
 	self: MiruSuiteModuleInstance,
 	presetId: string,
@@ -159,6 +252,11 @@ function getLegacyPresetTarget(
 	deviceMaps: Map<number, { id: number; sectionName: string; name: string }>[],
 ): { id: number; sectionName: string; name: string } | undefined {
 	const [videoDevices, audioDevices, framerDevices] = deviceMaps
+	const suffixMatch = presetId.match(/-(\d+)$/)
+	const suffixId = suffixMatch ? Number(suffixMatch[1]) : undefined
+	if (category === 'vMix Framer' && suffixId !== undefined) return framerDevices?.get(suffixId)
+	if (category === 'AutoCut' && suffixId !== undefined) return audioDevices?.get(suffixId)
+
 	const actionDeviceId = findOptionValue(legacy.steps, 'deviceId')
 	if (actionDeviceId !== undefined) {
 		for (const map of deviceMaps) {
@@ -169,14 +267,14 @@ function getLegacyPresetTarget(
 
 	if (presetId.startsWith('playPreset-')) {
 		const preset = self.store.getPresetById(Number(presetId.slice('playPreset-'.length)))
-		const ids = [...new Set((preset?.commands ?? []).map((command) => command.deviceId).filter((id): id is number => id !== undefined))]
+		const ids = [
+			...new Set(
+				(preset?.commands ?? []).map((command) => command.deviceId).filter((id): id is number => id !== undefined),
+			),
+		]
 		return ids.length === 1 ? videoDevices?.get(ids[0]) : undefined
 	}
 
-	const match = presetId.match(/-(\d+)$/)
-	const suffixId = match ? Number(match[1]) : undefined
-	if (category === 'vMix Framer' && suffixId !== undefined) return framerDevices?.get(suffixId)
-	if (category === 'AutoCut' && suffixId !== undefined) return audioDevices?.get(suffixId)
 	if (suffixId !== undefined) {
 		for (const map of deviceMaps) {
 			const target = map.get(suffixId)
@@ -199,79 +297,142 @@ function findOptionValue(value: any, key: string): number | undefined {
 	return undefined
 }
 
-function createModernPreset(legacy: any, deviceName?: string): any {
+function createModernPreset(legacy: any, deviceName = '', arrowAsset?: string): any {
+	const { title, footer } = getPresetTextParts(String(legacy.style?.text ?? ''), deviceName)
 	const simple = { ...legacy, type: 'simple' }
 	delete simple.category
+	if (simple.style) simple.style = { ...simple.style, text: [title, footer].filter(Boolean).join('\n') }
 	if (simple.options?.rotaryActions !== undefined) {
 		const { rotaryActions: _rotaryActions, ...supportedOptions } = simple.options
 		simple.options = supportedOptions
 		if (Object.keys(supportedOptions).length === 0) delete simple.options
 	}
 
-	const iconLayout = getIconLayout(String(legacy.style?.text ?? ''), deviceName)
-	if (!iconLayout) return simple
+	const iconLayout = getIconLayout(title)
+	if (!iconLayout && !arrowAsset && !footer) return simple
 
 	const textColor = legacy.style?.color ?? combineRgb(255, 255, 255)
 	const backgroundColor = legacy.style?.bgcolor ?? combineRgb(0, 0, 0)
+	const elements: any[] = [
+		{ type: 'box', id: 'background', x: 0, y: 0, width: 100, height: 100, color: backgroundColor },
+	]
+	if (arrowAsset) {
+		elements.push({
+			type: 'image',
+			id: 'icon',
+			x: 8,
+			y: 2,
+			width: 84,
+			height: footer ? 76 : 96,
+			base64Image: { isExpression: true, value: `$(autodirector-mirusuite:ptz_arrow_${arrowAsset})` },
+			fillMode: 'fit',
+			halign: 'center',
+			valign: 'center',
+		})
+	} else if (iconLayout) {
+		elements.push({
+			type: 'text',
+			id: 'icon',
+			x: 3,
+			y: 0,
+			width: 94,
+			height: iconLayout.label ? 60 : footer ? 78 : 100,
+			text: iconLayout.icon,
+			fontsize: 110,
+			fontsizeAllowShrink: true,
+			weight: 'bold',
+			halign: 'center',
+			valign: 'center',
+			color: textColor,
+		})
+		if (iconLayout.label) {
+			elements.push({
+				type: 'text',
+				id: 'text',
+				x: 4,
+				y: 60,
+				width: 92,
+				height: footer ? 19 : 38,
+				text: iconLayout.label,
+				fontsize: 200,
+				fontsizeAllowShrink: true,
+				halign: 'center',
+				valign: 'center',
+				color: textColor,
+			})
+		}
+	} else {
+		elements.push({
+			type: 'text',
+			id: 'text',
+			x: 4,
+			y: 2,
+			width: 92,
+			height: footer ? 76 : 96,
+			text: asGraphicText(title),
+			fontsize: 200,
+			fontsizeAllowShrink: true,
+			halign: 'center',
+			valign: 'center',
+			color: textColor,
+		})
+	}
+	if (footer) {
+		elements.push({
+			type: 'text',
+			id: 'device',
+			x: 4,
+			y: 80,
+			width: 92,
+			height: 20,
+			text: asGraphicText(footer),
+			fontsize: 200,
+			fontsizeAllowShrink: true,
+			halign: 'center',
+			valign: 'center',
+			color: textColor,
+		})
+	}
 	const layered = {
 		type: 'layered',
 		name: legacy.name,
 		canvas: { decoration: 'none' },
-		elements: [
-			{ type: 'box', id: 'background', x: 0, y: 0, width: 100, height: 100, color: backgroundColor },
-			{
-				type: 'text',
-				id: 'icon',
-				x: 3,
-				y: 0,
-				width: 94,
-				height: iconLayout.label ? 62 : 78,
-				text: iconLayout.icon,
-				fontsize: 58,
-				fontsizeAllowShrink: false,
-				weight: 'bold',
-				halign: 'center',
-				valign: 'center',
-				color: textColor,
-			},
-			{
-				type: 'text',
-				id: 'label',
-				x: 4,
-				y: 62,
-				width: 92,
-				height: 19,
-				text: iconLayout.label,
-				fontsize: 15,
-				fontsizeAllowShrink: true,
-				halign: 'center',
-				valign: 'center',
-				color: textColor,
-			},
-			{
-				type: 'text',
-				id: 'device',
-				x: 4,
-				y: 82,
-				width: 92,
-				height: 16,
-				text: iconLayout.device,
-				fontsize: 10,
-				fontsizeAllowShrink: true,
-				halign: 'center',
-				valign: 'center',
-				color: textColor,
-			},
-		],
+		elements,
 		steps: legacy.steps,
 		feedbacks: (legacy.feedbacks ?? []).map((feedback: any) => {
 			const styleOverrides: any[] = []
 			if (feedback.style?.bgcolor !== undefined) {
-				styleOverrides.push({ elementId: 'background', elementProperty: 'color', override: feedback.style.bgcolor })
+				styleOverrides.push({
+					elementId: 'background',
+					elementProperty: 'color',
+					override: { isExpression: false, value: feedback.style.bgcolor },
+				})
 			}
 			if (feedback.style?.color !== undefined) {
-				for (const elementId of ['icon', 'label', 'device']) {
-					styleOverrides.push({ elementId, elementProperty: 'color', override: feedback.style.color })
+				for (const elementId of ['icon', 'text', 'device']) {
+					if (elements.some((element) => element.id === elementId && element.type === 'text')) {
+						styleOverrides.push({
+							elementId,
+							elementProperty: 'color',
+							override: { isExpression: false, value: feedback.style.color },
+						})
+					}
+				}
+			}
+			if (feedback.feedbackId === 'directorStatus') {
+				styleOverrides.push({
+					elementId: 'background',
+					elementProperty: 'color',
+					override: { isExpression: false, value: 'bgcolor' },
+				})
+				for (const elementId of ['icon', 'text', 'device']) {
+					if (elements.some((element) => element.id === elementId && element.type === 'text')) {
+						styleOverrides.push({
+							elementId,
+							elementProperty: 'color',
+							override: { isExpression: false, value: 'color' },
+						})
+					}
 				}
 			}
 			const { style: _style, ...definition } = feedback
@@ -281,8 +442,62 @@ function createModernPreset(legacy: any, deviceName?: string): any {
 	return { type: 'alternatives', variants: [layered, simple] }
 }
 
-function getIconLayout(text: string, deviceName?: string): { icon: string; label: string; device: string } | undefined {
-	const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
+function getPresetTextParts(text: string, deviceLabel: string): { title: string; footer: string } {
+	const lines = text
+		.split('\n')
+		.map((line) => line.trim())
+		.filter(Boolean)
+	let footer = deviceLabel.trim()
+	const lastLine = lines.at(-1) ?? ''
+	const parenthetical = lastLine.match(/^\((.+)\)$/)
+	const trailingParenthetical = lastLine.match(/\(([^()]+)\)\s*$/)
+	if (!footer && parenthetical) footer = parenthetical[1].trim()
+	if (!footer && trailingParenthetical) footer = trailingParenthetical[1].trim()
+	if (lastLine.includes('$(autodirector-mirusuite:manual_move_speed)')) footer = lastLine
+	if (footer && lines.length > 0) {
+		const normalizedFooter = footer
+			.replace(/^\(|\)$/g, '')
+			.trim()
+			.toLocaleLowerCase()
+		const cleanedLastLine = lastLine
+			.replace(/^\(|\)$/g, '')
+			.replace(/\(([^()]+)\)\s*$/, '')
+			.trim()
+			.toLocaleLowerCase()
+		if (
+			parenthetical ||
+			lastLine === footer ||
+			cleanedLastLine === normalizedFooter ||
+			lastLine.includes('$(autodirector-mirusuite:manual_move_speed)')
+		) {
+			lines.pop()
+		} else {
+			for (let index = lines.length - 1; index >= 0; index--) {
+				if (
+					lines[index]
+						.replace(/^\(|\)$/g, '')
+						.trim()
+						.toLocaleLowerCase() === normalizedFooter
+				)
+					lines.splice(index, 1)
+			}
+		}
+	}
+	if (trailingParenthetical && !parenthetical && lines.length > 0) {
+		lines[lines.length - 1] = lines
+			.at(-1)!
+			.replace(/\s*\(([^()]+)\)\s*$/, '')
+			.trim()
+		if (!lines.at(-1)) lines.pop()
+	}
+	return { title: lines.join('\n'), footer }
+}
+
+function getIconLayout(text: string): { icon: string; label: string } | undefined {
+	const lines = text
+		.split('\n')
+		.map((line) => line.trim())
+		.filter(Boolean)
 	if (lines.length === 0) return undefined
 	let iconLine = lines[0].replace(/\uFE0F/g, '')
 	let prefixLabel = ''
@@ -297,13 +512,60 @@ function getIconLayout(text: string, deviceName?: string): { icon: string; label
 		}
 	}
 	if (!LARGE_PRESET_ICONS.has(iconLine)) return undefined
-	const device = deviceName ?? ''
-	const labelLines = lines.slice(1).filter((line) => {
-		const cleaned = line.replace(/^\(|\)$/g, '')
-		return cleaned !== device && cleaned.length > 0
-	})
+	const labelLines = lines.slice(1)
 	if (prefixLabel) labelLines.unshift(prefixLabel)
-	return { icon: iconLine, label: labelLines.join(' '), device }
+	return { icon: iconLine, label: labelLines.join(' ') }
+}
+
+function asGraphicText(text: string): string | { isExpression: true; value: string } {
+	return text.includes('$(') ? { isExpression: true, value: text } : text
+}
+
+function getPresetArrowAsset(presetId: string): string | undefined {
+	const match = presetId.match(/^ptzMove-(topLeft|top|topRight|left|right|bottomLeft|bottom|bottomRight)-\d+$/)
+	if (!match) return undefined
+	const directionToAsset: Record<string, string> = {
+		topLeft: 'nw',
+		top: 'n',
+		topRight: 'ne',
+		left: 'w',
+		right: 'e',
+		bottomLeft: 'sw',
+		bottom: 's',
+		bottomRight: 'se',
+	}
+	return directionToAsset[match[1]]
+}
+
+function addManualMoveSpeedPresets(presets: CompanionPresetDefinitions): void {
+	for (const direction of ['increase', 'decrease'] as const) {
+		const isIncrease = direction === 'increase'
+		const icon = isIncrease ? '+' : '-'
+		const title = `${icon}\nMovement Speed\n$(autodirector-mirusuite:manual_move_speed)`
+		presets[`manualMoveSpeed-${direction}`] = {
+			type: 'button',
+			category: 'PTZ',
+			name: `${isIncrease ? 'Increase' : 'Decrease'} Manual Movement Speed`,
+			style: {
+				text: title,
+				size: 'auto',
+				bgcolor: combineRgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: isIncrease ? 'increaseMoveSpeed' : 'decreaseMoveSpeed',
+							options: { step: 0.05 },
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+	}
 }
 
 function addShotSizePreset(
@@ -755,17 +1017,16 @@ function addPTZDirectionPresets(
 	videoDeviceChoices: DropdownChoice[],
 	deviceId: number,
 ) {
-	const speed = 0.2
-	const diagonalSpeed = speed / Math.sqrt(2)
+	const diagonalSpeed = 1 / Math.sqrt(2)
 	const directions = [
-		{ id: 'topLeft', label: '↖️', pan: -diagonalSpeed, tilt: diagonalSpeed },
-		{ id: 'top', label: '⬆️', pan: 0, tilt: speed },
-		{ id: 'topRight', label: '↗️', pan: diagonalSpeed, tilt: diagonalSpeed },
-		{ id: 'left', label: '⬅️', pan: -speed, tilt: 0 },
-		{ id: 'right', label: '➡️', pan: speed, tilt: 0 },
-		{ id: 'bottomLeft', label: '↙️', pan: -diagonalSpeed, tilt: -diagonalSpeed },
-		{ id: 'bottom', label: '⬇️', pan: 0, tilt: -speed },
-		{ id: 'bottomRight', label: '↘️', pan: diagonalSpeed, tilt: -diagonalSpeed },
+		{ id: 'topLeft', label: '↖', pan: -diagonalSpeed, tilt: diagonalSpeed },
+		{ id: 'top', label: '↑', pan: 0, tilt: 1 },
+		{ id: 'topRight', label: '↗', pan: diagonalSpeed, tilt: diagonalSpeed },
+		{ id: 'left', label: '←', pan: -1, tilt: 0 },
+		{ id: 'right', label: '→', pan: 1, tilt: 0 },
+		{ id: 'bottomLeft', label: '↙', pan: -diagonalSpeed, tilt: -diagonalSpeed },
+		{ id: 'bottom', label: '↓', pan: 0, tilt: -1 },
+		{ id: 'bottomRight', label: '↘', pan: diagonalSpeed, tilt: -diagonalSpeed },
 	]
 	const deviceName = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 
@@ -818,8 +1079,8 @@ function addPTZZoomPresets(
 	deviceId: number,
 ) {
 	const zoomDirections = [
-		{ id: 'in', label: '➕', zoom: 0.5 },
-		{ id: 'out', label: '➖', zoom: -0.5 },
+		{ id: 'in', label: '+', zoom: 1 },
+		{ id: 'out', label: '-', zoom: -1 },
 	]
 	const deviceName = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 

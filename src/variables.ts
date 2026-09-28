@@ -1,4 +1,5 @@
 import type { JsonValue } from '@companion-module/base'
+import { readFileSync } from 'node:fs'
 import type { MiruSuiteModuleInstance } from './main.js'
 import { getInputComponentType } from './scripts/helpers.js'
 
@@ -12,6 +13,10 @@ export function UpdateVariableDefinitions(self: MiruSuiteModuleInstance): void {
 		live_inputs: { name: 'Live inputs' },
 		dominant_speaker_override: { name: 'Dominant speaker override' },
 		autocut_active: { name: 'AutoCut active' },
+		manual_move_speed: { name: 'Manual camera movement speed (%)' },
+	}
+	for (const direction of ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']) {
+		definitions[`ptz_arrow_${direction}`] = { name: `PTZ arrow graphic: ${direction.toUpperCase()}` }
 	}
 
 	for (const device of self.store.getDevices()) {
@@ -34,7 +39,17 @@ export function UpdateVariableDefinitions(self: MiruSuiteModuleInstance): void {
 	}
 
 	self.setVariableDefinitions(definitions)
-	self.setVariableValues(buildVariableValues(self))
+	if (!self.ptzArrowImagesInitialized) {
+		const arrowValues: Record<string, string> = {}
+		for (const direction of ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']) {
+			const base64 = readFileSync(new URL(`./static/arrows/${direction}.png`, import.meta.url)).toString('base64')
+			arrowValues[`ptz_arrow_${direction}`] = `data:image/png;base64,${base64}`
+		}
+		self.setVariableValues({ ...buildVariableValues(self), ...arrowValues })
+		self.ptzArrowImagesInitialized = true
+	} else {
+		self.setVariableValues(buildVariableValues(self))
+	}
 }
 
 export function UpdateVariableValues(self: MiruSuiteModuleInstance): void {
@@ -56,6 +71,7 @@ function buildVariableValues(self: MiruSuiteModuleInstance): Record<string, Json
 		live_inputs: liveInputs.join(', '),
 		dominant_speaker_override: self.store.getDominantSpeakerOverride() ?? -1,
 		autocut_active: self.store.isAutoCutRunning(),
+		manual_move_speed: `${Math.round(self.manualMoveSpeed * 100)}%`,
 	}
 
 	for (const device of devices) {
@@ -72,7 +88,7 @@ function buildVariableValues(self: MiruSuiteModuleInstance): Record<string, Json
 		values[`${prefix}_switcher_input`] = device.switcherInput ?? ''
 		values[`${prefix}_live`] =
 			device.switcherInput !== undefined && device.switcherInput !== null && liveInputs.includes(device.switcherInput)
-		values[`${prefix}_director_state`] = directorId ? device.feedback?.[directorId]?.state ?? 'OFF' : 'OFF'
+		values[`${prefix}_director_state`] = directorId ? (device.feedback?.[directorId]?.state ?? 'OFF') : 'OFF'
 		values[`${prefix}_active_preset_id`] = activePreset?.id ?? -1
 		values[`${prefix}_active_preset_name`] = activePresetEntity?.name ?? ''
 		values[`${prefix}_tracking_mode`] = personTracker?.trackingMode ?? ''

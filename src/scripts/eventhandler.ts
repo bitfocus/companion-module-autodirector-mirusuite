@@ -51,20 +51,7 @@ export class EventHandler {
 					await this.self.updateConfiguration()
 					break
 				case 'COMPONENTS_UPDATED': {
-					if (!this.self.store.hasConfiguration) {
-						await this.self.updateConfiguration()
-						break
-					}
-					const definitionsChanged = await this.self.store.loadDevices()
-					if (definitionsChanged) this.self.updateDefinitions()
-					this.self.updateVariableValues()
-					this.self.checkFeedbacks(
-						'shotSize',
-						'trackingMode',
-						'enabledComponentType',
-						'directorStatus',
-						'vMixFramerEnabled',
-					)
+					await this.self.updateConfiguration()
 					break
 				}
 				case 'ACTIVE_PRESET_UPDATED':
