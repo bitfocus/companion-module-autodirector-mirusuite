@@ -1,4 +1,4 @@
-import { CompanionFeedbackAdvancedEvent, DropdownChoice } from '@companion-module/base'
+import { DropdownChoice } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from './main.js'
 import {
 	getDeviceSelector,
@@ -8,23 +8,11 @@ import {
 	getPresetChoices,
 	isPresetActive,
 	getDeviceIdToSwitcherInputMap,
-	isPresetLive,
 	isDeviceLive,
 	isInputLive,
-	getDisplayableDeviceNamesFromPreset,
 	createDeviceOptions,
 	getComponentsOfType,
 } from './scripts/helpers.js'
-import {
-	AutoConfiguredButton,
-	getAutoBankButtons,
-	getFilteredPresets,
-	getIndexOfButton,
-	getPresetToButton,
-	isDisplayDeviceName,
-} from './scripts/autolearning.js'
-import Jimp from 'jimp'
-import { getColorByInstrument } from './scripts/instrumentcolors.js'
 import { type ComponentState } from './api/types.js'
 
 export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
@@ -36,7 +24,6 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const deviceOptions = videoDeviceChoices.concat(audioDeviceChoices)
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceChoices)
 	const deviceId2SwitcherInput = getDeviceIdToSwitcherInputMap(self)
-	const presets = store.getPresets()
 	self.setFeedbackDefinitions({
 		enabledComponentType: {
 			name: 'Component Type Enabled',
@@ -79,6 +66,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			description:
 				'Turns green when the director is running, yellow when in warning state, and red when in error state. To select a device, you first need to create a device in MiruSuite and add a video input to it. This action needs a director be installed on the device.',
 			options: [getDeviceSelector(self, videoDeviceChoices)],
+			affectedProperties: ['bgcolor', 'color'],
 			callback: async (feedback) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
@@ -133,6 +121,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				getFaceSelector(self, faceChoices),
 				getDeviceSelector(self, videoDeviceChoices),
 			],
+			affectedProperties: ['bgcolor', 'color', 'png64'],
 			callback: async (feedback, _) => {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
@@ -218,131 +207,6 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				return isPresetActive(self, presetId)
 			},
 		},
-		learnMode: {
-			name: 'Learn Mode',
-			type: 'advanced',
-			options: [],
-			callback: async (event) => {
-				self.log('debug', 'Learn Mode feedback')
-				const learnMode = self.getVariableValue('learningMode') === event.controlId
-				const learnedButtonsCount = getAutoBankButtons(event.controlId).length
-				const filteredPresetsCount = getFilteredPresets(presets, event.controlId).length
-				const numberText = '(' + filteredPresetsCount + '/' + learnedButtonsCount + ')'
-				self.log('debug', 'Learn Mode feedback: ' + learnMode + ' ' + numberText)
-				if (learnMode) {
-					return {
-						bgcolor: 0x012bfc, // blue
-						color: 0xfffff,
-						text: 'Learning Save? ' + numberText,
-					}
-				} else {
-					if (learnedButtonsCount < filteredPresetsCount) {
-						return {
-							bgcolor: 0xe6d700, // yellow
-							color: 0xfffff,
-							text: 'Learn Presets ' + numberText,
-						}
-					} else {
-						return {
-							bgcolor: 0x002800,
-							color: 0xfffff,
-							text: 'Learn Presets ' + numberText,
-						}
-					}
-				}
-			},
-		},
-		autoPreset: {
-			name: 'Auto Preset',
-			type: 'advanced',
-			options: [],
-			callback: async (feedback, _) => {
-				const thisButton: AutoConfiguredButton = {
-					id: feedback.controlId,
-				}
-				const preset = getPresetToButton(presets, thisButton)
-				let presetLabel = ''
-				if (preset) {
-					presetLabel = preset?.name ?? 'Unknown'
-					if (isDisplayDeviceName(thisButton)) {
-						presetLabel += '\n(' + getDisplayableDeviceNamesFromPreset(preset, videoDeviceChoices) + ')'
-					}
-				}
-				const [index, bank] = getIndexOfButton(thisButton)
-				const learningMode = self.getVariableValue('learningMode')
-				if (learningMode != 'disabled') {
-					// LEARNING MODE
-					if (index > -1) {
-						if (bank == learningMode) {
-							// learned for this bank
-							return {
-								bgcolor: 0x00ff00,
-								color: 0x000000,
-								text: '#' + index,
-							}
-						} else {
-							// learned for another bank
-							return {
-								bgcolor: 0xffff00,
-								color: 0x000000,
-								text: 'Overwrite?',
-							}
-						}
-					} else {
-						return {
-							bgcolor: 0xff0000,
-							color: 0xfffff,
-							text: 'Learning',
-						}
-					}
-				} else {
-					// LIVE MODE
-					if (index > -1) {
-						if (preset == undefined) {
-							return await displayLOGO(feedback)
-						} else {
-							const active = isPresetActive(self, Number(preset.id))
-							const live = isPresetLive(self, deviceId2SwitcherInput, presets, Number(preset.id))
-							if (active) {
-								if (live) {
-									// dark red bg, grey text
-									return {
-										bgcolor: 0x640000,
-										color: 0x969696,
-										text: presetLabel,
-									}
-								} else {
-									// red bg, white text
-									return {
-										bgcolor: 0xff0000,
-										color: 0xfffff,
-										text: presetLabel,
-									}
-								}
-							} else {
-								if (live) {
-									// black bg, grey text
-									return {
-										bgcolor: getColorByInstrument(preset?.metadata?.instrument ?? 'Unknown'),
-										color: 0x8c8c8c,
-										text: presetLabel,
-									}
-								} else {
-									// black bg, white text
-									return {
-										bgcolor: getColorByInstrument(preset?.metadata?.instrument ?? 'Unknown'),
-										color: 0xfffff,
-										text: presetLabel,
-									}
-								}
-							}
-						}
-					} else {
-						return await displayLOGO(feedback)
-					}
-				}
-			},
-		},
 		liveDevice: {
 			name: 'Live Device',
 			type: 'boolean',
@@ -423,22 +287,4 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			},
 		},
 	})
-}
-async function displayLOGO(feedback: CompanionFeedbackAdvancedEvent) {
-	const img = await Jimp.read('dist/static/icon.png')
-	const png64 = await img
-		?.scaleToFit(feedback.image?.width ?? 72, feedback.image?.height ?? 72)
-		.getBase64Async('image/png')
-	if (png64 == undefined) {
-		return {
-			text: 'Auto Preset',
-			bgcolor: 0x000000,
-			color: 0xfffff,
-		}
-	} else {
-		return {
-			png64,
-			text: '',
-		}
-	}
 }

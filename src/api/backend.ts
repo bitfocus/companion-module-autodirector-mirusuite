@@ -34,13 +34,21 @@ export default class Backend {
 			this.self.log('debug', `Setting up backend for base url ${this.baseUrl}`)
 			// We override the fetch function to update connection status and throw in case of errors
 			const checkedFetch: typeof fetch = async (input, init) => {
-				const response = await fetch(input, init)
-				if (!response.ok) {
+				try {
+					const response = await fetch(input, init)
+					if (!response.ok) {
+						throw new Error(`MiruSuite returned ${response.status} ${response.statusText}`)
+					}
+					this.self.connectionState = 'Connected'
+					this.self.updateStatus(InstanceStatus.Ok)
+					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
+					return response
+				} catch (error) {
+					this.self.connectionState = 'Disconnected'
 					this.self.updateStatus(InstanceStatus.ConnectionFailure)
-					this.self.log('error', 'Backend returned code ' + response.status + ' - ' + response.statusText)
+					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
+					throw error
 				}
-				this.self.updateStatus(InstanceStatus.Ok)
-				return response
 			}
 			let headers = undefined
 			if (username && password) {
@@ -105,7 +113,7 @@ export default class Backend {
 			return
 		}
 		const framer = device.components?.vMixFramer
-		if (framer === null) {
+		if (framer == null) {
 			return
 		}
 		enabled ??= device.feedback?.['FRAMER_VMIX']?.state !== 'RUNNING'
@@ -120,12 +128,11 @@ export default class Backend {
 		}
 		const settings = device.components?.headTrackingDirector
 		if (settings !== null && settings !== undefined) {
-			settings.targetShotSize = shotSize
 			await this.client.PUT('/api/devices/{id}', {
 				params: { path: { id: device.id ?? -1 } },
 				body: {
 					patch: {
-						headTrackingDirector: settings,
+						headTrackingDirector: { ...settings, targetShotSize: shotSize },
 					},
 				},
 			})
@@ -183,11 +190,9 @@ export default class Backend {
 		}
 		const personTracker = device.components?.personTracker
 		if (personTracker !== undefined && personTracker !== null) {
-			personTracker.trackingMode = mode
-			personTracker.targetFaceId = targetFaceId
 			await this.client.PUT('/api/devices/{id}', {
 				params: { path: { id: device.id ?? -1 } },
-				body: { patch: { personTracker } },
+				body: { patch: { personTracker: { ...personTracker, trackingMode: mode, targetFaceId } } },
 			})
 		}
 	}

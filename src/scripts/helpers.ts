@@ -1,8 +1,11 @@
 import { DropdownChoice } from '@companion-module/base'
 import type { ComponentFeedback, ComponentId, Device, PresetEntity, ShotSize } from '../api/types.js'
 import { MiruSuiteModuleInstance } from '../main.js'
-import { getInstrumentGroups } from './metadata.js'
 export type DeviceId2SwitcherInput = { [key: number]: string }
+
+const unavailableDeviceChoice: DropdownChoice = { id: -1, label: 'No devices available' }
+const unavailablePresetChoice: DropdownChoice = { id: -1, label: 'No presets available' }
+const unavailableFaceChoice: DropdownChoice = { id: -1, label: 'No faces available' }
 
 /**
  * Create a list of choices for selecting a face
@@ -101,7 +104,7 @@ export function getPresetChoices(
 	videoDeviceChoices: DropdownChoice[],
 ): DropdownChoice[] {
 	try {
-		const presets = self.store.getPresets()
+		const presets = [...self.store.getPresets()]
 		presets.sort((a, b) => {
 			const deviceIdA = a.commands?.map((command) => command.deviceId)[0] ?? -1
 			const deviceIdB = b.commands?.map((command) => command.deviceId)[0] ?? -1
@@ -112,7 +115,7 @@ export function getPresetChoices(
 			presetChoices.push({
 				id: preset.id ?? -1,
 				label:
-					(preset.name ?? 'Unkown name') +
+					(preset.name ?? 'Unknown name') +
 					'\n (' +
 					getDisplayableDeviceNamesFromPreset(preset, videoDeviceChoices) +
 					')',
@@ -125,97 +128,44 @@ export function getPresetChoices(
 	}
 }
 
-export function getPresetSelector(self: MiruSuiteModuleInstance, presetChoices: DropdownChoice[]): any {
-	const offlineMode = self.getVariableValue('offlineMode') === 'true'
-	if (offlineMode) {
-		return {
-			id: 'preset',
-			type: 'number',
-			label: 'Preset',
-			default: 0,
-			min: 0,
-			max: 10000,
-		}
-	} else {
-		return {
-			id: 'preset',
-			type: 'dropdown',
-			label: 'Preset',
-			default: presetChoices[0]?.id ?? -1,
-			choices: presetChoices,
-		}
+export function getPresetSelector(_self: MiruSuiteModuleInstance, presetChoices: DropdownChoice[]): any {
+	const choices = presetChoices.length > 0 ? presetChoices : [unavailablePresetChoice]
+	return {
+		id: 'preset',
+		type: 'dropdown',
+		label: 'Preset',
+		default: choices[0].id,
+		choices,
 	}
 }
 
 export function getDeviceSelector(
-	self: MiruSuiteModuleInstance,
+	_self: MiruSuiteModuleInstance,
 	deviceChoices: DropdownChoice[],
 	multi = false,
 	title = 'Device',
 ): any {
-	const offlineMode = self.getVariableValue('offlineMode') === 'true'
-	if (offlineMode || deviceChoices.length === 0) {
-		let suffix = ''
-		if (multi) {
-			suffix = ' (comma separated)'
-		}
-		return {
-			id: multi ? 'deviceIds' : 'deviceId',
-			type: 'textinput',
-			label: title + suffix,
-			default: '',
-			tooltip: 'To select a device, you first need to create a device in MiruSuite and add a video input to it.',
-		}
-	} else {
-		return {
-			id: multi ? 'deviceIds' : 'deviceId',
-			type: multi ? 'multidropdown' : 'dropdown',
-			label: title,
-			default: deviceChoices[0]?.id ?? -1,
-			choices: deviceChoices,
-			tooltip:
-				'You can select multiple devices. To make a device available, you first need to create a device in MiruSuite and add a video input to it.',
-		}
-	}
-}
-
-export function getFaceSelector(self: MiruSuiteModuleInstance, faceChoices: DropdownChoice[]): any {
-	const offlineMode = self.getVariableValue('offlineMode') === 'true'
-	if (offlineMode) {
-		return {
-			id: 'person',
-			type: 'number',
-			label: 'Person',
-			default: 0,
-			min: 0,
-			max: 10000,
-			isVisible: (options: any) => options.mode == 'SINGLE',
-		}
-	} else {
-		return {
-			id: 'person',
-			type: 'dropdown',
-			label: 'Person',
-			default: faceChoices[0]?.id ?? -1,
-			choices: faceChoices,
-			isVisible: (options: any) => options.mode == 'SINGLE',
-		}
-	}
-}
-
-export function getInstrumentGroupSelector(): any {
-	const instrumentGroupChoices: DropdownChoice[] = []
-	instrumentGroupChoices.push({ id: 'All', label: 'All' })
-	for (const instrumentGroup of getInstrumentGroups()) {
-		instrumentGroupChoices.push({ id: instrumentGroup, label: instrumentGroup })
-	}
+	const choices = deviceChoices.length > 0 ? deviceChoices : [unavailableDeviceChoice]
 	return {
-		id: 'instrumentGroups',
-		type: 'multidropdown',
-		label: 'Instrument groups',
-		default: ['All'],
-		choices: instrumentGroupChoices,
-		tooltip: 'If you like to filter for available instrument groups, select them here.',
+		id: multi ? 'deviceIds' : 'deviceId',
+		type: multi ? 'multidropdown' : 'dropdown',
+		label: title,
+		default: multi ? [] : choices[0].id,
+		choices,
+		tooltip:
+			'You can select multiple devices. To make a device available, you first need to create a device in MiruSuite and add a video input to it.',
+	}
+}
+
+export function getFaceSelector(_self: MiruSuiteModuleInstance, faceChoices: DropdownChoice[]): any {
+	const choices = faceChoices.length > 0 ? faceChoices : [unavailableFaceChoice]
+	return {
+		id: 'person',
+		type: 'dropdown',
+		label: 'Person',
+		default: choices[0].id,
+		choices,
+		isVisibleExpression: '$(options:mode) == "SINGLE"',
 	}
 }
 

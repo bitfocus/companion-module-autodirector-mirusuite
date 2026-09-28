@@ -1,113 +1,113 @@
-import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
-import { GetConfigFields, type ModuleConfig } from './config.js'
-import { UpdateVariableDefinitions } from './variables.js'
-import { UpgradeScripts } from './upgrades.js'
-import { UpdateActions } from './actions.js'
-import { UpdateFeedbacks } from './feedbacks.js'
+import { InstanceBase, InstanceStatus, type SomeCompanionConfigField } from '@companion-module/base'
 import Backend from './api/backend.js'
+import { UpdateActions } from './actions.js'
+import { GetConfigFields, type ModuleConfig, type ModuleSecrets } from './config.js'
+import { UpdateFeedbacks } from './feedbacks.js'
+import type { MiruSuiteInstanceTypes } from './instance-types.js'
 import { UpdatePresets } from './presets.js'
-import setupEventHandler from './scripts/eventhandler.js'
-import { updateAutoConfiguredButtons } from './scripts/autolearning.js'
+import { EventHandler } from './scripts/eventhandler.js'
 import { Store } from './scripts/store.js'
+import { UpdateVariableDefinitions, UpdateVariableValues } from './variables.js'
 
-export class MiruSuiteModuleInstance extends InstanceBase<ModuleConfig> {
-	config!: ModuleConfig // Setup in init()
-
+export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes> {
+	config!: ModuleConfig
+	secrets!: ModuleSecrets
 	backend: Backend | null = null
 	store: Store = new Store(this)
+	connectionState = 'Connecting'
+	private eventHandler: EventHandler | null = null
 
 	constructor(internal: unknown) {
 		super(internal)
 	}
 
-	async init(config: ModuleConfig): Promise<void> {
-		this.log('debug', 'Initializing')
+	async init(config: ModuleConfig, _isFirstInit: boolean, secrets: ModuleSecrets = {}): Promise<void> {
 		this.config = config
+		this.secrets = secrets
+		await this.connect()
+	}
+
+	async destroy(): Promise<void> {
+		this.eventHandler?.close()
+		this.eventHandler = null
+		this.backend = null
+	}
+
+	async configUpdated(config: ModuleConfig, secrets: ModuleSecrets = {}): Promise<void> {
+		this.config = config
+		this.secrets = secrets
+		await this.connect()
+	}
+
+	private async connect(): Promise<void> {
+		this.eventHandler?.close()
+		this.eventHandler = null
 		this.backend = new Backend(this)
-		await this.backend.setup(config.host, config.port, config.username, config.password)
-		this.updateVariableDefinitions() // export variable definitions
+		this.connectionState = 'Connecting'
+		await this.backend.setup(this.config.host, this.config.port, this.config.username, this.secrets.password ?? '')
+
 		try {
 			await this.updateConfiguration()
-			setupEventHandler(this, config.host, config.port)
-		} catch (e) {
-			this.log('error', 'Error updating configuration - ' + e)
+		} catch (error) {
+			this.log('error', `Error loading MiruSuite configuration: ${String(error)}`)
+			this.connectionState = 'Disconnected'
+			this.updateStatus(InstanceStatus.ConnectionFailure)
+			if (this.store.hasConfiguration) this.updateVariableValues()
 		}
-	}
 
-	// When module gets deleted
-	async destroy(): Promise<void> {
-		this.log('debug', 'Destroying module')
-	}
-
-	async configUpdated(config: ModuleConfig): Promise<void> {
-		this.log('debug', 'Config updated')
-		if (config.host !== this.config.host || config.port !== this.config.port) {
-			await this.init(config)
-		}
+		this.eventHandler = new EventHandler(
+			this,
+			this.config.host,
+			this.config.port,
+			this.config.username,
+			this.secrets.password ?? '',
+		)
+		this.eventHandler.connect()
 	}
 
 	async updateConfiguration(): Promise<void> {
-		this.log('debug', 'Updating configuration with host ' + this.config.host + ' and port ' + this.config.port)
-		let offlineMode = false
+		if (!this.backend) throw new Error('Backend not initialized')
 		try {
-			if (this.backend === null) {
-				this.log('error', 'Backend not initialized')
-				return
-			}
-			await this.store.loadDevices()
-			await this.store.loadFaces()
-			await this.store.loadActivePresetMap()
-			await this.store.loadPresets()
-			await this.store.loadLiveInputs()
-			await this.store.loadAutoCutEnabled()
-			updateAutoConfiguredButtons(this)
-			this.updateStatus(InstanceStatus.Ok)
+			await this.store.loadConfiguration()
 		} catch (error) {
-			this.log('error', 'Error fetching available fields - ' + error)
-			offlineMode = true
-			this.log('warn', 'Running in offline mode')
+			this.connectionState = 'Disconnected'
 			this.updateStatus(InstanceStatus.ConnectionFailure)
+			if (this.store.hasConfiguration) this.updateVariableValues()
+			throw error
 		}
-		this.setVariableValues({
-			offlineMode: JSON.stringify(offlineMode),
-			learningMode: 'disabled',
-		})
-		this.updateActions() // export actions
-		this.updateFeedbacks() // export feedbacks
-		this.updatePresets() // export presets
+		this.connectionState = 'Connected'
+		this.updateStatus(InstanceStatus.Ok)
+		this.updateDefinitions()
+		this.updateVariableValues()
 		this.checkFeedbacks(
-			'autoPreset',
-			'learnMode',
 			'enabledComponentType',
 			'directorStatus',
 			'trackingMode',
 			'shotSize',
+			'activePreset',
 			'liveDevice',
 			'liveInput',
 			'autoCut',
+			'dominantSpeakerOverride',
+			'vMixFramerEnabled',
 		)
 	}
 
-	// Return config fields for web config
+	updateDefinitions(): void {
+		UpdateActions(this)
+		UpdateFeedbacks(this)
+		UpdateVariableDefinitions(this)
+		UpdatePresets(this)
+	}
+
+	updateVariableValues(): void {
+		UpdateVariableValues(this)
+	}
+
 	getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields()
 	}
-
-	updateActions(): void {
-		UpdateActions(this)
-	}
-
-	updateFeedbacks(): void {
-		UpdateFeedbacks(this)
-	}
-
-	updateVariableDefinitions(): void {
-		UpdateVariableDefinitions(this)
-	}
-
-	updatePresets(): void {
-		UpdatePresets(this)
-	}
 }
 
-runEntrypoint(MiruSuiteModuleInstance, UpgradeScripts)
+export default MiruSuiteModuleInstance
+export { UpgradeScripts } from './upgrades.js'

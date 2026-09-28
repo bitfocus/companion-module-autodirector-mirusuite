@@ -1,5 +1,6 @@
-import { CompanionPresetDefinitions, DropdownChoice, combineRgb } from '@companion-module/base'
+import { DropdownChoice, combineRgb, type CompanionPresetDefinitions as ModernPresetDefinitions, type CompanionPresetSection } from '@companion-module/base'
 import { MiruSuiteModuleInstance } from './main.js'
+import type { MiruSuiteInstanceTypes } from './instance-types.js'
 import type { ShotSize, TrackingMode } from './api/types.js'
 import {
 	createDeviceOptions,
@@ -11,6 +12,9 @@ import {
 	getDeviceById,
 	hasPTZController,
 } from './scripts/helpers.js'
+
+type CompanionPresetDefinitions = Record<string, any>
+const LARGE_PRESET_ICONS = new Set(['+', '-', '−', '↖', '⬆', '↗', '⬅', '➡', '↙', '⬇', '↘', '➕', '➖', '↑', '↓', '←', '→', '↔', '↕', '⏻'])
 
 export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	const faceChoices: DropdownChoice[] = createFaceOptions(self)
@@ -25,9 +29,6 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	)
 	const presets: CompanionPresetDefinitions = {}
 
-	if (videoDeviceChoices.length === 0) {
-		videoDeviceChoices.push({ id: '0', label: 'Dummy device' })
-	}
 	for (const choice of videoDeviceChoices) {
 		const deviceId = Number(choice.id)
 		const videoDevice = self.store.getDeviceById(deviceId)
@@ -87,12 +88,222 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	for (const devicePreset of devicePresets) {
 		addPlayPresetPreset(presets, devicePreset)
 	}
-	addLearningModePreset(presets)
-	addAutoPresetButton(presets)
-	addClearAllLearnedButtonData(presets)
 	addTriggerAutoCut(presets)
 	addConfigureTargetShotSizes(presets)
-	self.setPresetDefinitions(presets)
+	const { structure, definitions } = convertLegacyPresets(self, presets)
+	self.setPresetDefinitions(structure, definitions)
+}
+
+function convertLegacyPresets(
+	self: MiruSuiteModuleInstance,
+	legacyPresets: CompanionPresetDefinitions,
+): { structure: CompanionPresetSection<MiruSuiteInstanceTypes>[]; definitions: ModernPresetDefinitions<MiruSuiteInstanceTypes> } {
+	type Target = { id: number; sectionName: string; name: string }
+	type Group = { id: string; type: 'simple'; name: string; presets: string[] }
+	type Section = { id: string; name: string; groups: Map<string, Group> }
+
+	const videoDevices = new Map(
+		self.store.getVideoDevices().flatMap((device) =>
+			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'Video', name: device.name ?? `Device ${device.id}` } as Target]],
+		),
+	)
+	const audioDevices = new Map(
+		self.store.getAudioDevices().flatMap((device) =>
+			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'Audio', name: device.name ?? `Device ${device.id}` } as Target]],
+		),
+	)
+	const framerDevices = new Map(
+		self.store.getVMixFramerDevices().flatMap((device) =>
+			device.id === undefined ? [] : [[device.id, { id: device.id, sectionName: 'vMix Framer', name: device.name ?? `Device ${device.id}` } as Target]],
+		),
+	)
+	const allDeviceMaps = [videoDevices, audioDevices, framerDevices]
+	const sections = new Map<string, Section>()
+	const definitions: ModernPresetDefinitions<MiruSuiteInstanceTypes> = {}
+
+	for (const [presetId, legacy] of Object.entries(legacyPresets)) {
+		if (!legacy || legacy.type !== 'button') continue
+		const category = String(legacy.category ?? 'General')
+		const target = getLegacyPresetTarget(self, presetId, legacy, category, allDeviceMaps)
+		const sectionName = target ? `${target.sectionName}: ${target.name}` : 'Module-wide'
+		const sectionId = target ? `device-${target.sectionName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${target.id}` : 'module-wide'
+		const displayGroup = category === 'Presets' ? 'Saved Presets' : category
+		const groupId = `${sectionId}-${displayGroup.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+		let section = sections.get(sectionId)
+		if (!section) {
+			section = { id: sectionId, name: sectionName, groups: new Map() }
+			sections.set(sectionId, section)
+		}
+		let group = section.groups.get(groupId)
+		if (!group) {
+			group = { id: groupId, type: 'simple', name: displayGroup, presets: [] }
+			section.groups.set(groupId, group)
+		}
+		group.presets.push(presetId)
+		definitions[presetId] = createModernPreset(legacy, target?.name)
+	}
+
+	const structure: CompanionPresetSection<MiruSuiteInstanceTypes>[] = [...sections.values()].map((section) => ({
+		id: section.id,
+		name: section.name,
+		definitions: [...section.groups.values()],
+	}))
+	return { structure, definitions }
+}
+
+function getLegacyPresetTarget(
+	self: MiruSuiteModuleInstance,
+	presetId: string,
+	legacy: any,
+	category: string,
+	deviceMaps: Map<number, { id: number; sectionName: string; name: string }>[],
+): { id: number; sectionName: string; name: string } | undefined {
+	const [videoDevices, audioDevices, framerDevices] = deviceMaps
+	const actionDeviceId = findOptionValue(legacy.steps, 'deviceId')
+	if (actionDeviceId !== undefined) {
+		for (const map of deviceMaps) {
+			const target = map.get(actionDeviceId)
+			if (target) return target
+		}
+	}
+
+	if (presetId.startsWith('playPreset-')) {
+		const preset = self.store.getPresetById(Number(presetId.slice('playPreset-'.length)))
+		const ids = [...new Set((preset?.commands ?? []).map((command) => command.deviceId).filter((id): id is number => id !== undefined))]
+		return ids.length === 1 ? videoDevices?.get(ids[0]) : undefined
+	}
+
+	const match = presetId.match(/-(\d+)$/)
+	const suffixId = match ? Number(match[1]) : undefined
+	if (category === 'vMix Framer' && suffixId !== undefined) return framerDevices?.get(suffixId)
+	if (category === 'AutoCut' && suffixId !== undefined) return audioDevices?.get(suffixId)
+	if (suffixId !== undefined) {
+		for (const map of deviceMaps) {
+			const target = map.get(suffixId)
+			if (target) return target
+		}
+	}
+	return undefined
+}
+
+function findOptionValue(value: any, key: string): number | undefined {
+	if (!value || typeof value !== 'object') return undefined
+	if (!Array.isArray(value) && Object.prototype.hasOwnProperty.call(value, key)) {
+		const parsed = Number(value[key])
+		if (Number.isFinite(parsed)) return parsed
+	}
+	for (const child of Object.values(value)) {
+		const found = findOptionValue(child, key)
+		if (found !== undefined) return found
+	}
+	return undefined
+}
+
+function createModernPreset(legacy: any, deviceName?: string): any {
+	const simple = { ...legacy, type: 'simple' }
+	delete simple.category
+	if (simple.options?.rotaryActions !== undefined) {
+		const { rotaryActions: _rotaryActions, ...supportedOptions } = simple.options
+		simple.options = supportedOptions
+		if (Object.keys(supportedOptions).length === 0) delete simple.options
+	}
+
+	const iconLayout = getIconLayout(String(legacy.style?.text ?? ''), deviceName)
+	if (!iconLayout) return simple
+
+	const textColor = legacy.style?.color ?? combineRgb(255, 255, 255)
+	const backgroundColor = legacy.style?.bgcolor ?? combineRgb(0, 0, 0)
+	const layered = {
+		type: 'layered',
+		name: legacy.name,
+		canvas: { decoration: 'none' },
+		elements: [
+			{ type: 'box', id: 'background', x: 0, y: 0, width: 100, height: 100, color: backgroundColor },
+			{
+				type: 'text',
+				id: 'icon',
+				x: 3,
+				y: 0,
+				width: 94,
+				height: iconLayout.label ? 62 : 78,
+				text: iconLayout.icon,
+				fontsize: 58,
+				fontsizeAllowShrink: false,
+				weight: 'bold',
+				halign: 'center',
+				valign: 'center',
+				color: textColor,
+			},
+			{
+				type: 'text',
+				id: 'label',
+				x: 4,
+				y: 62,
+				width: 92,
+				height: 19,
+				text: iconLayout.label,
+				fontsize: 15,
+				fontsizeAllowShrink: true,
+				halign: 'center',
+				valign: 'center',
+				color: textColor,
+			},
+			{
+				type: 'text',
+				id: 'device',
+				x: 4,
+				y: 82,
+				width: 92,
+				height: 16,
+				text: iconLayout.device,
+				fontsize: 10,
+				fontsizeAllowShrink: true,
+				halign: 'center',
+				valign: 'center',
+				color: textColor,
+			},
+		],
+		steps: legacy.steps,
+		feedbacks: (legacy.feedbacks ?? []).map((feedback: any) => {
+			const styleOverrides: any[] = []
+			if (feedback.style?.bgcolor !== undefined) {
+				styleOverrides.push({ elementId: 'background', elementProperty: 'color', override: feedback.style.bgcolor })
+			}
+			if (feedback.style?.color !== undefined) {
+				for (const elementId of ['icon', 'label', 'device']) {
+					styleOverrides.push({ elementId, elementProperty: 'color', override: feedback.style.color })
+				}
+			}
+			const { style: _style, ...definition } = feedback
+			return { ...definition, styleOverrides }
+		}),
+	}
+	return { type: 'alternatives', variants: [layered, simple] }
+}
+
+function getIconLayout(text: string, deviceName?: string): { icon: string; label: string; device: string } | undefined {
+	const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
+	if (lines.length === 0) return undefined
+	let iconLine = lines[0].replace(/\uFE0F/g, '')
+	let prefixLabel = ''
+	if (iconLine.startsWith('Target ')) {
+		prefixLabel = 'Target'
+		iconLine = iconLine.slice('Target '.length).replace(/\uFE0F/g, '')
+	} else {
+		const prefixIcon = [...LARGE_PRESET_ICONS].find((icon) => iconLine.startsWith(`${icon} `))
+		if (prefixIcon) {
+			prefixLabel = iconLine.slice(prefixIcon.length).trim()
+			iconLine = prefixIcon
+		}
+	}
+	if (!LARGE_PRESET_ICONS.has(iconLine)) return undefined
+	const device = deviceName ?? ''
+	const labelLines = lines.slice(1).filter((line) => {
+		const cleaned = line.replace(/^\(|\)$/g, '')
+		return cleaned !== device && cleaned.length > 0
+	})
+	if (prefixLabel) labelLines.unshift(prefixLabel)
+	return { icon: iconLine, label: labelLines.join(' '), device }
 }
 
 function addShotSizePreset(
@@ -500,107 +711,6 @@ function addReApplyPreset(presets: CompanionPresetDefinitions, videoDeviceChoice
 						},
 					},
 				],
-			},
-		],
-		feedbacks: [],
-	}
-}
-
-function addLearningModePreset(presets: CompanionPresetDefinitions) {
-	presets['learnAutoButtons'] = {
-		type: 'button',
-		category: 'Auto Presets',
-		name: 'Learn Presets',
-		style: {
-			text: 'Learn Presets',
-			size: 'auto',
-			bgcolor: combineRgb(0, 0, 255),
-			color: combineRgb(255, 255, 255),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'learnAutoButtons',
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: 'learnMode',
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-				},
-			},
-		],
-	}
-}
-
-function addAutoPresetButton(presets: CompanionPresetDefinitions): CompanionPresetDefinitions {
-	presets['autoPreset'] = {
-		type: 'button',
-		category: 'Auto Presets',
-		name: 'Auto Preset Slot',
-		style: {
-			text: 'Auto Preset Slot',
-			size: 'auto',
-			bgcolor: combineRgb(0, 0, 0),
-			color: combineRgb(255, 255, 255),
-		},
-		steps: [
-			{
-				down: [],
-				up: [
-					{
-						actionId: 'playAutoPreset',
-						options: {},
-					},
-				],
-				1000: [
-					{
-						actionId: 'overwriteAutoPreset',
-						options: {},
-					},
-				],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: 'autoPreset',
-				options: {},
-				style: {
-					bgcolor: combineRgb(255, 0, 0),
-				},
-			},
-		],
-	}
-	return presets
-}
-
-function addClearAllLearnedButtonData(presets: CompanionPresetDefinitions) {
-	presets['clearAllAutoButtons'] = {
-		type: 'button',
-		category: 'Auto Presets',
-		name: 'Unlearn Presets',
-		style: {
-			text: 'Unlearn Presets',
-			size: 'auto',
-			bgcolor: combineRgb(255, 0, 0),
-			color: combineRgb(255, 255, 255),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'clearAllAutoButtons',
-						options: {},
-					},
-				],
-				up: [],
 			},
 		],
 		feedbacks: [],

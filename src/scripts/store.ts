@@ -12,6 +12,7 @@ export class Store {
 	private faces: FaceIdEntity[] = []
 	private autoCutEnabled = false
 	private dominantSpeakerOverride: number | null = null
+	private configurationLoaded = false
 
 	constructor(self: MiruSuiteModuleInstance) {
 		this.self = self
@@ -26,30 +27,62 @@ export class Store {
 
 	async loadDevices(): Promise<boolean> {
 		const data = await this.backend.loadDevices()
-		const newVideoDevices = this._getVideoDevicesFromData(data)
-			.map((device) => device.id + 'type: ' + getInputComponentType(device) + 'director: ' + getDirectorType(device))
-			.sort()
-		const oldVideoDevices = this.getVideoDevices()
-			.map(
-				(device) => device.id + 'components: ' + getInputComponentType(device) + 'director: ' + getDirectorType(device),
-			)
-			.sort()
-		this.self.log('debug', 'New video devices: ' + JSON.stringify(newVideoDevices))
-		this.self.log('debug', 'Old video devices: ' + JSON.stringify(oldVideoDevices))
-		const videoDevicesChanged = JSON.stringify(newVideoDevices) !== JSON.stringify(oldVideoDevices)
-		this.devices = data ?? []
-		return videoDevicesChanged
+		const oldSignature = this.getDefinitionSignature(this.devices)
+		const newSignature = this.getDefinitionSignature(data)
+		this.devices = data
+		return oldSignature !== newSignature
 	}
 
 	getDeviceById(id: number): Device | undefined {
 		return this.devices.find((device) => device.id === id)
 	}
 
-	getVideoDevices(): Device[] {
-		return this.devices.filter((device) => getInputComponentType(device) === 'VIDEO')
+	getDevices(): Device[] {
+		return this.devices
 	}
 
-	_getVideoDevicesFromData(_data: Device[] | undefined): Device[] {
+	get hasConfiguration(): boolean {
+		return this.configurationLoaded
+	}
+
+	async loadConfiguration(): Promise<boolean> {
+		const [devices, faces, activePresetMap, presets] = await Promise.all([
+			this.backend.loadDevices(),
+			this.backend.listFaces(),
+			this.backend.loadActivePresetMap(),
+			this.backend.listPresets(),
+		])
+		const [liveInputs, autoCutEnabled, dominantSpeakerOverride] = await Promise.allSettled([
+			this.backend.getLiveInputs(),
+			this.backend.isAutoCutRunning(),
+			this.backend.loadOverrideDominantSpeaker(),
+		])
+		const optionalRefreshes = [
+			['live inputs', liveInputs],
+			['AutoCut state', autoCutEnabled],
+			['dominant speaker override', dominantSpeakerOverride],
+		] as const
+		for (const [name, result] of optionalRefreshes) {
+			if (result.status === 'rejected') {
+				this.self.log('warn', `Could not refresh ${name}; keeping the last known value: ${String(result.reason)}`)
+			}
+		}
+		const oldSignature = this.getDefinitionSignature(this.devices)
+		const newSignature = this.getDefinitionSignature(devices)
+
+		// Commit only after every endpoint succeeds so a disconnect cannot publish a partial catalog.
+		this.devices = devices
+		this.faces = faces
+		this.activePresetMap = activePresetMap
+		this.presets = presets
+		if (liveInputs.status === 'fulfilled') this.liveInputs = liveInputs.value
+		if (autoCutEnabled.status === 'fulfilled') this.autoCutEnabled = autoCutEnabled.value
+		if (dominantSpeakerOverride.status === 'fulfilled') this.dominantSpeakerOverride = dominantSpeakerOverride.value
+		this.configurationLoaded = true
+		return oldSignature !== newSignature
+	}
+
+	getVideoDevices(): Device[] {
 		return this.devices.filter((device) => getInputComponentType(device) === 'VIDEO')
 	}
 
@@ -69,12 +102,20 @@ export class Store {
 		return this.activePresetMap
 	}
 
+	getActivePresetForDevice(deviceId: number): ActivePreset | undefined {
+		return this.activePresetMap[String(deviceId)]
+	}
+
 	async loadPresets(): Promise<void> {
 		this.presets = await this.backend.listPresets()
 	}
 
 	getPresets(): PresetEntity[] {
 		return this.presets
+	}
+
+	getPresetById(id: number): PresetEntity | undefined {
+		return this.presets.find((preset) => preset.id === id)
 	}
 
 	async loadLiveInputs(): Promise<void> {
@@ -107,5 +148,22 @@ export class Store {
 
 	getDominantSpeakerOverride(): number | null {
 		return this.dominantSpeakerOverride
+	}
+
+	private getDefinitionSignature(devices: Device[]): string {
+		return JSON.stringify(
+			devices
+				.map((device) => ({
+					id: device.id,
+					name: device.name,
+					inputType: getInputComponentType(device),
+					directorType: getDirectorType(device),
+					switcherInput: device.switcherInput,
+					hasController: Object.keys(device.components ?? {}).some((key) => key.toLowerCase().includes('controller')),
+					hasVMixFramer: Boolean(device.components?.vMixFramer),
+					hasAudioAutoCut: Boolean(device.components?.audioAutoCut),
+				}))
+				.sort((a, b) => (a.id ?? -1) - (b.id ?? -1)),
+		)
 	}
 }

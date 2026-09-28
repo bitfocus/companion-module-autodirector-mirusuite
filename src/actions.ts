@@ -5,23 +5,11 @@ import {
 	createDeviceOptions,
 	getDeviceSelector,
 	getFaceSelector,
-	getInstrumentGroupSelector,
 	getPresetSelector,
 	createFaceOptions,
 	getPresetChoices,
 	getPTZCapableDevices,
 } from './scripts/helpers.js'
-import {
-	AutoConfiguredButton,
-	addAutoButton as learnAutoButton,
-	clearLearnedButtons,
-	getIndexOfButton,
-	getPresetToButton,
-	setSelectedDevices,
-	clearAllAutoButtons,
-	setSelectedInstruments,
-	setDisplayDeviceName,
-} from './scripts/autolearning.js'
 
 export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const backend = self.backend
@@ -33,7 +21,6 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 	const audioDeviceOptions: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
 	const deviceOptions = [...videoDeviceOptions, ...audioDeviceOptions]
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceOptions)
-	const presets = store.getPresets()
 
 	self.setActionDefinitions({
 		setShotSize: {
@@ -241,122 +228,6 @@ export function UpdateActions(self: MiruSuiteModuleInstance): void {
 				const presetId = Number(event.options.preset)
 				self.log('info', 'Overwriting preset ' + presetId)
 				await backend?.overwritePreset(presetId)
-			},
-		},
-		learnAutoButtons: {
-			name: 'Learn Auto Preset Buttons',
-			description:
-				'1. Press this button to start learning. 2. Press your auto preset buttons in the order you want them to be used. 3. Press this button again to finish the learning. Available presets for the configured devices will be automatically arranged on the learned buttons. WARNING: When changing the configuration of this button, you will need to repeat the learning process.',
-			options: [
-				getDeviceSelector(self, videoDeviceOptions, true, 'Select devices'),
-				getInstrumentGroupSelector(),
-				{
-					id: 'displayName',
-					type: 'checkbox',
-					label: 'Display Device Names',
-					default: 'false',
-				},
-			],
-			async callback(event) {
-				if (self.getVariableValue('learningMode') === 'disabled') {
-					let devices: number[] = []
-					if (event.options.deviceIds instanceof String) {
-						devices = event.options.deviceIds.split(',').map((id) => Number(id.trim()))
-					} else if (Array.isArray(event.options.deviceIds)) {
-						devices = event.options.deviceIds.map((id) => Number(id))
-					} else {
-						self.log('warn', 'Empty or invalid deviceIds option for learnAutoButtons action')
-					}
-					self.log('debug', 'Learning auto preset buttons for ' + event.controlId)
-					self.log('debug', 'Selected devices: ' + JSON.stringify(devices))
-					if (devices.length === 0) {
-						self.log('warn', 'No devices selected')
-						return
-					}
-					self.setVariableValues({ learningMode: event.controlId })
-					clearLearnedButtons(self, event.controlId)
-					setSelectedDevices(self, event.controlId, devices)
-					setDisplayDeviceName(self, event.controlId, event.options.displayName == true)
-					const instrumentGroups =
-						Array.isArray(event.options.instrumentGroups) &&
-						event.options.instrumentGroups.map((group) => String(group))
-					if (!instrumentGroups || instrumentGroups.includes('All')) {
-						setSelectedInstruments(self, event.controlId, [])
-					} else {
-						setSelectedInstruments(self, event.controlId, instrumentGroups)
-					}
-					self.checkFeedbacks('learnMode', 'autoPreset')
-				} else {
-					self.log('debug', 'Stopping learning auto preset buttons for ' + event.controlId + '...')
-					self.setVariableValues({ learningMode: 'disabled' })
-					self.checkFeedbacks('learnMode', 'autoPreset')
-				}
-			},
-		},
-		playAutoPreset: {
-			name: 'Play Auto Preset',
-			description: 'Play the automatically linked preset',
-			options: [],
-			async callback(event) {
-				const thisButton: AutoConfiguredButton = {
-					id: event.controlId,
-				}
-				const [index, bank] = getIndexOfButton(thisButton)
-				const learningMode = String(self.getVariableValue('learningMode'))
-				if (learningMode != 'disabled') {
-					// Learning mode
-					if (index > -1 && bank === learningMode) {
-						// Already learned by this bank
-						return
-					}
-					learnAutoButton(self, learningMode, {
-						id: event.controlId,
-					})
-				} else {
-					self.log('info', 'Playing auto preset...')
-					const preset = getPresetToButton(presets, thisButton)
-					if (preset === undefined) {
-						self.log('warn', 'Preset not set for button ' + index)
-						return
-					}
-					const presetId = Number(preset?.id ?? -1)
-					await backend?.playPreset(presetId, false)
-				}
-				self.checkFeedbacks('autoPreset', 'learnMode')
-			},
-		},
-		overwriteAutoPreset: {
-			name: 'Overwrite Auto Preset',
-			description: 'Overwrite the automatically linked preset with the current position',
-			options: [],
-			async callback(event) {
-				const thisButton: AutoConfiguredButton = {
-					id: event.controlId,
-				}
-				const [index] = getIndexOfButton(thisButton)
-				const learningMode = String(self.getVariableValue('learningMode'))
-				if (learningMode !== 'disabled') {
-					// do nothing
-					return
-				}
-				self.log('debug', 'Overwriting auto preset...')
-				const preset = getPresetToButton(presets, thisButton)
-				if (preset === undefined) {
-					self.log('warn', 'Preset not set for button ' + index)
-					return
-				}
-				const presetId = Number(preset?.id ?? -1)
-				await backend?.overwritePreset(presetId)
-				self.checkFeedbacks('autoPreset', 'learnMode')
-			},
-		},
-		clearAllAutoButtons: {
-			name: 'Clear All Auto Buttons',
-			description: 'Clear all auto button data. This action is only for debugging purposes.',
-			options: [],
-			async callback() {
-				clearAllAutoButtons(self)
-				self.checkFeedbacks('learnMode', 'autoPreset')
 			},
 		},
 		triggerMovement: {
