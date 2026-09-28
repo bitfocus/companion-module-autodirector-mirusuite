@@ -19,6 +19,7 @@ import type {
 	ProjectLoadImpact,
 	ProjectSummary,
 	Setlist,
+	SwitcherState,
 	ShotSize,
 	TrackingMode,
 } from './types.js'
@@ -70,6 +71,9 @@ export default class Backend {
 					if (this.self.store.hasConfiguration) {
 						this.self.updateVariableValues()
 						this.self.checkFeedbacks(
+							'liveDevice',
+							'liveInput',
+							'switcherBusInput',
 							'controllerConnected',
 							'framingStable',
 							'musicFollower',
@@ -361,13 +365,24 @@ export default class Backend {
 		}
 	}
 
-	async getLiveInputs(): Promise<string[]> {
+	async getSwitcherState(): Promise<SwitcherState> {
 		const response = await this.client.GET('/api/switcher')
-		if (response.data?.connectionStatus !== 'CONNECTED') {
+		const state = response.data ?? {}
+		if (state.connectionStatus !== 'CONNECTED') {
 			this.self.log('debug', 'Switcher not connected')
-			return []
+			return { ...state, programs: [], preview: [] }
 		}
-		return response.data.programs ?? []
+		return state
+	}
+
+	async getLiveInputs(): Promise<string[]> {
+		return (await this.getSwitcherState()).programs ?? []
+	}
+
+	async setPreview(input: string): Promise<void> {
+		await this.client.POST('/api/switcher/preview/{input}', {
+			params: { path: { input } },
+		})
 	}
 
 	async triggerRandomMove(id: number): Promise<void> {

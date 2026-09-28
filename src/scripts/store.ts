@@ -12,6 +12,7 @@ import type {
 	ProjectSummary,
 	Setlist,
 	State,
+	SwitcherState,
 } from '../api/types.js'
 import { getDirectorType, getInputComponentType } from './helpers.js'
 import Backend from '../api/backend.js'
@@ -21,7 +22,7 @@ export class Store {
 	private devices: Device[] = []
 	private activePresetMap: { [name: string]: ActivePreset } = {}
 	private presets: PresetEntity[] = []
-	private liveInputs: string[] = []
+	private switcherState: SwitcherState = {}
 	private faces: FaceIdEntity[] = []
 	private autoCutEnabled = false
 	private dominantSpeakerOverride: number | null = null
@@ -60,6 +61,10 @@ export class Store {
 	}
 
 	async loadConfiguration(): Promise<boolean> {
+		const loadSwitcherState = async () =>
+			typeof this.backend.getSwitcherState === 'function'
+				? this.backend.getSwitcherState()
+				: this.backend.getLiveInputs().then((programs) => ({ programs }))
 		const [devices, faces, activePresetMap, presets] = await Promise.all([
 			this.backend.loadDevices(),
 			this.backend.listFaces(),
@@ -67,7 +72,7 @@ export class Store {
 			this.backend.listPresets(),
 		])
 		const [
-			liveInputs,
+			switcherState,
 			autoCutEnabled,
 			dominantSpeakerOverride,
 			dominantSpeaker,
@@ -79,7 +84,7 @@ export class Store {
 			setlists,
 			...musicFollowerStates
 		] = await Promise.allSettled([
-			this.backend.getLiveInputs(),
+			loadSwitcherState(),
 			this.backend.isAutoCutRunning(),
 			this.backend.loadOverrideDominantSpeaker(),
 			this.backend.loadDominantSpeaker(),
@@ -94,7 +99,7 @@ export class Store {
 				.map(async (device) => this.backend.loadMusicFollowerState(device.id!)),
 		])
 		const optionalRefreshes = [
-			['live inputs', liveInputs],
+			['switcher state', switcherState],
 			['AutoCut state', autoCutEnabled],
 			['dominant speaker override', dominantSpeakerOverride],
 			['dominant speaker', dominantSpeaker],
@@ -116,6 +121,15 @@ export class Store {
 		const newProjectId = activeProject.status === 'fulfilled' ? activeProject.value?.id : oldProjectId
 		const projectChanged =
 			this.configurationLoaded && activeProject.status === 'fulfilled' && oldProjectId !== newProjectId
+		let projectPresets = presets
+		if (projectChanged) {
+			// The initial catalog fetch can race the active-project change. Re-fetch after the new active ID is known.
+			try {
+				projectPresets = await this.backend.listPresets()
+			} catch (error) {
+				this.self.log('warn', `Could not refresh presets for the newly active project: ${String(error)}`)
+			}
+		}
 		if (projectChanged) {
 			this.clearLiveState()
 			this.musicFollowerStates.clear()
@@ -126,8 +140,8 @@ export class Store {
 		this.pruneLiveStates(devices)
 		this.faces = faces
 		this.activePresetMap = activePresetMap
-		this.presets = presets
-		if (liveInputs.status === 'fulfilled') this.liveInputs = liveInputs.value
+		this.presets = projectPresets
+		if (switcherState.status === 'fulfilled') this.switcherState = switcherState.value
 		if (autoCutEnabled.status === 'fulfilled') this.autoCutEnabled = autoCutEnabled.value
 		if (dominantSpeakerOverride.status === 'fulfilled') this.dominantSpeakerOverride = dominantSpeakerOverride.value
 		if (dominantSpeaker.status === 'fulfilled') this.dominantSpeaker = dominantSpeaker.value
@@ -193,12 +207,29 @@ export class Store {
 		return this.presets.find((preset) => preset.id === id)
 	}
 
-	async loadLiveInputs(): Promise<void> {
-		this.liveInputs = await this.backend.getLiveInputs()
+	async loadLiveInputs(): Promise<boolean> {
+		const previousInputs = JSON.stringify(this.getSwitcherInputs())
+		this.switcherState =
+			typeof this.backend.getSwitcherState === 'function'
+				? await this.backend.getSwitcherState()
+				: { programs: await this.backend.getLiveInputs() }
+		return previousInputs !== JSON.stringify(this.getSwitcherInputs())
 	}
 
 	getLiveInputs(): string[] {
-		return this.liveInputs
+		return this.switcherState.programs ?? []
+	}
+
+	getPreviewInputs(): string[] {
+		return this.switcherState.preview ?? []
+	}
+
+	getSwitcherInputs(): NonNullable<SwitcherState['availableInputs']> {
+		return this.switcherState.availableInputs ?? []
+	}
+
+	getSwitcherState(): SwitcherState {
+		return this.switcherState
 	}
 
 	async loadFaces(): Promise<void> {
@@ -287,6 +318,7 @@ export class Store {
 	clearLiveState(): void {
 		this.liveStates.clear()
 		this.musicFollowerStates.clear()
+		this.switcherState = { connectionStatus: 'DISCONNECTED', programs: [], preview: [], availableInputs: [] }
 		this.autoCutEnabled = false
 		this.dominantSpeaker = null
 		this.dominantSpeakerOverride = null

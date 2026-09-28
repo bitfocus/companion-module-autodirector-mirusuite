@@ -122,7 +122,7 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 	Object.assign(
 		presets,
 		getProjectPresets(self),
-		getSwitcherPresets(),
+		getSwitcherPresets(self),
 		getCameraWorkflowPresets(self),
 		getGamepadPresets(self),
 		getOrchestraPresets(self),

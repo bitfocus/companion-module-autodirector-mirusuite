@@ -1,6 +1,7 @@
 /* eslint n/no-unsupported-features/node-builtins: "off", n/no-unpublished-import: "off" */
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { combineRgb } from '@companion-module/base'
 import Backend from '../dist/api/backend.js'
 import { Store } from '../dist/scripts/store.js'
 import { UpdateActions } from '../dist/actions.js'
@@ -62,6 +63,19 @@ test('project load retries with the server confirmation token when enabled', asy
 	assert.deepEqual(requests[1].params.query, { id: 12, confirm: true, confirmationToken: 'token-2' })
 })
 
+test('Switcher preview input uses the generated preview endpoint', async () => {
+	const { backend } = makeBackend()
+	let request
+	backend._client.POST = async (path, options) => {
+		request = { path, options }
+		return { response: { ok: true, status: 201 } }
+	}
+
+	await backend.setPreview('Camera 1')
+	assert.equal(request.path, '/api/switcher/preview/{input}')
+	assert.deepEqual(request.options.params.path, { input: 'Camera 1' })
+})
+
 test('Orchestra updates merge into the latest settings before PUT', async () => {
 	const { backend, self } = makeBackend()
 	const writes = []
@@ -99,15 +113,40 @@ test('live state cache keys device state by target and can be cleared', () => {
 	assert.equal(store.getLiveState('controller', 7), undefined)
 })
 
+test('switcher state refresh tracks available, Program, and Preview inputs', async () => {
+	let state = {
+		connectionStatus: 'CONNECTED',
+		availableInputs: [{ id: 'a', name: 'Camera A' }],
+		programs: ['a'],
+		preview: ['b'],
+	}
+	const store = new Store({ backend: { getSwitcherState: async () => state } })
+	assert.equal(await store.loadLiveInputs(), true)
+	assert.deepEqual(store.getSwitcherInputs(), [{ id: 'a', name: 'Camera A' }])
+	assert.deepEqual(store.getLiveInputs(), ['a'])
+	assert.deepEqual(store.getPreviewInputs(), ['b'])
+	assert.equal(await store.loadLiveInputs(), false)
+
+	state = { connectionStatus: 'DISCONNECTED', availableInputs: [], programs: [], preview: [] }
+	assert.equal(await store.loadLiveInputs(), true)
+	assert.deepEqual(store.getPreviewInputs(), [])
+})
+
 test('project changes clear old live state and reject Music Follower snapshots from the previous project', async () => {
 	let activeProject = { id: 1, name: 'One' }
 	let followerState = { target: 'musicFollower', deviceId: 7, projectId: 1, status: 'TRACKING' }
+	let presetReads = 0
 	const device = { id: 7, name: 'Camera', components: { musicFollower: {} } }
 	const backend = {
 		loadDevices: async () => [device],
 		listFaces: async () => [],
 		loadActivePresetMap: async () => ({}),
-		listPresets: async () => [],
+		listPresets: async () => {
+			presetReads++
+			if (presetReads === 2) return [{ id: 10, name: 'stale project preset' }]
+			if (presetReads >= 3) return [{ id: 20, name: 'new project preset' }]
+			return [{ id: 1, name: 'first project preset' }]
+		},
 		getLiveInputs: async () => [],
 		isAutoCutRunning: async () => false,
 		loadOverrideDominantSpeaker: async () => null,
@@ -131,6 +170,7 @@ test('project changes clear old live state and reject Music Follower snapshots f
 	await store.loadConfiguration()
 	assert.equal(store.getLiveState('controller', 7), undefined)
 	assert.equal(store.getMusicFollowerState(7), undefined)
+	assert.equal(store.getPresets()[0].name, 'new project preset')
 
 	followerState = { target: 'musicFollower', deviceId: 7, projectId: 2, status: 'WAITING_FOR_SELECTION' }
 	await store.loadConfiguration()
@@ -172,7 +212,12 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 		getDeviceById: (id) => [videoDevice, audioDevice].find((candidate) => candidate.id === id),
 		getPresetById: (id) => (id === 42 ? { id: 42, name: 'Saved preset', commands: [{ deviceId: 7 }] } : undefined),
 		getActivePresetMap: () => ({}),
-		getLiveInputs: () => [],
+		getLiveInputs: () => ['camera-a'],
+		getPreviewInputs: () => ['camera-b'],
+		getSwitcherInputs: () => [
+			{ id: 'camera-a', name: 'Camera A' },
+			{ id: 'camera-b', name: 'Camera B' },
+		],
 		getDominantSpeakerOverride: () => null,
 		getDominantSpeaker: () => null,
 		getActiveProject: () => project,
@@ -211,7 +256,7 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 	UpdateFeedbacks(self)
 	const presets = {
 		...getProjectPresets(self),
-		...getSwitcherPresets(),
+		...getSwitcherPresets(self),
 		...getCameraWorkflowPresets(self),
 		...getGamepadPresets(self),
 		...getOrchestraPresets(self),
@@ -219,6 +264,12 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 	const actionIds = new Set(Object.keys(self.actions))
 	const feedbackIds = new Set(Object.keys(self.feedbacks))
 	assert.ok(presets['loadProject-3'])
+	assert.ok(presets['switcherProgram-camera-a'])
+	assert.ok(presets['switcherPreview-camera-b'])
+	assert.equal(presets['switcherProgram-camera-a'].style.bgcolor, combineRgb(64, 0, 0))
+	assert.equal(presets['switcherProgram-camera-a'].feedbacks[0].style.bgcolor, combineRgb(255, 0, 0))
+	assert.equal(presets['switcherPreview-camera-b'].style.bgcolor, combineRgb(0, 64, 0))
+	assert.equal(presets['switcherPreview-camera-b'].feedbacks[0].style.bgcolor, combineRgb(0, 255, 0))
 	assert.ok(presets['correctFraming-7'])
 	assert.ok(presets['gamepadCamera-7'])
 	assert.ok(presets['musicPiece-7-11'])
@@ -235,6 +286,9 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 			assert.ok(feedbackIds.has(feedback.feedbackId), `missing feedback ${feedback.feedbackId}`)
 		}
 	}
+	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'program', input: 'camera-a' } }), true)
+	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'preview', input: 'camera-b' } }), true)
+	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'preview', input: 'camera-a' } }), false)
 	await self.actions.setGamepadDevice.callback({ options: { deviceId: 99 } })
 	await self.actions.selectMusicPiece.callback({ options: { deviceId: 7, pieceId: 12 } })
 	await self.actions.selectMusicSetlistEntry.callback({ options: { deviceId: 7, entry: '5:3' } })
@@ -331,4 +385,34 @@ test('state stream reconnect refreshes the live snapshot after the initial conne
 	handler.close()
 	handler.handleStateStreamOpen()
 	assert.equal(refreshes, 1)
+})
+
+test('switcher state events refresh definitions when the available input list changes', async () => {
+	let definitionsRefreshed = 0
+	const feedbackChecks = []
+	const handler = new EventHandler(
+		{
+			store: {
+				async loadLiveInputs() {
+					return true
+				},
+			},
+			updateStatus() {},
+			updateDefinitions() {
+				definitionsRefreshed++
+			},
+			updateVariableValues() {},
+			checkFeedbacks(...ids) {
+				feedbackChecks.push(ids)
+			},
+			log() {},
+		},
+		'127.0.0.1',
+		8080,
+		'',
+		'',
+	)
+	await handler.handleMessage(JSON.stringify({ type: 'SWITCHER_STATE_UPDATED' }))
+	assert.equal(definitionsRefreshed, 1)
+	assert.ok(feedbackChecks.flat().includes('switcherBusInput'))
 })

@@ -37,6 +37,9 @@ export class EventHandler {
 			this.self.store.clearLiveState()
 			this.self.updateVariableValues()
 			this.self.checkFeedbacks(
+				'liveDevice',
+				'liveInput',
+				'switcherBusInput',
 				'controllerConnected',
 				'framingStable',
 				'musicFollower',
@@ -65,6 +68,9 @@ export class EventHandler {
 			this.self.store.clearLiveState()
 			this.self.updateVariableValues()
 			this.self.checkFeedbacks(
+				'liveDevice',
+				'liveInput',
+				'switcherBusInput',
 				'controllerConnected',
 				'framingStable',
 				'musicFollower',
@@ -104,9 +110,9 @@ export class EventHandler {
 					this.self.checkFeedbacks('activePreset')
 					break
 				case 'SWITCHER_STATE_UPDATED':
-					await this.self.store.loadLiveInputs()
+					if (await this.self.store.loadLiveInputs()) this.self.updateDefinitions()
 					this.self.updateVariableValues()
-					this.self.checkFeedbacks('liveDevice', 'liveInput')
+					this.self.checkFeedbacks('liveDevice', 'liveInput', 'switcherBusInput')
 					break
 				case 'AUTO_CUT_UPDATED':
 					await this.self.store.loadAutoCutEnabled()

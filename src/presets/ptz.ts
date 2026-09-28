@@ -6,7 +6,7 @@ export function addManualMoveSpeedPresets(presets: CompanionPresetDefinitions): 
 	for (const direction of ['increase', 'decrease'] as const) {
 		const isIncrease = direction === 'increase'
 		const icon = isIncrease ? '+' : '-'
-		const title = `${icon}\nMovement Speed\n$(autodirector-mirusuite:manual_move_speed)`
+		const title = `${icon}\nMove Speed\n$(autodirector-mirusuite:manual_move_speed)`
 		presets[`manualMoveSpeed-${direction}`] = {
 			type: 'button',
 			category: 'PTZ',

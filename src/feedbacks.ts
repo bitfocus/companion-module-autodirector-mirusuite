@@ -1,4 +1,4 @@
-import { DropdownChoice } from '@companion-module/base'
+import { combineRgb, DropdownChoice } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from './main.js'
 import {
 	getDeviceSelector,
@@ -24,6 +24,19 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const deviceOptions = videoDeviceChoices.concat(audioDeviceChoices)
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceChoices)
 	const deviceId2SwitcherInput = getDeviceIdToSwitcherInputMap(self)
+	const switcherInputChoices: DropdownChoice[] = (store.getSwitcherInputs?.() ?? [])
+		.filter((input) => input.id !== undefined)
+		.map((input) => ({ id: input.id!, label: input.name ?? input.id! }))
+	const switcherInputOption =
+		switcherInputChoices.length > 0
+			? {
+					id: 'input',
+					type: 'dropdown' as const,
+					label: 'Input',
+					choices: switcherInputChoices,
+					default: switcherInputChoices[0].id,
+				}
+			: { id: 'input', type: 'textinput' as const, label: 'Input', default: '' }
 	self.setFeedbackDefinitions({
 		enabledComponentType: {
 			name: 'Component Type Enabled',
@@ -247,6 +260,30 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			callback: async (feedback) => {
 				const input = feedback.options.input
 				return isInputLive(self, typeof input === 'string' || typeof input === 'number' ? String(input) : '')
+			},
+		},
+		switcherBusInput: {
+			name: 'Switcher Bus Input',
+			type: 'boolean',
+			description: 'Checks whether the selected input is currently on the Program or Preview bus.',
+			defaultStyle: { bgcolor: combineRgb(64, 0, 0), color: combineRgb(255, 255, 255) },
+			options: [
+				{
+					id: 'bus',
+					type: 'dropdown',
+					label: 'Bus',
+					choices: [
+						{ id: 'program', label: 'Program' },
+						{ id: 'preview', label: 'Preview' },
+					],
+					default: 'program',
+				},
+				switcherInputOption,
+			],
+			callback: (feedback) => {
+				const input = typeof feedback.options.input === 'string' ? feedback.options.input : ''
+				if (feedback.options.bus === 'preview') return store.getPreviewInputs?.().includes(input) ?? false
+				return store.getLiveInputs().includes(input)
 			},
 		},
 		autoCut: {

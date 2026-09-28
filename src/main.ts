@@ -89,6 +89,7 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 			'activePreset',
 			'liveDevice',
 			'liveInput',
+			'switcherBusInput',
 			'autoCut',
 			'autoCutState',
 			'dominantSpeakerOverride',
