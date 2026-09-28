@@ -1355,6 +1355,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/gamepad/selected-device": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the shared gamepad camera */
+        get: operations["getGamepadSelectedDevice"];
+        /** Select or clear the shared gamepad camera */
+        put: operations["setGamepadSelectedDevice"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/license": {
         parameters: {
             query?: never;
@@ -1762,6 +1780,74 @@ export interface paths {
         post?: never;
         /** Delete an instrument */
         delete: operations["InstrumentCatalogResource_deleteInstrument"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orchestra/music-transfer/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import a validated music transfer archive */
+        post: operations["MusicLibraryTransferResource_importArchive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orchestra/music-transfer/pieces/{pieceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export one music piece, its original MP3, and all annotations */
+        get: operations["MusicLibraryTransferResource_exportPiece"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orchestra/music-transfer/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate a music transfer and preview destination catalog mappings */
+        post: operations["MusicLibraryTransferResource_preview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orchestra/music-transfer/setlists/{setlistId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export one setlist, its pieces, original MP3s, annotations, and entry order */
+        get: operations["MusicLibraryTransferResource_exportSetlist"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3586,7 +3672,14 @@ export interface components {
             deviceId?: number;
         };
         /** @enum {string} */
-        GUIUpdateType: "ERROR" | "ORCHESTRA_SCHEDULER_WARNING" | "ORCHESTRA_SETTINGS_UPDATED" | "QUICK_EDIT_AVAILABILITY_UPDATED" | "DEVICES_UPDATED" | "PERSONS_UPDATED" | "COMPONENTS_UPDATED" | "PANORAMA_UPDATED" | "PROJECT_UPDATED" | "SWITCHER_STATE_UPDATED" | "SWITCHER_CONFIG_UPDATED" | "ACTIVE_PRESET_UPDATED" | "AUTO_CUT_UPDATED" | "AUTO_CUT_SPEAKER_OVERRIDE_UPDATED" | "QUICK_EDIT_PROTECTION_STARTED" | "QUICK_EDIT_PROTECTION_ENDED" | "TOKEN";
+        GUIUpdateType: "ERROR" | "GAMEPAD_SELECTED_DEVICE_UPDATED" | "ORCHESTRA_SCHEDULER_WARNING" | "ORCHESTRA_SETTINGS_UPDATED" | "QUICK_EDIT_AVAILABILITY_UPDATED" | "DEVICES_UPDATED" | "PERSONS_UPDATED" | "COMPONENTS_UPDATED" | "PANORAMA_UPDATED" | "PROJECT_UPDATED" | "SWITCHER_STATE_UPDATED" | "SWITCHER_CONFIG_UPDATED" | "ACTIVE_PRESET_UPDATED" | "AUTO_CUT_UPDATED" | "AUTO_CUT_SPEAKER_OVERRIDE_UPDATED" | "QUICK_EDIT_PROTECTION_STARTED" | "QUICK_EDIT_PROTECTION_ENDED" | "TOKEN";
+        GamepadSelectedDevice: {
+            /**
+             * Format: int64
+             * @description Selected device ID; null clears selection
+             */
+            deviceId?: number | null;
+        };
         /** @description Persisted general application settings. */
         GeneralSettings: {
             /**
@@ -4217,6 +4310,95 @@ export interface components {
         };
         /** @enum {string} */
         MusicSkipRegionReason: "SILENCE" | "APPLAUSE";
+        MusicTransferAnnotation: {
+            type?: components["schemas"]["MusicAnnotationType"];
+            label?: string;
+            /** Format: double */
+            startSeconds?: number;
+            /** Format: double */
+            endSeconds?: number;
+            /** Format: int32 */
+            position?: number;
+            groupName?: string;
+            instrumentName?: string;
+            shotSizeName?: string;
+            groupShotSize?: boolean;
+        };
+        MusicTransferArchive: {
+            /** Format: int32 */
+            formatVersion?: number;
+            type?: string;
+            name?: string;
+            pieces?: components["schemas"]["MusicTransferPiece"][];
+            entries?: string[];
+            created?: components["schemas"]["LocalDateTime"];
+            updated?: components["schemas"]["LocalDateTime"];
+        };
+        MusicTransferCandidate: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            parentName?: string;
+        };
+        MusicTransferMapping: {
+            references?: {
+                [key: string]: number;
+            };
+            createReferences?: string[];
+        };
+        MusicTransferPiece: {
+            key?: string;
+            name?: string;
+            composer?: string;
+            notes?: string;
+            originalFilename?: string;
+            /** Format: int64 */
+            originalSizeBytes?: number;
+            /** Format: int32 */
+            sampleRateHz?: number;
+            /** Format: int32 */
+            channelCount?: number;
+            /** Format: int32 */
+            bitrateKbps?: number;
+            /** Format: int64 */
+            frameCount?: number;
+            /** Format: double */
+            durationSeconds?: number;
+            sourceSha256?: string;
+            created?: components["schemas"]["LocalDateTime"];
+            updated?: components["schemas"]["LocalDateTime"];
+            annotations?: components["schemas"]["MusicTransferAnnotation"][];
+        };
+        MusicTransferPreview: {
+            type?: string;
+            name?: string;
+            /** Format: int32 */
+            pieceCount?: number;
+            /** Format: int32 */
+            annotationCount?: number;
+            references?: components["schemas"]["MusicTransferReference"][];
+            duplicatePieceKeys?: string[];
+        };
+        MusicTransferReference: {
+            key?: string;
+            kind?: string;
+            name?: string;
+            parentName?: string;
+            /** Format: int64 */
+            suggestedId?: number;
+            candidates?: components["schemas"]["MusicTransferCandidate"][];
+        };
+        MusicTransferResult: {
+            /** Format: int32 */
+            createdPieces?: number;
+            /** Format: int32 */
+            reusedPieces?: number;
+            setlistName?: string;
+            createdPieceNames?: string[];
+            reusedPieceNames?: string[];
+            failedItems?: string[];
+            warnings?: string[];
+        };
         NDIInputComponentSettings: {
             descriptor?: components["schemas"]["NDIInputDescriptor"] | null;
             crop?: components["schemas"]["CropRect"] | null;
@@ -7219,6 +7401,57 @@ export interface operations {
             };
         };
     };
+    getGamepadSelectedDevice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GamepadSelectedDevice"];
+                };
+            };
+        };
+    };
+    setGamepadSelectedDevice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GamepadSelectedDevice"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GamepadSelectedDevice"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getLicenseDetails: {
         parameters: {
             query?: never;
@@ -8012,6 +8245,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InstrumentCatalog"];
+                };
+            };
+        };
+    };
+    MusicLibraryTransferResource_importArchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    archive?: string;
+                    mapping?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MusicTransferResult"];
+                };
+            };
+        };
+    };
+    MusicLibraryTransferResource_exportPiece: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pieceId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.mirusuite.music+zip": unknown;
+                };
+            };
+        };
+    };
+    MusicLibraryTransferResource_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    archive?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MusicTransferPreview"];
+                };
+            };
+        };
+    };
+    MusicLibraryTransferResource_exportSetlist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                setlistId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.mirusuite.music+zip": unknown;
                 };
             };
         };
