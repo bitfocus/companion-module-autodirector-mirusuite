@@ -2546,6 +2546,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/switcher/cut": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Swap Program and Preview inputs
+         * @description Returns 409 when disconnected, bus state is unavailable, a fallback swap is ambiguous, or a preview camera is moving to a manual preset. For OBS, Cut runs the selected main Studio Mode Transition effect; select Cut in OBS for an immediate switch.
+         */
+        post: operations["cutSwitcher"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/switcher/disconnect": {
         parameters: {
             query?: never;
@@ -2572,6 +2592,23 @@ export interface paths {
         };
         /** Get switcher information */
         get: operations["getSwitcherInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/switcher/obs/quick-transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List OBS Quick Transition hotkeys */
+        get: operations["getObsQuickTransitions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4228,6 +4265,7 @@ export interface components {
             /** Format: int32 */
             port?: number;
             password?: string;
+            transitionHotkeyName?: string;
         };
         /** @enum {string} */
         OCRLanguage: "DEU" | "ENG" | "FRA" | "SPA";
@@ -4882,6 +4920,8 @@ export interface components {
             recordingState?: components["schemas"]["SwitcherRecordingState"];
             streamingState?: components["schemas"]["SwitcherStreamingState"];
             isAnOverlayActive?: boolean;
+            /** @description Whether Cut is native; false still permits a single-input fallback swap */
+            nativeCutSupported?: boolean;
         };
         /** @enum {string} */
         SwitcherStreamingState: "IDLE" | "CONNECTING" | "STOPPING" | "STREAMING" | "UNKNOWN";
@@ -9442,6 +9482,38 @@ export interface operations {
             };
         };
     };
+    cutSwitcher: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cut dispatched successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No switcher initialized */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Cut blocked by movement or unavailable bus state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     disconnectSwitcher: {
         parameters: {
             query?: never;
@@ -9476,6 +9548,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ModelInfo"];
+                };
+            };
+        };
+    };
+    getObsQuickTransitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
                 };
             };
         };
