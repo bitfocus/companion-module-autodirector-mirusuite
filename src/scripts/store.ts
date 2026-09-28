@@ -35,6 +35,7 @@ export class Store {
 	private setlists: Setlist[] = []
 	private musicFollowerStates = new Map<number, MusicFollowerState>()
 	private liveStates = new Map<string, State>()
+	private autoCutStateReceivedAt: number | null = null
 	private configurationLoaded = false
 
 	constructor(self: MiruSuiteModuleInstance) {
@@ -54,6 +55,11 @@ export class Store {
 
 	getDevices(): Device[] {
 		return this.devices
+	}
+
+	async loadDevices(): Promise<void> {
+		this.devices = await this.backend.loadDevices()
+		this.pruneLiveStates(this.devices)
 	}
 
 	get hasConfiguration(): boolean {
@@ -305,9 +311,10 @@ export class Store {
 		if (state.deviceId !== undefined) this.musicFollowerStates.set(state.deviceId, state)
 	}
 
-	applyLiveState(state: State): void {
+	applyLiveState(state: State, receivedAt = Date.now()): void {
 		const deviceId = 'deviceId' in state ? state.deviceId : undefined
 		this.liveStates.set(`${state.target}:${deviceId ?? 'global'}`, state)
+		if (state.target === 'autoCutState') this.autoCutStateReceivedAt = receivedAt
 		if (state.target === 'musicFollower') this.setMusicFollowerState(state)
 	}
 
@@ -315,9 +322,33 @@ export class Store {
 		return this.liveStates.get(`${target}:${deviceId ?? 'global'}`)
 	}
 
+	getAutoCutRemainingTime(now = Date.now()): number {
+		const state = this.getLiveState('autoCutState')
+		if (state?.target !== 'autoCutState' || state.remainingTime === undefined) return -1
+		if (state.scheduledTime === undefined || state.scheduledTime <= 0 || state.remainingTime < 0) {
+			return state.remainingTime
+		}
+		const remaining = Math.max(0, Math.min(state.remainingTime, state.scheduledTime))
+		const elapsedSeconds = this.autoCutStateReceivedAt === null ? 0 : (now - this.autoCutStateReceivedAt) / 1000
+		return Math.max(0, remaining - Math.max(0, elapsedSeconds))
+	}
+
+	hasAutoCutCountdown(): boolean {
+		const state = this.getLiveState('autoCutState')
+		return (
+			state?.target === 'autoCutState' &&
+			state.scheduledTime !== undefined &&
+			state.scheduledTime > 0 &&
+			state.remainingTime !== undefined &&
+			state.remainingTime >= 0 &&
+			this.getAutoCutRemainingTime() > 0
+		)
+	}
+
 	clearLiveState(): void {
 		this.liveStates.clear()
 		this.musicFollowerStates.clear()
+		this.autoCutStateReceivedAt = null
 		this.switcherState = { connectionStatus: 'DISCONNECTED', programs: [], preview: [], availableInputs: [] }
 		this.autoCutEnabled = false
 		this.dominantSpeaker = null

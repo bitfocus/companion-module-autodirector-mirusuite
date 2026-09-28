@@ -18,6 +18,7 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 	manualMoveSpeed = 0.2
 	ptzArrowImagesInitialized = false
 	private eventHandler: EventHandler | null = null
+	private autoCutVariableTimer: ReturnType<typeof setInterval> | null = null
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -32,6 +33,8 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 	async destroy(): Promise<void> {
 		this.eventHandler?.close()
 		this.eventHandler = null
+		if (this.autoCutVariableTimer !== null) clearInterval(this.autoCutVariableTimer)
+		this.autoCutVariableTimer = null
 		this.backend = null
 	}
 
@@ -113,6 +116,26 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 
 	updateVariableValues(): void {
 		UpdateVariableValues(this)
+		this.syncAutoCutVariableTimer()
+	}
+
+	private syncAutoCutVariableTimer(): void {
+		if (this.store.hasAutoCutCountdown()) {
+			if (this.autoCutVariableTimer === null) {
+				this.autoCutVariableTimer = setInterval(() => {
+					if (!this.store.hasAutoCutCountdown()) {
+						if (this.autoCutVariableTimer !== null) clearInterval(this.autoCutVariableTimer)
+						this.autoCutVariableTimer = null
+						this.updateVariableValues()
+						return
+					}
+					UpdateVariableValues(this)
+				}, 1000)
+			}
+		} else if (this.autoCutVariableTimer !== null) {
+			clearInterval(this.autoCutVariableTimer)
+			this.autoCutVariableTimer = null
+		}
 	}
 
 	adjustManualMoveSpeed(delta: number): void {

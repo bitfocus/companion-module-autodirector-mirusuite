@@ -13,6 +13,7 @@ import { getGamepadPresets } from '../dist/presets/gamepad.js'
 import { getOrchestraPresets } from '../dist/presets/orchestra.js'
 import { getProjectPresets } from '../dist/presets/projects.js'
 import { getSwitcherPresets } from '../dist/presets/switcher.js'
+import { UpdateVariableDefinitions, UpdateVariableValues } from '../dist/variables.js'
 
 function makeBackend() {
 	const self = {
@@ -103,6 +104,23 @@ test('Orchestra Boolean toggle flips the latest server value and preserves other
 	assert.deepEqual(writes[0], { movePreviewCameras: false, saveCameraGain: false, moveCameraCount: 3 })
 })
 
+test('Orchestra device toggle adds or removes the device while preserving settings', async () => {
+	const { backend } = makeBackend()
+	let settings = { moveCameraCount: 2, disabledDeviceIds: [5], saveCameraGain: true }
+	const writes = []
+	backend._client.GET = async () => ({ data: settings })
+	backend._client.PUT = async (_path, options) => {
+		writes.push(options.body)
+		settings = options.body
+		return { response: { ok: true, status: 204 } }
+	}
+
+	await backend.toggleOrchestraDevice(5)
+	assert.deepEqual(writes[0], { moveCameraCount: 2, disabledDeviceIds: [], saveCameraGain: true })
+	await backend.toggleOrchestraDevice(8)
+	assert.deepEqual(writes[1], { moveCameraCount: 2, disabledDeviceIds: [8], saveCameraGain: true })
+})
+
 test('live state cache keys device state by target and can be cleared', () => {
 	const store = new Store({})
 	const controller = { target: 'controller', deviceId: 7, connectionState: 'CONNECTED', panAngle: 23 }
@@ -111,6 +129,130 @@ test('live state cache keys device state by target and can be cleared', () => {
 	assert.equal(store.getLiveState('controller', 8), undefined)
 	store.clearLiveState()
 	assert.equal(store.getLiveState('controller', 7), undefined)
+})
+
+test('variables refresh AutoCut and live state and are declared only for relevant components', () => {
+	const speakerCamera = {
+		id: 10,
+		name: 'Speaker camera',
+		switcherInput: '0',
+		components: { personTracker: {}, headTrackingDirector: {}, speakerAutoCut: {} },
+		feedback: {
+			INPUT_WEBCAM: { state: 'RUNNING' },
+			DIRECTOR_HEAD_TRACKING: { state: 'RUNNING' },
+			AUTO_CUT_SPEAKER: { state: 'RUNNING' },
+			FRAMER_VMIX: { state: 'OFF' },
+			CONTROLLER_CANON: { state: 'OFF' },
+		},
+	}
+	const audioDevice = {
+		id: 11,
+		name: 'Audio',
+		components: { audioInput: {}, audioAutoCut: {} },
+		feedback: {
+			INPUT_AUDIO: { state: 'RUNNING' },
+			AUTO_CUT_AUDIO: { state: 'RUNNING' },
+			MUSIC_FOLLOWER: { state: 'OFF' },
+		},
+	}
+	const orchestraCamera = {
+		id: 12,
+		name: 'Orchestra camera',
+		components: { musicFollower: {}, vMixFramer: {}, panasonicController: {} },
+		feedback: {
+			INPUT_WEBCAM: { state: 'RUNNING' },
+			FRAMER_VMIX: { state: 'OFF' },
+			CONTROLLER_PANASONIC: { state: 'RUNNING' },
+		},
+	}
+	const futureRoleDevice = {
+		id: 13,
+		name: 'Future AutoCut camera',
+		components: { audienceAutoCut: {}, futureAutoCutRole: {} },
+		feedback: { AUTO_CUT_FUTURE_ROLE: { state: 'READY' } },
+	}
+	const devices = [speakerCamera, audioDevice, orchestraCamera, futureRoleDevice]
+	const liveStates = new Map([
+		['autoCutState:global', { target: 'autoCutState', state: 'CUTTING', subState: 'LOCKED', remainingTime: 1.75 }],
+	])
+	let liveInputs = ['0']
+	let definitions
+	let values
+	const store = {
+		getDevices: () => devices,
+		getVideoDevices: () => [speakerCamera, orchestraCamera],
+		getAudioDevices: () => [audioDevice],
+		getLiveInputs: () => liveInputs,
+		getActivePresetMap: () => ({}),
+		getPresets: () => [],
+		getPresetById: () => undefined,
+		getLiveState: (target, deviceId) => liveStates.get(`${target}:${deviceId ?? 'global'}`),
+		getAutoCutRemainingTime: () => 1.75,
+		getOrchestraSettings: () => ({ moveCameraCount: 2, disabledDeviceIds: [] }),
+		isAutoCutRunning: () => true,
+		getActiveProject: () => null,
+		getDominantSpeaker: () => null,
+		getDominantSpeakerOverride: () => null,
+		getGamepadDeviceId: () => null,
+		getDeviceById: (id) => devices.find((device) => device.id === id),
+		getMusicFollowerState: () => undefined,
+	}
+	const self = {
+		store,
+		connectionState: 'Connected',
+		manualMoveSpeed: 0.2,
+		ptzArrowImagesInitialized: true,
+		setVariableDefinitions(next) {
+			definitions = next
+		},
+		setVariableValues(next) {
+			values = next
+		},
+	}
+
+	UpdateVariableDefinitions(self)
+	assert.ok(definitions.device_10_autocut_state)
+	assert.ok(definitions.device_13_autocut_state)
+	assert.equal(definitions.device_10_vmix_framer_state, undefined)
+	assert.equal(definitions.device_10_music_follower_state, undefined)
+	assert.equal(definitions.device_10_controller_connection_state, undefined)
+	assert.equal(definitions.device_11_music_follower_state, undefined)
+	assert.ok(definitions.device_10_tracking_mode)
+	assert.equal(definitions.device_11_live, undefined)
+	assert.ok(definitions.device_12_vmix_framer_state)
+	assert.ok(definitions.device_12_music_follower_state)
+	assert.ok(definitions.device_12_controller_connection_state)
+	assert.equal(definitions.device_12_tracking_mode, undefined)
+	assert.ok(definitions.orchestra_move_camera_count)
+	assert.equal(values.autocut_state, 'CUTTING')
+	assert.equal(values.autocut_remaining_time, 1.75)
+	assert.equal(values.device_10_autocut_state, 'RUNNING')
+	assert.equal(values.device_13_autocut_state, 'READY')
+	assert.equal(values.device_10_live, true)
+
+	liveInputs = ['1']
+	UpdateVariableValues(self)
+	assert.equal(values.device_10_live, false)
+	orchestraCamera.components.musicFollower = null
+	UpdateVariableDefinitions(self)
+	assert.equal(definitions.orchestra_move_camera_count, undefined)
+	assert.equal(values.orchestra_move_camera_count, undefined)
+	assert.deepEqual(getOrchestraPresets({ store }), {})
+
+	futureRoleDevice.feedback.AUTO_CUT_AUDIENCE = { state: 'IDLE' }
+	UpdateVariableValues(self)
+	assert.equal(values.device_13_autocut_state, 'AUTO_CUT_AUDIENCE=IDLE, AUTO_CUT_FUTURE_ROLE=READY')
+})
+
+test('AutoCut remaining time counts down from the latest scheduled state snapshot', () => {
+	const store = new Store({})
+	const receivedAt = Date.now()
+	store.applyLiveState({ target: 'autoCutState', state: 'SPEAKER', scheduledTime: 8, remainingTime: 6 }, receivedAt)
+	assert.equal(store.hasAutoCutCountdown(), true)
+	assert.equal(store.getAutoCutRemainingTime(receivedAt + 1500), 4.5)
+	assert.equal(store.getAutoCutRemainingTime(receivedAt + 7000), 0)
+	store.clearLiveState()
+	assert.equal(store.hasAutoCutCountdown(), false)
 })
 
 test('switcher state refresh tracks available, Program, and Preview inputs', async () => {
@@ -222,7 +364,7 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 		getDominantSpeaker: () => null,
 		getActiveProject: () => project,
 		getGamepadDeviceId: () => null,
-		getOrchestraSettings: () => ({}),
+		getOrchestraSettings: () => ({ disabledDeviceIds: [8] }),
 		getMusicFollowerState: () => undefined,
 		getLiveState: () => undefined,
 		isAutoCutRunning: () => false,
@@ -276,6 +418,9 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 	assert.ok(presets['musicSetlist-7-5-2'])
 	assert.equal(presets['musicPiece-7-12'], undefined)
 	assert.ok(presets['orchestra-move-camera-count-3'])
+	assert.ok(presets['orchestra-device-7'])
+	assert.ok(presets['orchestra-device-8'])
+	assert.equal(presets['orchestra-device-7'].feedbacks[0].style.bgcolor, combineRgb(0, 0, 255))
 	for (const preset of Object.values(presets)) {
 		for (const step of preset.steps ?? []) {
 			for (const action of [...(step.down ?? []), ...(step.up ?? [])]) {
@@ -289,6 +434,8 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'program', input: 'camera-a' } }), true)
 	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'preview', input: 'camera-b' } }), true)
 	assert.equal(self.feedbacks.switcherBusInput.callback({ options: { bus: 'preview', input: 'camera-a' } }), false)
+	assert.equal(self.feedbacks.orchestraDeviceEnabled.callback({ options: { deviceId: 7 } }), true)
+	assert.equal(self.feedbacks.orchestraDeviceEnabled.callback({ options: { deviceId: 8 } }), false)
 	await self.actions.setGamepadDevice.callback({ options: { deviceId: 99 } })
 	await self.actions.selectMusicPiece.callback({ options: { deviceId: 7, pieceId: 12 } })
 	await self.actions.selectMusicSetlistEntry.callback({ options: { deviceId: 7, entry: '5:3' } })
@@ -415,4 +562,37 @@ test('switcher state events refresh definitions when the available input list ch
 	await handler.handleMessage(JSON.stringify({ type: 'SWITCHER_STATE_UPDATED' }))
 	assert.equal(definitionsRefreshed, 1)
 	assert.ok(feedbackChecks.flat().includes('switcherBusInput'))
+})
+
+test('AutoCut update events reload per-device component feedback before updating variables', async () => {
+	let deviceRefreshes = 0
+	let runningRefreshes = 0
+	let variableRefreshes = 0
+	const handler = new EventHandler(
+		{
+			store: {
+				async loadDevices() {
+					deviceRefreshes++
+				},
+				async loadAutoCutEnabled() {
+					runningRefreshes++
+				},
+				async loadDominantSpeaker() {},
+			},
+			updateStatus() {},
+			updateVariableValues() {
+				variableRefreshes++
+			},
+			checkFeedbacks() {},
+			log() {},
+		},
+		'127.0.0.1',
+		8080,
+		'',
+		'',
+	)
+	await handler.handleMessage(JSON.stringify({ type: 'AUTO_CUT_UPDATED' }))
+	assert.equal(deviceRefreshes, 1)
+	assert.equal(runningRefreshes, 1)
+	assert.equal(variableRefreshes, 2)
 })

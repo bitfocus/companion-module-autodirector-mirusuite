@@ -22,6 +22,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const videoDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getVideoDevices())
 	const audioDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getAudioDevices())
 	const deviceOptions = videoDeviceChoices.concat(audioDeviceChoices)
+	const allDeviceChoices: DropdownChoice[] = createDeviceOptions(store.getDevices())
 	const presetChoices: DropdownChoice[] = getPresetChoices(self, videoDeviceChoices)
 	const deviceId2SwitcherInput = getDeviceIdToSwitcherInputMap(self)
 	const switcherInputChoices: DropdownChoice[] = (store.getSwitcherInputs?.() ?? [])
@@ -515,6 +516,18 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 					return expected === 'toggle' ? actual : String(actual) === expected.toLowerCase()
 				if (typeof actual === 'number') return actual === Number(expected)
 				return false
+			},
+		},
+		orchestraDeviceEnabled: {
+			name: 'Device Enabled in Orchestra',
+			type: 'boolean',
+			description: 'Active when this device is not listed in Orchestra disabledDeviceIds.',
+			defaultStyle: { bgcolor: combineRgb(0, 0, 255), color: combineRgb(255, 255, 255) },
+			options: [getDeviceSelector(self, allDeviceChoices)],
+			callback: (feedback) => {
+				const deviceId = Number(feedback.options.deviceId)
+				if (!Number.isInteger(deviceId) || !store.getDevices().some((device) => device.id === deviceId)) return false
+				return !(store.getOrchestraSettings().disabledDeviceIds ?? []).includes(deviceId)
 			},
 		},
 	})

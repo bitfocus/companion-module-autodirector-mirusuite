@@ -115,10 +115,11 @@ export class EventHandler {
 					this.self.checkFeedbacks('liveDevice', 'liveInput', 'switcherBusInput')
 					break
 				case 'AUTO_CUT_UPDATED':
+					await this.self.store.loadDevices()
 					await this.self.store.loadAutoCutEnabled()
 					await this.self.store.loadDominantSpeaker()
 					this.self.updateVariableValues()
-					this.self.checkFeedbacks('autoCut', 'dominantSpeaker')
+					this.self.checkFeedbacks('autoCut', 'dominantSpeaker', 'enabledComponentType')
 					break
 				case 'AUTO_CUT_SPEAKER_OVERRIDE_UPDATED':
 					await this.self.store.loadOverrideDominantSpeaker()
@@ -133,7 +134,7 @@ export class EventHandler {
 				case 'ORCHESTRA_SETTINGS_UPDATED':
 					this.self.store.setOrchestraSettings(await this.self.backend!.loadOrchestraSettings())
 					this.self.updateVariableValues()
-					this.self.checkFeedbacks('orchestraSetting')
+					this.self.checkFeedbacks('orchestraSetting', 'orchestraDeviceEnabled')
 					break
 			}
 			this.self.connectionState = 'Connected'

@@ -1,8 +1,11 @@
+import { combineRgb } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from '../main.js'
 import { action, button, feedback, type LegacyPresets } from './helpers.js'
 
 export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPresets {
 	const presets: LegacyPresets = {}
+	if (!self.store.getDevices().some((device) => device.components?.musicFollower != null)) return presets
+
 	for (const device of self.store.getDevices()) {
 		if (device.id === undefined || device.components?.musicFollower == null) continue
 		const deviceId = device.id
@@ -33,6 +36,24 @@ export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPreset
 				)
 			}
 		}
+	}
+	for (const device of self.store.getDevices()) {
+		if (device.id === undefined) continue
+		presets[`orchestra-device-${device.id}`] = button(
+			'Orchestra',
+			`Include in Orchestra\n${device.name ?? `Device ${device.id}`}`,
+			[action('toggleOrchestraDevice', { deviceId: device.id })],
+			[
+				feedback(
+					'orchestraDeviceEnabled',
+					{ deviceId: device.id },
+					{
+						bgcolor: combineRgb(0, 0, 255),
+						color: combineRgb(255, 255, 255),
+					},
+				),
+			],
+		)
 	}
 
 	for (const setting of ['movePreviewCameras', 'saveCameraGain', 'saveDirectorSettings', 'autoMoveCameras'] as const) {

@@ -18,7 +18,7 @@ const settings = [
 ] as const
 
 export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
-	const devices = createDeviceOptions(self.store.getVideoDevices())
+	const devices = createDeviceOptions(self.store.getDevices())
 	const readyPieces = self.store
 		.getMusicPieces()
 		.filter((piece) => piece.id !== undefined && piece.analysisStatus === 'READY' && piece.selectable !== false)
@@ -114,6 +114,24 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 		musicFollowerNext: musicFollowerTransport(self, 'next'),
 		musicFollowerPrevious: musicFollowerTransport(self, 'previous'),
 		musicFollowerReset: musicFollowerTransport(self, 'reset'),
+		toggleOrchestraDevice: {
+			name: 'Toggle Device in Orchestra',
+			description: 'Add a device to Orchestra, or remove it from the disabled device list.',
+			options: [
+				{
+					id: 'deviceId',
+					type: 'dropdown',
+					label: 'Device',
+					choices: devices.length ? devices : [{ id: -1, label: 'No devices available' }],
+					default: devices[0]?.id ?? -1,
+				},
+			],
+			async callback(event: CompanionActionEvent) {
+				const deviceId = Number(event.options.deviceId)
+				if (!Number.isInteger(deviceId) || !self.store.getDevices().some((device) => device.id === deviceId)) return
+				await self.backend?.toggleOrchestraDevice(deviceId)
+			},
+		},
 		setOrchestraSetting: {
 			name: 'Set Orchestra Setting',
 			description: 'Update one Orchestra setting while preserving the other current settings.',

@@ -159,11 +159,23 @@ export default class Backend {
 		return this.saveOrchestraSettings(updated)
 	}
 
+	async toggleOrchestraDevice(deviceId: number): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const disabledDeviceIds = current.disabledDeviceIds ?? []
+		const updated = {
+			...current,
+			disabledDeviceIds: disabledDeviceIds.includes(deviceId)
+				? disabledDeviceIds.filter((id) => id !== deviceId)
+				: [...disabledDeviceIds, deviceId],
+		}
+		return this.saveOrchestraSettings(updated)
+	}
+
 	private async saveOrchestraSettings(updated: OrchestraSettings): Promise<OrchestraSettings> {
 		await this.client.PUT('/api/config/orchestra-settings', { body: updated })
 		this.self.store.setOrchestraSettings(updated)
 		this.self.updateVariableValues()
-		this.self.checkFeedbacks('orchestraSetting')
+		this.self.checkFeedbacks('orchestraSetting', 'orchestraDeviceEnabled')
 		return updated
 	}
 
