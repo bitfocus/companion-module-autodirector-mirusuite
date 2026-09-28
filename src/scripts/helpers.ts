@@ -222,21 +222,21 @@ export function getComponentFeedback(device: Device, component: ComponentId): Co
 
 export function getComponentOfType(
 	device: Device,
-	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER',
 ): ComponentId | undefined {
 	return Object.keys(device.feedback ?? {}).find((component) => component.startsWith(type)) as ComponentId | undefined
 }
 
 export function getComponentsOfType(
 	device: Device,
-	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER',
 ): ComponentId[] {
 	return Object.keys(device.feedback ?? {}).filter((component) => component.startsWith(type)) as ComponentId[]
 }
 
 export function getFeedbackForComponentOfType(
 	device: Device,
-	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER',
 ): ComponentFeedback | undefined {
 	const componentId = getComponentOfType(device, type)
 	if (componentId) {
@@ -247,7 +247,7 @@ export function getFeedbackForComponentOfType(
 
 export function isComponentOfTypeEnabled(
 	device: Device,
-	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT',
+	type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER',
 ): boolean {
 	const feedback = getFeedbackForComponentOfType(device, type)
 	return feedback !== undefined && feedback?.state !== 'OFF'

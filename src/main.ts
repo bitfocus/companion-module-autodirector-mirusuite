@@ -90,7 +90,15 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 			'liveDevice',
 			'liveInput',
 			'autoCut',
+			'autoCutState',
 			'dominantSpeakerOverride',
+			'dominantSpeaker',
+			'activeProject',
+			'gamepadSelectedDevice',
+			'controllerConnected',
+			'framingStable',
+			'musicFollower',
+			'orchestraSetting',
 			'vMixFramerEnabled',
 		)
 	}

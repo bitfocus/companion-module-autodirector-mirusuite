@@ -1,0 +1,334 @@
+/* eslint n/no-unsupported-features/node-builtins: "off", n/no-unpublished-import: "off" */
+import assert from 'node:assert/strict'
+import test from 'node:test'
+import Backend from '../dist/api/backend.js'
+import { Store } from '../dist/scripts/store.js'
+import { UpdateActions } from '../dist/actions.js'
+import { UpdateFeedbacks } from '../dist/feedbacks.js'
+import { UpdatePresets } from '../dist/presets.js'
+import { EventHandler } from '../dist/scripts/eventhandler.js'
+import { getCameraWorkflowPresets } from '../dist/presets/camera.js'
+import { getGamepadPresets } from '../dist/presets/gamepad.js'
+import { getOrchestraPresets } from '../dist/presets/orchestra.js'
+import { getProjectPresets } from '../dist/presets/projects.js'
+import { getSwitcherPresets } from '../dist/presets/switcher.js'
+
+function makeBackend() {
+	const self = {
+		log() {},
+		updateVariableValues() {},
+		checkFeedbacks() {},
+		store: {
+			setOrchestraSettings(settings) {
+				this.settings = settings
+			},
+		},
+	}
+	const backend = new Backend(self)
+	backend._client = { GET: async () => ({ data: {} }), PUT: async () => ({ response: { ok: true, status: 204 } }) }
+	return { backend, self }
+}
+
+test('project load reports 409 impact and does not confirm unless requested', async () => {
+	const { backend } = makeBackend()
+	const impact = { sources: [{ deviceName: 'Camera A', sourceName: 'NDI' }], confirmationToken: 'token-1' }
+	const requests = []
+	backend._client.PUT = async (_path, options) => {
+		requests.push(options)
+		return { response: { ok: false, status: 409 }, error: impact }
+	}
+
+	const result = await backend.loadProject(12, false)
+	assert.equal(result.loaded, false)
+	assert.deepEqual(result.impact, impact)
+	assert.equal(requests.length, 1)
+})
+
+test('project load retries with the server confirmation token when enabled', async () => {
+	const { backend } = makeBackend()
+	const impact = { sources: [{ deviceName: 'Camera A' }], confirmationToken: 'token-2' }
+	const requests = []
+	backend._client.PUT = async (_path, options) => {
+		requests.push(options)
+		return requests.length === 1
+			? { response: { ok: false, status: 409 }, error: impact }
+			: { response: { ok: true, status: 200 }, data: { projectId: 12 } }
+	}
+
+	const result = await backend.loadProject(12, true)
+	assert.equal(result.loaded, true)
+	assert.deepEqual(result.impact, impact)
+	assert.equal(requests.length, 2)
+	assert.deepEqual(requests[1].params.query, { id: 12, confirm: true, confirmationToken: 'token-2' })
+})
+
+test('Orchestra updates merge into the latest settings before PUT', async () => {
+	const { backend, self } = makeBackend()
+	const writes = []
+	backend._client.GET = async () => ({ data: { movePreviewCameras: true, moveCameraCount: 2, disabledDeviceIds: [5] } })
+	backend._client.PUT = async (_path, options) => {
+		writes.push(options.body)
+		return { response: { ok: true, status: 204 } }
+	}
+
+	await backend.updateOrchestraSettings({ moveCameraCount: 3 })
+	assert.deepEqual(writes[0], { movePreviewCameras: true, moveCameraCount: 3, disabledDeviceIds: [5] })
+	assert.deepEqual(self.store.settings, writes[0])
+})
+
+test('Orchestra Boolean toggle flips the latest server value and preserves other fields', async () => {
+	const { backend } = makeBackend()
+	const writes = []
+	backend._client.GET = async () => ({ data: { movePreviewCameras: true, saveCameraGain: false, moveCameraCount: 3 } })
+	backend._client.PUT = async (_path, options) => {
+		writes.push(options.body)
+		return { response: { ok: true, status: 204 } }
+	}
+
+	await backend.toggleOrchestraSetting('movePreviewCameras')
+	assert.deepEqual(writes[0], { movePreviewCameras: false, saveCameraGain: false, moveCameraCount: 3 })
+})
+
+test('live state cache keys device state by target and can be cleared', () => {
+	const store = new Store({})
+	const controller = { target: 'controller', deviceId: 7, connectionState: 'CONNECTED', panAngle: 23 }
+	store.applyLiveState(controller)
+	assert.deepEqual(store.getLiveState('controller', 7), controller)
+	assert.equal(store.getLiveState('controller', 8), undefined)
+	store.clearLiveState()
+	assert.equal(store.getLiveState('controller', 7), undefined)
+})
+
+test('project changes clear old live state and reject Music Follower snapshots from the previous project', async () => {
+	let activeProject = { id: 1, name: 'One' }
+	let followerState = { target: 'musicFollower', deviceId: 7, projectId: 1, status: 'TRACKING' }
+	const device = { id: 7, name: 'Camera', components: { musicFollower: {} } }
+	const backend = {
+		loadDevices: async () => [device],
+		listFaces: async () => [],
+		loadActivePresetMap: async () => ({}),
+		listPresets: async () => [],
+		getLiveInputs: async () => [],
+		isAutoCutRunning: async () => false,
+		loadOverrideDominantSpeaker: async () => null,
+		loadDominantSpeaker: async () => null,
+		loadProjects: async () => [activeProject],
+		loadActiveProject: async () => activeProject,
+		loadGamepadSelectedDevice: async () => ({ deviceId: null }),
+		loadOrchestraSettings: async () => ({}),
+		loadMusicPieces: async () => [],
+		loadSetlists: async () => [],
+		loadMusicFollowerState: async () => followerState,
+	}
+	const self = { backend, log() {} }
+	const store = new Store(self)
+	self.store = store
+	await store.loadConfiguration()
+	store.applyLiveState({ target: 'controller', deviceId: 7, connectionState: 'CONNECTED' })
+	assert.equal(store.getMusicFollowerState(7).status, 'TRACKING')
+
+	activeProject = { id: 2, name: 'Two' }
+	await store.loadConfiguration()
+	assert.equal(store.getLiveState('controller', 7), undefined)
+	assert.equal(store.getMusicFollowerState(7), undefined)
+
+	followerState = { target: 'musicFollower', deviceId: 7, projectId: 2, status: 'WAITING_FOR_SELECTION' }
+	await store.loadConfiguration()
+	assert.equal(store.getMusicFollowerState(7).status, 'WAITING_FOR_SELECTION')
+
+	activeProject = null
+	await store.loadConfiguration()
+	assert.equal(store.getMusicFollowerState(7), undefined)
+})
+
+test('new contextual presets reference registered actions and feedbacks, and stale choices do nothing', async () => {
+	const videoDevice = {
+		id: 7,
+		name: 'Camera',
+		components: { headTrackingDirector: {}, musicFollower: {}, panasonicController: {} },
+		feedback: { CONTROLLER_PANASONIC: { state: 'RUNNING' } },
+	}
+	const audioDevice = { id: 8, name: 'Mic', components: { audioAutoCut: {} } }
+	const project = { id: 3, name: 'Show' }
+	const piece = { id: 11, name: 'Intro', analysisStatus: 'READY' }
+	const setlist = {
+		id: 5,
+		name: 'Main',
+		entries: [
+			{ id: 2, ready: true, piece: { name: 'Intro' } },
+			{ id: 3, ready: false, piece: { name: 'Unavailable' } },
+		],
+	}
+	const store = {
+		getDevices: () => [videoDevice, audioDevice],
+		getVideoDevices: () => [videoDevice],
+		getAudioDevices: () => [audioDevice],
+		getVMixFramerDevices: () => [],
+		getFaces: () => [],
+		getPresets: () => [{ id: 42, name: 'Saved preset', commands: [{ deviceId: 7 }] }],
+		getProjects: () => [project],
+		getMusicPieces: () => [piece, { id: 12, name: 'Draft', analysisStatus: 'PROCESSING' }],
+		getSetlists: () => [setlist],
+		getDeviceById: (id) => [videoDevice, audioDevice].find((candidate) => candidate.id === id),
+		getPresetById: (id) => (id === 42 ? { id: 42, name: 'Saved preset', commands: [{ deviceId: 7 }] } : undefined),
+		getActivePresetMap: () => ({}),
+		getLiveInputs: () => [],
+		getDominantSpeakerOverride: () => null,
+		getDominantSpeaker: () => null,
+		getActiveProject: () => project,
+		getGamepadDeviceId: () => null,
+		getOrchestraSettings: () => ({}),
+		getMusicFollowerState: () => undefined,
+		getLiveState: () => undefined,
+		isAutoCutRunning: () => false,
+	}
+	const apiCalls = []
+	const logs = []
+	const self = {
+		store,
+		backend: {
+			setGamepadSelectedDevice: async (...args) => apiCalls.push(['gamepad', ...args]),
+			setMusicFollowerPiece: async (...args) => apiCalls.push(['piece', ...args]),
+			setMusicFollowerSetlistEntry: async (...args) => apiCalls.push(['entry', ...args]),
+			loadProject: async (...args) => apiCalls.push(['project', ...args]),
+		},
+		log(level, message) {
+			logs.push([level, message])
+		},
+		async updateConfiguration() {},
+		setActionDefinitions(value) {
+			this.actions = value
+		},
+		setFeedbackDefinitions(value) {
+			this.feedbacks = value
+		},
+		setPresetDefinitions(structure, definitions) {
+			this.presetStructure = structure
+			this.presetDefinitions = definitions
+		},
+	}
+	UpdateActions(self)
+	UpdateFeedbacks(self)
+	const presets = {
+		...getProjectPresets(self),
+		...getSwitcherPresets(),
+		...getCameraWorkflowPresets(self),
+		...getGamepadPresets(self),
+		...getOrchestraPresets(self),
+	}
+	const actionIds = new Set(Object.keys(self.actions))
+	const feedbackIds = new Set(Object.keys(self.feedbacks))
+	assert.ok(presets['loadProject-3'])
+	assert.ok(presets['correctFraming-7'])
+	assert.ok(presets['gamepadCamera-7'])
+	assert.ok(presets['musicPiece-7-11'])
+	assert.ok(presets['musicSetlist-7-5-2'])
+	assert.equal(presets['musicPiece-7-12'], undefined)
+	assert.ok(presets['orchestra-move-camera-count-3'])
+	for (const preset of Object.values(presets)) {
+		for (const step of preset.steps ?? []) {
+			for (const action of [...(step.down ?? []), ...(step.up ?? [])]) {
+				assert.ok(actionIds.has(action.actionId), `missing action ${action.actionId}`)
+			}
+		}
+		for (const feedback of preset.feedbacks ?? []) {
+			assert.ok(feedbackIds.has(feedback.feedbackId), `missing feedback ${feedback.feedbackId}`)
+		}
+	}
+	await self.actions.setGamepadDevice.callback({ options: { deviceId: 99 } })
+	await self.actions.selectMusicPiece.callback({ options: { deviceId: 7, pieceId: 12 } })
+	await self.actions.selectMusicSetlistEntry.callback({ options: { deviceId: 7, entry: '5:3' } })
+	await self.actions.loadProject.callback({ options: { projectId: 99, confirmInterruptions: true } })
+	assert.deepEqual(apiCalls, [])
+	const impact = {
+		sources: [{ deviceName: 'Camera', sourceName: 'NDI input' }],
+		switcherWillDisconnect: true,
+	}
+	self.backend.loadProject = async (_projectId, confirm) => ({ loaded: confirm, impact })
+	await self.actions.loadProject.callback({ options: { projectId: 3, confirmInterruptions: false } })
+	await self.actions.loadProject.callback({ options: { projectId: 3, confirmInterruptions: true } })
+	assert.ok(
+		logs.some(([, message]) => message.includes('Camera: NDI input') && message.includes('switcher will disconnect')),
+	)
+	assert.ok(logs.some(([level, message]) => level === 'info' && message.includes('Project load interruption impact')))
+	UpdatePresets(self)
+	assert.ok(Object.keys(self.presetDefinitions).length > Object.keys(presets).length)
+	for (const presetId of [
+		'toggledDirector-7',
+		'shotSize-WIDE-7',
+		'toggleAutoCut',
+		'overrideDominantSpeaker-8',
+		'playPreset-42',
+		'reapplyPreset-7',
+	]) {
+		assert.ok(self.presetDefinitions[presetId], `missing existing preset ${presetId}`)
+	}
+	for (const definition of Object.values(self.presetDefinitions)) {
+		const variants = definition.variants ?? [definition]
+		for (const variant of variants) {
+			for (const step of variant.steps ?? []) {
+				for (const action of [...(step.down ?? []), ...(step.up ?? [])]) {
+					assert.ok(actionIds.has(action.actionId), `missing action ${action.actionId}`)
+				}
+			}
+			for (const feedback of variant.feedbacks ?? []) {
+				assert.ok(feedbackIds.has(feedback.feedbackId), `missing feedback ${feedback.feedbackId}`)
+			}
+		}
+	}
+})
+
+test('batched state stream events update the store and refresh dominant speaker after audio changes', async () => {
+	const applied = []
+	let speakerRefreshes = 0
+	const feedbackChecks = []
+	const self = {
+		store: {
+			applyLiveState(state) {
+				applied.push(state)
+			},
+			async loadDominantSpeaker() {
+				speakerRefreshes++
+			},
+		},
+		updateVariableValues() {},
+		checkFeedbacks(...ids) {
+			feedbackChecks.push(ids)
+		},
+		log() {},
+	}
+	const handler = new EventHandler(self, '127.0.0.1', 8080, '', '')
+	await handler.handleStateMessage(
+		JSON.stringify([
+			{ target: 'controller', deviceId: 7, connectionState: 'CONNECTED' },
+			{ target: 'musicFollower', deviceId: 7, status: 'TRACKING' },
+			{ target: 'autoCutEvent', type: 'AUDIO_CHANGED' },
+		]),
+	)
+	assert.equal(applied.length, 3)
+	assert.equal(speakerRefreshes, 1)
+	assert.ok(feedbackChecks.flat().includes('dominantSpeaker'))
+})
+
+test('state stream reconnect refreshes the live snapshot after the initial connection', () => {
+	let refreshes = 0
+	const handler = new EventHandler(
+		{
+			async updateConfiguration() {
+				refreshes++
+			},
+			log() {},
+		},
+		'127.0.0.1',
+		8080,
+		'',
+		'',
+	)
+	handler.handleStateStreamOpen()
+	assert.equal(refreshes, 0)
+	handler.handleStateStreamOpen()
+	assert.equal(refreshes, 1)
+	handler.close()
+	handler.handleStateStreamOpen()
+	assert.equal(refreshes, 1)
+})

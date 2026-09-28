@@ -13,7 +13,7 @@ import {
 	createDeviceOptions,
 	getComponentsOfType,
 } from './scripts/helpers.js'
-import { type ComponentState } from './api/types.js'
+import { type ComponentState, type OrchestraSettings } from './api/types.js'
 
 export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const backend = self.backend
@@ -45,6 +45,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 						{ id: 'CONTROLLER', label: 'Controller' },
 						{ id: 'DIRECTOR', label: 'Director' },
 						{ id: 'AUTO_CUT', label: 'AutoCut' },
+						{ id: 'MUSIC_FOLLOWER', label: 'Music Follower' },
 					],
 					default: 'DIRECTOR',
 				},
@@ -55,7 +56,12 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				if (!device) {
 					return false
 				}
-				const componentType = feedback.options.componentType as 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT'
+				const componentType = feedback.options.componentType as
+					| 'INPUT'
+					| 'CONTROLLER'
+					| 'DIRECTOR'
+					| 'AUTO_CUT'
+					| 'MUSIC_FOLLOWER'
 				const components = getComponentsOfType(device, componentType)
 				return components.some((component) => device.feedback?.[component]?.state === 'RUNNING')
 			},
@@ -239,7 +245,8 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				},
 			],
 			callback: async (feedback) => {
-				return isInputLive(self, feedback.options.input?.toString() ?? '')
+				const input = feedback.options.input
+				return isInputLive(self, typeof input === 'string' || typeof input === 'number' ? String(input) : '')
 			},
 		},
 		autoCut: {
@@ -284,6 +291,193 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 				const deviceId = Number(feedback.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				return device?.feedback?.['FRAMER_VMIX']?.state === 'RUNNING'
+			},
+		},
+		controllerConnected: {
+			name: 'Controller Connected',
+			type: 'boolean',
+			description: 'Checks the latest live controller connection state reported by MiruSuite.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [getDeviceSelector(self, videoDeviceChoices)],
+			callback: (feedback) => {
+				const state = store.getLiveState('controller', Number(feedback.options.deviceId))
+				return state?.target === 'controller' && state.connectionState === 'CONNECTED'
+			},
+		},
+		framingStable: {
+			name: 'Framing Stable',
+			type: 'boolean',
+			description: 'Checks whether live tracking state reports stable framing for a device.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [getDeviceSelector(self, videoDeviceChoices)],
+			callback: (feedback) => {
+				const state = store.getLiveState('framingStable', Number(feedback.options.deviceId))
+				return state?.target === 'framingStable' && state.enabled === true
+			},
+		},
+		dominantSpeaker: {
+			name: 'Is Dominant Speaker',
+			type: 'boolean',
+			description:
+				'Checks the automatically detected dominant speaker. This is separate from a manually set speaker override.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [getDeviceSelector(self, audioDeviceChoices)],
+			callback: (feedback) => store.getDominantSpeaker()?.id === Number(feedback.options.deviceId),
+		},
+		activeProject: {
+			name: 'Active Project',
+			type: 'boolean',
+			description: 'Checks whether the selected MiruSuite project is active.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [
+				{
+					id: 'projectId',
+					type: 'dropdown',
+					label: 'Project',
+					choices: store
+						.getProjects()
+						.map((project) => ({ id: project.id ?? -1, label: project.name ?? `Project ${project.id}` })),
+					default: store.getProjects()[0]?.id ?? -1,
+				},
+			],
+			callback: (feedback) => store.getActiveProject()?.id === Number(feedback.options.projectId),
+		},
+		gamepadSelectedDevice: {
+			name: 'Gamepad Camera Selected',
+			type: 'boolean',
+			description: 'Checks whether the selected device is assigned to MiruSuite’s shared gamepad.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [getDeviceSelector(self, videoDeviceChoices)],
+			callback: (feedback) => store.getGamepadDeviceId() === Number(feedback.options.deviceId),
+		},
+		autoCutState: {
+			name: 'AutoCut Live State',
+			type: 'boolean',
+			description: 'Checks the current AutoCut live state reported by MiruSuite.',
+			defaultStyle: { bgcolor: 0xff0000, color: 0x000000 },
+			options: [
+				{
+					id: 'state',
+					type: 'dropdown',
+					label: 'State',
+					choices: ['STAGE', 'SPEAKER', 'PIP', 'PRESENTATION', 'AUDIENCE'].map((id) => ({ id, label: id })),
+					default: 'STAGE',
+				},
+			],
+			callback: (feedback) => {
+				const state = store.getLiveState('autoCutState')
+				return state?.target === 'autoCutState' && state.state === feedback.options.state
+			},
+		},
+		musicFollower: {
+			name: 'Music Follower Status',
+			type: 'boolean',
+			description: 'Checks the live status of a device Music Follower component.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [
+				{
+					id: 'status',
+					type: 'dropdown',
+					label: 'Status',
+					choices: [
+						'DISABLED',
+						'PAUSED',
+						'WAITING_FOR_SELECTION',
+						'WAITING_FOR_ANALYSIS',
+						'TRACKING',
+						'HALTED',
+						'ENDED',
+						'ERROR',
+					].map((id) => ({ id, label: id.replaceAll('_', ' ') })),
+					default: 'TRACKING',
+				},
+				getDeviceSelector(
+					self,
+					createDeviceOptions(store.getDevices().filter((device) => device.components?.musicFollower != null)),
+				),
+			],
+			callback: (feedback) =>
+				store.getMusicFollowerState(Number(feedback.options.deviceId))?.status === feedback.options.status,
+		},
+		musicFollowerPieceSelected: {
+			name: 'Music Follower Piece Selected',
+			type: 'boolean',
+			description: 'Checks whether this piece is selected by the device Music Follower.',
+			defaultStyle: { bgcolor: 0x008000, color: 0xffffff },
+			options: [
+				getDeviceSelector(
+					self,
+					createDeviceOptions(store.getDevices().filter((device) => device.components?.musicFollower != null)),
+				),
+				{
+					id: 'pieceId',
+					type: 'number',
+					label: 'Piece ID',
+					default: -1,
+				},
+			],
+			callback: (feedback) =>
+				store.getMusicFollowerState(Number(feedback.options.deviceId))?.selectedPieceId ===
+				Number(feedback.options.pieceId),
+		},
+		musicFollowerSetlistEntrySelected: {
+			name: 'Music Follower Setlist Entry Selected',
+			type: 'boolean',
+			description: 'Checks whether this setlist entry is selected by the device Music Follower.',
+			defaultStyle: { bgcolor: 0x008000, color: 0xffffff },
+			options: [
+				getDeviceSelector(
+					self,
+					createDeviceOptions(store.getDevices().filter((device) => device.components?.musicFollower != null)),
+				),
+				{ id: 'setlistId', type: 'number', label: 'Setlist ID', default: -1 },
+				{ id: 'entryId', type: 'number', label: 'Entry ID', default: -1 },
+			],
+			callback: (feedback) => {
+				const state = store.getMusicFollowerState(Number(feedback.options.deviceId))
+				return (
+					state?.selectedSetlistId === Number(feedback.options.setlistId) &&
+					state?.selectedSetlistEntryId === Number(feedback.options.entryId)
+				)
+			},
+		},
+		orchestraSetting: {
+			name: 'Orchestra Setting',
+			type: 'boolean',
+			description:
+				'Checks an Orchestra setting against a selected value. For excluded devices, use the device ID as the value.',
+			defaultStyle: { bgcolor: 0x00ff00, color: 0x000000 },
+			options: [
+				{
+					id: 'setting',
+					type: 'dropdown',
+					label: 'Setting',
+					choices: [
+						{ id: 'movePreviewCameras', label: 'Move preview cameras' },
+						{ id: 'moveCameraCount', label: 'Cameras to move' },
+						{ id: 'saveCameraGain', label: 'Save camera gain' },
+						{ id: 'saveDirectorSettings', label: 'Save director settings' },
+						{ id: 'autoMoveCameras', label: 'Automatically move cameras' },
+						{ id: 'audioCalloutPrepLeadSeconds', label: 'Audio callout lead time' },
+						{ id: 'audioCalloutPrepGroupWindowSeconds', label: 'Audio callout group window' },
+						{ id: 'cameraPreparationLeadSeconds', label: 'Camera preparation lead time' },
+						{ id: 'disabledDeviceIds', label: 'Excluded device IDs' },
+					],
+					default: 'movePreviewCameras',
+				},
+				{ id: 'value', type: 'textinput', label: 'Expected value', default: 'true' },
+			],
+			callback: (feedback) => {
+				const setting = feedback.options.setting
+				const key = typeof setting === 'string' ? setting : ''
+				const actual = store.getOrchestraSettings()[key as keyof OrchestraSettings]
+				const value = feedback.options.value
+				const expected = typeof value === 'string' || typeof value === 'number' ? String(value) : ''
+				if (key === 'disabledDeviceIds') return (actual as number[] | undefined)?.includes(Number(expected)) ?? false
+				if (typeof actual === 'boolean')
+					return expected === 'toggle' ? actual : String(actual) === expected.toLowerCase()
+				if (typeof actual === 'number') return actual === Number(expected)
+				return false
 			},
 		},
 	})

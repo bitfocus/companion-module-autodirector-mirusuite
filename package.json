@@ -9,6 +9,7 @@
 		"package": "yarn build && companion-module-build",
 		"build": "yarn run build:main && yarn run copyassets",
 		"build:main": "tsc -p tsconfig.build.json",
+		"test": "yarn build:main && node --test test/*.test.mjs",
 		"dev": "yarn run copyassets && tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",
 		"lint": "yarn run lint:raw .",

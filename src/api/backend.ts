@@ -5,7 +5,23 @@ import { MiruSuiteModuleInstance } from '../main.js'
 import { getComponentOfType } from '../scripts/helpers.js'
 import createClient, { type Client } from 'openapi-fetch'
 import { paths } from './openapi.js'
-import type { ActivePreset, Device, FaceIdEntity, PresetEntity, ShotSize, TrackingMode } from './types.js'
+import type {
+	ActivePreset,
+	Device,
+	DeviceSummary,
+	FaceIdEntity,
+	GamepadSelectedDevice,
+	MusicFollowerState,
+	MusicPiece,
+	OrchestraBooleanSetting,
+	OrchestraSettings,
+	PresetEntity,
+	ProjectLoadImpact,
+	ProjectSummary,
+	Setlist,
+	ShotSize,
+	TrackingMode,
+} from './types.js'
 
 export default class Backend {
 	private self: MiruSuiteModuleInstance
@@ -36,9 +52,13 @@ export default class Backend {
 			const checkedFetch: typeof fetch = async (input, init) => {
 				try {
 					const response = await fetch(input, init)
-					if (!response.ok) {
+					const requestUrl = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+					const projectLoadConflict =
+						response.status === 409 && new URL(requestUrl, this.baseUrl).pathname === '/api/projects/load'
+					if (!response.ok && !projectLoadConflict) {
 						throw new Error(`MiruSuite returned ${response.status} ${response.statusText}`)
 					}
+					if (projectLoadConflict) return response
 					this.self.connectionState = 'Connected'
 					this.self.updateStatus(InstanceStatus.Ok)
 					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
@@ -46,7 +66,19 @@ export default class Backend {
 				} catch (error) {
 					this.self.connectionState = 'Disconnected'
 					this.self.updateStatus(InstanceStatus.ConnectionFailure)
-					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
+					this.self.store.clearLiveState()
+					if (this.self.store.hasConfiguration) {
+						this.self.updateVariableValues()
+						this.self.checkFeedbacks(
+							'controllerConnected',
+							'framingStable',
+							'musicFollower',
+							'autoCut',
+							'autoCutState',
+							'dominantSpeaker',
+							'dominantSpeakerOverride',
+						)
+					}
 					throw error
 				}
 			}
@@ -82,6 +114,129 @@ export default class Backend {
 		return response.data ?? []
 	}
 
+	async loadProjects(): Promise<ProjectSummary[]> {
+		const response = await this.client.GET('/api/projects')
+		return response.data ?? []
+	}
+
+	async loadActiveProject(): Promise<ProjectSummary | null> {
+		const response = await this.client.GET('/api/projects/active')
+		return response.data ? { id: response.data.id, name: response.data.name } : null
+	}
+
+	async loadGamepadSelectedDevice(): Promise<GamepadSelectedDevice> {
+		const response = await this.client.GET('/api/gamepad/selected-device')
+		return response.data ?? { deviceId: null }
+	}
+
+	async setGamepadSelectedDevice(deviceId: number | null): Promise<void> {
+		await this.client.PUT('/api/gamepad/selected-device', { body: { deviceId } })
+	}
+
+	async loadDominantSpeaker(): Promise<DeviceSummary | null> {
+		const response = await this.client.GET('/api/autocut/dominantSpeaker')
+		return response.data ?? null
+	}
+
+	async loadOrchestraSettings(): Promise<OrchestraSettings> {
+		const response = await this.client.GET('/api/config/orchestra-settings')
+		return response.data ?? {}
+	}
+
+	async updateOrchestraSettings(patch: Partial<OrchestraSettings>): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const updated = { ...current, ...patch }
+		return this.saveOrchestraSettings(updated)
+	}
+
+	async toggleOrchestraSetting(setting: OrchestraBooleanSetting): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const updated = { ...current, [setting]: current[setting] !== true }
+		return this.saveOrchestraSettings(updated)
+	}
+
+	private async saveOrchestraSettings(updated: OrchestraSettings): Promise<OrchestraSettings> {
+		await this.client.PUT('/api/config/orchestra-settings', { body: updated })
+		this.self.store.setOrchestraSettings(updated)
+		this.self.updateVariableValues()
+		this.self.checkFeedbacks('orchestraSetting')
+		return updated
+	}
+
+	async loadMusicPieces(): Promise<MusicPiece[]> {
+		const response = await this.client.GET('/api/orchestra/pieces')
+		return response.data ?? []
+	}
+
+	async loadSetlists(): Promise<Setlist[]> {
+		const response = await this.client.GET('/api/orchestra/setlists')
+		return response.data ?? []
+	}
+
+	async loadMusicFollowerState(deviceId: number): Promise<MusicFollowerState> {
+		const response = await this.client.GET('/api/devices/{deviceId}/music-follower/state', {
+			params: { path: { deviceId } },
+		})
+		if (!response.data) throw new Error(`No Music Follower state returned for device ${deviceId}`)
+		return response.data
+	}
+
+	async setMusicFollowerPiece(deviceId: number, pieceId: number): Promise<void> {
+		await this.client.PUT('/api/devices/{deviceId}/music-follower/selection/piece', {
+			params: { path: { deviceId } },
+			body: { pieceId },
+		})
+	}
+
+	async setMusicFollowerSetlistEntry(deviceId: number, setlistId: number, entryId: number): Promise<void> {
+		await this.client.PUT('/api/devices/{deviceId}/music-follower/selection/setlist-entry', {
+			params: { path: { deviceId } },
+			body: { setlistId, entryId },
+		})
+	}
+
+	async musicFollowerNext(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/next', { params: { path: { deviceId } } })
+	}
+
+	async musicFollowerPrevious(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/previous', { params: { path: { deviceId } } })
+	}
+
+	async musicFollowerReset(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/reset', { params: { path: { deviceId } } })
+	}
+
+	async correctFraming(id: number): Promise<void> {
+		await this.client.POST('/api/devices/{id}/director/framing/correct', { params: { path: { id } } })
+	}
+
+	async cutSwitcher(): Promise<void> {
+		await this.client.POST('/api/switcher/cut')
+	}
+
+	async triggerTransition(): Promise<void> {
+		await this.client.POST('/api/switcher/transition')
+	}
+
+	async loadProject(
+		id: number,
+		confirmInterruptions: boolean,
+	): Promise<{ loaded: boolean; impact?: ProjectLoadImpact }> {
+		let response = await this.client.PUT('/api/projects/load', { params: { query: { id } } })
+		if (response.response.status === 409) {
+			const impact = response.error
+			if (!confirmInterruptions || !impact?.confirmationToken) return { loaded: false, impact }
+			response = await this.client.PUT('/api/projects/load', {
+				params: { query: { id, confirm: true, confirmationToken: impact.confirmationToken } },
+			})
+			if (!response.response.ok) throw new Error(`Project load failed with HTTP ${response.response.status}`)
+			return { loaded: true, impact }
+		}
+		if (!response.response.ok) throw new Error(`Project load failed with HTTP ${response.response.status}`)
+		return { loaded: true }
+	}
+
 	/**
 	 * Enables, disables or toggles the component with the given type of a device.
 	 * @param device device to update
@@ -91,7 +246,7 @@ export default class Backend {
 	async toggleComponent(
 		device: Device | undefined,
 		enabled?: boolean,
-		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' = 'DIRECTOR',
+		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER' = 'DIRECTOR',
 	): Promise<void> {
 		if (device === undefined) {
 			return

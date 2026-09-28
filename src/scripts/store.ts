@@ -1,5 +1,18 @@
 import { MiruSuiteModuleInstance } from '../main.js'
-import type { ActivePreset, Device, FaceIdEntity, PresetEntity } from '../api/types.js'
+import type {
+	ActivePreset,
+	Device,
+	DeviceSummary,
+	FaceIdEntity,
+	GamepadSelectedDevice,
+	MusicFollowerState,
+	MusicPiece,
+	OrchestraSettings,
+	PresetEntity,
+	ProjectSummary,
+	Setlist,
+	State,
+} from '../api/types.js'
 import { getDirectorType, getInputComponentType } from './helpers.js'
 import Backend from '../api/backend.js'
 
@@ -12,6 +25,15 @@ export class Store {
 	private faces: FaceIdEntity[] = []
 	private autoCutEnabled = false
 	private dominantSpeakerOverride: number | null = null
+	private dominantSpeaker: DeviceSummary | null = null
+	private projects: ProjectSummary[] = []
+	private activeProject: ProjectSummary | null = null
+	private gamepadDeviceId: number | null = null
+	private orchestraSettings: OrchestraSettings = {}
+	private musicPieces: MusicPiece[] = []
+	private setlists: Setlist[] = []
+	private musicFollowerStates = new Map<number, MusicFollowerState>()
+	private liveStates = new Map<string, State>()
 	private configurationLoaded = false
 
 	constructor(self: MiruSuiteModuleInstance) {
@@ -44,15 +66,44 @@ export class Store {
 			this.backend.loadActivePresetMap(),
 			this.backend.listPresets(),
 		])
-		const [liveInputs, autoCutEnabled, dominantSpeakerOverride] = await Promise.allSettled([
+		const [
+			liveInputs,
+			autoCutEnabled,
+			dominantSpeakerOverride,
+			dominantSpeaker,
+			projects,
+			activeProject,
+			gamepadDevice,
+			orchestraSettings,
+			musicPieces,
+			setlists,
+			...musicFollowerStates
+		] = await Promise.allSettled([
 			this.backend.getLiveInputs(),
 			this.backend.isAutoCutRunning(),
 			this.backend.loadOverrideDominantSpeaker(),
+			this.backend.loadDominantSpeaker(),
+			this.backend.loadProjects(),
+			this.backend.loadActiveProject(),
+			this.backend.loadGamepadSelectedDevice(),
+			this.backend.loadOrchestraSettings(),
+			this.backend.loadMusicPieces(),
+			this.backend.loadSetlists(),
+			...devices
+				.filter((device) => device.id !== undefined && device.components?.musicFollower != null)
+				.map(async (device) => this.backend.loadMusicFollowerState(device.id!)),
 		])
 		const optionalRefreshes = [
 			['live inputs', liveInputs],
 			['AutoCut state', autoCutEnabled],
 			['dominant speaker override', dominantSpeakerOverride],
+			['dominant speaker', dominantSpeaker],
+			['projects', projects],
+			['active project', activeProject],
+			['gamepad selection', gamepadDevice],
+			['Orchestra settings', orchestraSettings],
+			['music pieces', musicPieces],
+			['setlists', setlists],
 		] as const
 		for (const [name, result] of optionalRefreshes) {
 			if (result.status === 'rejected') {
@@ -61,15 +112,47 @@ export class Store {
 		}
 		const oldSignature = this.getDefinitionSignature(this.devices)
 		const newSignature = this.getDefinitionSignature(devices)
+		const oldProjectId = this.activeProject?.id
+		const newProjectId = activeProject.status === 'fulfilled' ? activeProject.value?.id : oldProjectId
+		const projectChanged =
+			this.configurationLoaded && activeProject.status === 'fulfilled' && oldProjectId !== newProjectId
+		if (projectChanged) {
+			this.clearLiveState()
+			this.musicFollowerStates.clear()
+		}
 
 		// Commit only after every endpoint succeeds so a disconnect cannot publish a partial catalog.
 		this.devices = devices
+		this.pruneLiveStates(devices)
 		this.faces = faces
 		this.activePresetMap = activePresetMap
 		this.presets = presets
 		if (liveInputs.status === 'fulfilled') this.liveInputs = liveInputs.value
 		if (autoCutEnabled.status === 'fulfilled') this.autoCutEnabled = autoCutEnabled.value
 		if (dominantSpeakerOverride.status === 'fulfilled') this.dominantSpeakerOverride = dominantSpeakerOverride.value
+		if (dominantSpeaker.status === 'fulfilled') this.dominantSpeaker = dominantSpeaker.value
+		if (projects.status === 'fulfilled') this.projects = projects.value
+		if (activeProject.status === 'fulfilled') this.activeProject = activeProject.value
+		if (gamepadDevice.status === 'fulfilled') this.gamepadDeviceId = gamepadDevice.value.deviceId ?? null
+		if (orchestraSettings.status === 'fulfilled') this.orchestraSettings = orchestraSettings.value
+		if (musicPieces.status === 'fulfilled') this.musicPieces = musicPieces.value
+		if (setlists.status === 'fulfilled') this.setlists = setlists.value
+		const musicDeviceIds = devices
+			.filter((device) => device.id !== undefined && device.components?.musicFollower != null)
+			.map((device) => device.id!)
+		const musicDeviceIdSet = new Set(musicDeviceIds)
+		for (const deviceId of this.musicFollowerStates.keys()) {
+			if (!musicDeviceIdSet.has(deviceId)) this.musicFollowerStates.delete(deviceId)
+		}
+		for (const deviceId of musicDeviceIds) {
+			const stateResult = musicFollowerStates.shift()
+			if (
+				stateResult?.status === 'fulfilled' &&
+				(!projectChanged || (newProjectId !== undefined && stateResult.value.projectId === newProjectId))
+			) {
+				this.musicFollowerStates.set(deviceId, stateResult.value)
+			}
+		}
 		this.configurationLoaded = true
 		return oldSignature !== newSignature
 	}
@@ -142,6 +225,73 @@ export class Store {
 		return this.dominantSpeakerOverride
 	}
 
+	async loadDominantSpeaker(): Promise<void> {
+		this.dominantSpeaker = await this.backend.loadDominantSpeaker()
+	}
+
+	getDominantSpeaker(): DeviceSummary | null {
+		return this.dominantSpeaker
+	}
+
+	getProjects(): ProjectSummary[] {
+		return this.projects
+	}
+
+	getActiveProject(): ProjectSummary | null {
+		return this.activeProject
+	}
+
+	getGamepadDeviceId(): number | null {
+		return this.gamepadDeviceId
+	}
+
+	async loadGamepadSelectedDevice(): Promise<void> {
+		const selected: GamepadSelectedDevice = await this.backend.loadGamepadSelectedDevice()
+		this.gamepadDeviceId = selected.deviceId ?? null
+	}
+
+	getOrchestraSettings(): OrchestraSettings {
+		return this.orchestraSettings
+	}
+
+	setOrchestraSettings(settings: OrchestraSettings): void {
+		this.orchestraSettings = settings
+	}
+
+	getMusicPieces(): MusicPiece[] {
+		return this.musicPieces
+	}
+
+	getSetlists(): Setlist[] {
+		return this.setlists
+	}
+
+	getMusicFollowerState(deviceId: number): MusicFollowerState | undefined {
+		return this.musicFollowerStates.get(deviceId)
+	}
+
+	setMusicFollowerState(state: MusicFollowerState): void {
+		if (state.deviceId !== undefined) this.musicFollowerStates.set(state.deviceId, state)
+	}
+
+	applyLiveState(state: State): void {
+		const deviceId = 'deviceId' in state ? state.deviceId : undefined
+		this.liveStates.set(`${state.target}:${deviceId ?? 'global'}`, state)
+		if (state.target === 'musicFollower') this.setMusicFollowerState(state)
+	}
+
+	getLiveState(target: State['target'], deviceId?: number): State | undefined {
+		return this.liveStates.get(`${target}:${deviceId ?? 'global'}`)
+	}
+
+	clearLiveState(): void {
+		this.liveStates.clear()
+		this.musicFollowerStates.clear()
+		this.autoCutEnabled = false
+		this.dominantSpeaker = null
+		this.dominantSpeakerOverride = null
+	}
+
 	private getDefinitionSignature(devices: Device[]): string {
 		return JSON.stringify(
 			devices
@@ -157,5 +307,13 @@ export class Store {
 				}))
 				.sort((a, b) => (a.id ?? -1) - (b.id ?? -1)),
 		)
+	}
+
+	private pruneLiveStates(devices: Device[]): void {
+		const deviceIds = new Set(devices.flatMap((device) => (device.id === undefined ? [] : [String(device.id)])))
+		for (const key of this.liveStates.keys()) {
+			const deviceId = key.slice(key.lastIndexOf(':') + 1)
+			if (deviceId !== 'global' && !deviceIds.has(deviceId)) this.liveStates.delete(key)
+		}
 	}
 }
