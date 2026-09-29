@@ -244,7 +244,7 @@ async function refreshFollower(self: MiruSuiteModuleInstance, deviceId: number):
 	try {
 		self.store.setMusicFollowerState(await self.backend!.loadMusicFollowerState(deviceId))
 		self.updateVariableValues()
-		self.checkFeedbacks('musicFollower')
+		self.checkFeedbacks('musicFollower', 'musicFollowerPieceSelected', 'musicFollowerSetlistEntrySelected')
 	} catch (error) {
 		self.log('warn', `Could not refresh Music Follower state for device ${deviceId}: ${String(error)}`)
 	}

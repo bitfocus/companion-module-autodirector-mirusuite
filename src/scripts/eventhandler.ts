@@ -162,6 +162,8 @@ export class EventHandler {
 				'framingStable',
 				'autoCutState',
 				'musicFollower',
+				'musicFollowerPieceSelected',
+				'musicFollowerSetlistEntrySelected',
 				'dominantSpeaker',
 			)
 		} catch (error) {

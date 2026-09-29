@@ -71,13 +71,13 @@ export class Store {
 			typeof this.backend.getSwitcherState === 'function'
 				? this.backend.getSwitcherState()
 				: this.backend.getLiveInputs().then((programs) => ({ programs }))
-		const [devices, faces, activePresetMap, presets] = await Promise.all([
+		let [devices, faces, activePresetMap, presets] = await Promise.all([
 			this.backend.loadDevices(),
 			this.backend.listFaces(),
 			this.backend.loadActivePresetMap(),
 			this.backend.listPresets(),
 		])
-		const [
+		let [
 			switcherState,
 			autoCutEnabled,
 			dominantSpeakerOverride,
@@ -127,13 +127,34 @@ export class Store {
 		const newProjectId = activeProject.status === 'fulfilled' ? activeProject.value?.id : oldProjectId
 		const projectChanged =
 			this.configurationLoaded && activeProject.status === 'fulfilled' && oldProjectId !== newProjectId
-		let projectPresets = presets
 		if (projectChanged) {
-			// The initial catalog fetch can race the active-project change. Re-fetch after the new active ID is known.
+			// The initial catalog fetch can race the active-project change. Refresh every project-scoped catalog
+			// after the new active ID is known, then commit them together below.
 			try {
-				projectPresets = await this.backend.listPresets()
+				const refreshedCatalogs = await Promise.all([
+					this.backend.loadDevices(),
+					this.backend.listFaces(),
+					this.backend.loadActivePresetMap(),
+					this.backend.listPresets(),
+				])
+				devices = refreshedCatalogs[0]
+				faces = refreshedCatalogs[1]
+				activePresetMap = refreshedCatalogs[2]
+				presets = refreshedCatalogs[3]
+				const refreshedMusicCatalogs = await Promise.all([
+					this.backend.loadMusicPieces().then((value) => ({ status: 'fulfilled', value }) as const),
+					this.backend.loadSetlists().then((value) => ({ status: 'fulfilled', value }) as const),
+				])
+				musicPieces = refreshedMusicCatalogs[0]
+				setlists = refreshedMusicCatalogs[1]
+				musicFollowerStates = await Promise.allSettled(
+					devices
+						.filter((device) => device.id !== undefined && device.components?.musicFollower != null)
+						.map(async (device) => this.backend.loadMusicFollowerState(device.id!)),
+				)
 			} catch (error) {
-				this.self.log('warn', `Could not refresh presets for the newly active project: ${String(error)}`)
+				this.self.log('warn', `Could not refresh catalogs for the newly active project: ${String(error)}`)
+				throw error
 			}
 		}
 		if (projectChanged) {
@@ -146,7 +167,7 @@ export class Store {
 		this.pruneLiveStates(devices)
 		this.faces = faces
 		this.activePresetMap = activePresetMap
-		this.presets = projectPresets
+		this.presets = presets
 		if (switcherState.status === 'fulfilled') this.switcherState = switcherState.value
 		if (autoCutEnabled.status === 'fulfilled') this.autoCutEnabled = autoCutEnabled.value
 		if (dominantSpeakerOverride.status === 'fulfilled') this.dominantSpeakerOverride = dominantSpeakerOverride.value
