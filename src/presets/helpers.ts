@@ -13,7 +13,10 @@ export function button(category: string, text: string, down: any[], feedbacks: a
 	}
 }
 
-export function action(actionId: string, options: Record<string, string | number | boolean>): any {
+export function action(
+	actionId: string,
+	options: Record<string, string | number | boolean | (string | number)[]>,
+): any {
 	return { actionId, options }
 }
 

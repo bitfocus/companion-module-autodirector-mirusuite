@@ -8,7 +8,15 @@ export function getProjectPresets(self: MiruSuiteModuleInstance): LegacyPresets 
 		presets[`loadProject-${project.id}`] = button(
 			'Projects',
 			project.name ?? `Project ${project.id}`,
-			[action('loadProject', { projectId: project.id, confirmInterruptions: true })],
+			[
+				action('loadProject', {
+					projectId: project.id,
+					confirmInterruptions: true,
+					enableDevices: true,
+					restoreAutoCut: true,
+					restoreSwitcher: true,
+				}),
+			],
 			[feedback('activeProject', { projectId: project.id })],
 		)
 	}

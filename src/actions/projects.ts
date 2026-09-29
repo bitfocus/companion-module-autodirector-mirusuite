@@ -12,7 +12,7 @@ export function GetProjectActions(self: MiruSuiteModuleInstance): Actions {
 	return {
 		loadProject: {
 			name: 'Load Project',
-			description: 'Load a MiruSuite project. Optionally confirm runtime interruptions reported by MiruSuite.',
+			description: 'Load a MiruSuite project and choose which runtime settings and devices to restore.',
 			options: [
 				{
 					id: 'projectId',
@@ -27,6 +27,24 @@ export function GetProjectActions(self: MiruSuiteModuleInstance): Actions {
 					label: 'Confirm interruptions reported by MiruSuite',
 					default: false,
 				},
+				{
+					id: 'enableDevices',
+					type: 'checkbox',
+					label: 'Enable devices in the project',
+					default: false,
+				},
+				{
+					id: 'restoreAutoCut',
+					type: 'checkbox',
+					label: 'Restore AutoCut settings',
+					default: false,
+				},
+				{
+					id: 'restoreSwitcher',
+					type: 'checkbox',
+					label: 'Restore switcher settings',
+					default: false,
+				},
 			],
 			async callback(event: CompanionActionEvent) {
 				const projectId = Number(event.options.projectId)
@@ -38,7 +56,11 @@ export function GetProjectActions(self: MiruSuiteModuleInstance): Actions {
 					self.log('warn', `Cannot load project: invalid project ID ${JSON.stringify(event.options.projectId)}`)
 					return
 				}
-				const result = await self.backend?.loadProject(projectId, event.options.confirmInterruptions === true)
+				const result = await self.backend?.loadProject(projectId, event.options.confirmInterruptions === true, {
+					enableDevices: event.options.enableDevices === true,
+					restoreAutoCut: event.options.restoreAutoCut === true,
+					restoreSwitcher: event.options.restoreSwitcher === true,
+				})
 				if (result?.impact) {
 					const descriptions: string[] = []
 					const sources = result.impact.sources?.map(

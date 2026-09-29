@@ -238,13 +238,15 @@ export default class Backend {
 	async loadProject(
 		id: number,
 		confirmInterruptions: boolean,
+		options: { enableDevices?: boolean; restoreAutoCut?: boolean; restoreSwitcher?: boolean } = {},
 	): Promise<{ loaded: boolean; impact?: ProjectLoadImpact }> {
-		let response = await this.client.PUT('/api/projects/load', { params: { query: { id } } })
+		const query = { id, ...options }
+		let response = await this.client.PUT('/api/projects/load', { params: { query } })
 		if (response.response.status === 409) {
 			const impact = response.error
 			if (!confirmInterruptions || !impact?.confirmationToken) return { loaded: false, impact }
 			response = await this.client.PUT('/api/projects/load', {
-				params: { query: { id, confirm: true, confirmationToken: impact.confirmationToken } },
+				params: { query: { ...query, confirm: true, confirmationToken: impact.confirmationToken } },
 			})
 			if (!response.response.ok) throw new Error(`Project load failed with HTTP ${response.response.status}`)
 			return { loaded: true, impact }

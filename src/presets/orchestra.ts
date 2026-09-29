@@ -1,5 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from '../main.js'
+import { getPTZCapableDevices } from '../scripts/helpers.js'
 import { action, button, feedback, type LegacyPresets } from './helpers.js'
 
 export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPresets {
@@ -37,7 +38,7 @@ export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPreset
 			}
 		}
 	}
-	for (const device of self.store.getDevices()) {
+	for (const device of getPTZCapableDevices(self.store.getDevices())) {
 		if (device.id === undefined) continue
 		presets[`orchestra-device-${device.id}`] = button(
 			'Orchestra',
@@ -68,14 +69,28 @@ export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPreset
 			presets[`orchestra-${setting}-${value}`] = button(
 				'Orchestra',
 				`${enabled ? 'Enable' : 'Disable'}\n${labels[setting]}`,
-				[action('setOrchestraSetting', { setting, booleanValue: value })],
+				[
+					action('setOrchestraSetting', {
+						setting,
+						booleanValue: value,
+						numberValue: 1,
+						deviceIds: [],
+					}),
+				],
 				[feedback('orchestraSetting', { setting, value })],
 			)
 		}
 		presets[`orchestra-${setting}-toggle`] = button(
 			'Orchestra',
 			`Toggle\n${labels[setting]}`,
-			[action('setOrchestraSetting', { setting, booleanValue: 'toggle' })],
+			[
+				action('setOrchestraSetting', {
+					setting,
+					booleanValue: 'toggle',
+					numberValue: 1,
+					deviceIds: [],
+				}),
+			],
 			[feedback('orchestraSetting', { setting, value: 'toggle' })],
 		)
 	}
@@ -83,7 +98,14 @@ export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPreset
 		presets[`orchestra-move-camera-count-${count}`] = button(
 			'Orchestra',
 			`${count} Camera${count === 1 ? '' : 's'}`,
-			[action('setOrchestraSetting', { setting: 'moveCameraCount', numberValue: count })],
+			[
+				action('setOrchestraSetting', {
+					setting: 'moveCameraCount',
+					booleanValue: 'true',
+					numberValue: count,
+					deviceIds: [],
+				}),
+			],
 			[feedback('orchestraSetting', { setting: 'moveCameraCount', value: String(count) })],
 		)
 	}
