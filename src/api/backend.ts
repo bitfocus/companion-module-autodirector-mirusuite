@@ -5,7 +5,24 @@ import { MiruSuiteModuleInstance } from '../main.js'
 import { getComponentOfType } from '../scripts/helpers.js'
 import createClient, { type Client } from 'openapi-fetch'
 import { paths } from './openapi.js'
-import type { ActivePreset, Device, FaceIdEntity, PresetEntity, ShotSize, TrackingMode } from './types.js'
+import type {
+	ActivePreset,
+	Device,
+	DeviceSummary,
+	FaceIdEntity,
+	GamepadSelectedDevice,
+	MusicFollowerState,
+	MusicPiece,
+	OrchestraBooleanSetting,
+	OrchestraSettings,
+	PresetEntity,
+	ProjectLoadImpact,
+	ProjectSummary,
+	Setlist,
+	SwitcherState,
+	ShotSize,
+	TrackingMode,
+} from './types.js'
 
 export default class Backend {
 	private self: MiruSuiteModuleInstance
@@ -34,13 +51,40 @@ export default class Backend {
 			this.self.log('debug', `Setting up backend for base url ${this.baseUrl}`)
 			// We override the fetch function to update connection status and throw in case of errors
 			const checkedFetch: typeof fetch = async (input, init) => {
-				const response = await fetch(input, init)
-				if (!response.ok) {
+				try {
+					const response = await fetch(input, init)
+					const requestUrl = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+					const projectLoadConflict =
+						response.status === 409 && new URL(requestUrl, this.baseUrl).pathname === '/api/projects/load'
+					if (!response.ok && !projectLoadConflict) {
+						throw new Error(`MiruSuite returned ${response.status} ${response.statusText}`)
+					}
+					if (projectLoadConflict) return response
+					this.self.connectionState = 'Connected'
+					this.self.updateStatus(InstanceStatus.Ok)
+					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
+					return response
+				} catch (error) {
+					this.self.connectionState = 'Disconnected'
 					this.self.updateStatus(InstanceStatus.ConnectionFailure)
-					this.self.log('error', 'Backend returned code ' + response.status + ' - ' + response.statusText)
+					this.self.store.clearLiveState()
+					if (this.self.store.hasConfiguration) {
+						this.self.updateVariableValues()
+						this.self.checkFeedbacks(
+							'liveDevice',
+							'liveInput',
+							'switcherBusInput',
+							'controllerConnected',
+							'framingStable',
+							'musicFollower',
+							'autoCut',
+							'autoCutState',
+							'dominantSpeaker',
+							'dominantSpeakerOverride',
+						)
+					}
+					throw error
 				}
-				this.self.updateStatus(InstanceStatus.Ok)
-				return response
 			}
 			let headers = undefined
 			if (username && password) {
@@ -74,6 +118,143 @@ export default class Backend {
 		return response.data ?? []
 	}
 
+	async loadProjects(): Promise<ProjectSummary[]> {
+		const response = await this.client.GET('/api/projects')
+		return response.data ?? []
+	}
+
+	async loadActiveProject(): Promise<ProjectSummary | null> {
+		const response = await this.client.GET('/api/projects/active')
+		return response.data ? { id: response.data.id, name: response.data.name } : null
+	}
+
+	async loadGamepadSelectedDevice(): Promise<GamepadSelectedDevice> {
+		const response = await this.client.GET('/api/gamepad/selected-device')
+		return response.data ?? { deviceId: null }
+	}
+
+	async setGamepadSelectedDevice(deviceId: number | null): Promise<void> {
+		await this.client.PUT('/api/gamepad/selected-device', { body: { deviceId } })
+	}
+
+	async loadDominantSpeaker(): Promise<DeviceSummary | null> {
+		const response = await this.client.GET('/api/autocut/dominantSpeaker')
+		return response.data ?? null
+	}
+
+	async loadOrchestraSettings(): Promise<OrchestraSettings> {
+		const response = await this.client.GET('/api/config/orchestra-settings')
+		return response.data ?? {}
+	}
+
+	async updateOrchestraSettings(patch: Partial<OrchestraSettings>): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const updated = { ...current, ...patch }
+		return this.saveOrchestraSettings(updated)
+	}
+
+	async toggleOrchestraSetting(setting: OrchestraBooleanSetting): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const updated = { ...current, [setting]: current[setting] !== true }
+		return this.saveOrchestraSettings(updated)
+	}
+
+	async toggleOrchestraDevice(deviceId: number): Promise<OrchestraSettings> {
+		const current = await this.loadOrchestraSettings()
+		const disabledDeviceIds = current.disabledDeviceIds ?? []
+		const updated = {
+			...current,
+			disabledDeviceIds: disabledDeviceIds.includes(deviceId)
+				? disabledDeviceIds.filter((id) => id !== deviceId)
+				: [...disabledDeviceIds, deviceId],
+		}
+		return this.saveOrchestraSettings(updated)
+	}
+
+	private async saveOrchestraSettings(updated: OrchestraSettings): Promise<OrchestraSettings> {
+		await this.client.PUT('/api/config/orchestra-settings', { body: updated })
+		this.self.store.setOrchestraSettings(updated)
+		this.self.updateVariableValues()
+		this.self.checkFeedbacks('orchestraSetting', 'orchestraDeviceEnabled')
+		return updated
+	}
+
+	async loadMusicPieces(): Promise<MusicPiece[]> {
+		const response = await this.client.GET('/api/orchestra/pieces')
+		return response.data ?? []
+	}
+
+	async loadSetlists(): Promise<Setlist[]> {
+		const response = await this.client.GET('/api/orchestra/setlists')
+		return response.data ?? []
+	}
+
+	async loadMusicFollowerState(deviceId: number): Promise<MusicFollowerState> {
+		const response = await this.client.GET('/api/devices/{deviceId}/music-follower/state', {
+			params: { path: { deviceId } },
+		})
+		if (!response.data) throw new Error(`No Music Follower state returned for device ${deviceId}`)
+		return response.data
+	}
+
+	async setMusicFollowerPiece(deviceId: number, pieceId: number): Promise<void> {
+		await this.client.PUT('/api/devices/{deviceId}/music-follower/selection/piece', {
+			params: { path: { deviceId } },
+			body: { pieceId },
+		})
+	}
+
+	async setMusicFollowerSetlistEntry(deviceId: number, setlistId: number, entryId: number): Promise<void> {
+		await this.client.PUT('/api/devices/{deviceId}/music-follower/selection/setlist-entry', {
+			params: { path: { deviceId } },
+			body: { setlistId, entryId },
+		})
+	}
+
+	async musicFollowerNext(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/next', { params: { path: { deviceId } } })
+	}
+
+	async musicFollowerPrevious(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/previous', { params: { path: { deviceId } } })
+	}
+
+	async musicFollowerReset(deviceId: number): Promise<void> {
+		await this.client.POST('/api/devices/{deviceId}/music-follower/reset', { params: { path: { deviceId } } })
+	}
+
+	async correctFraming(id: number): Promise<void> {
+		await this.client.POST('/api/devices/{id}/director/framing/correct', { params: { path: { id } } })
+	}
+
+	async cutSwitcher(): Promise<void> {
+		await this.client.POST('/api/switcher/cut')
+	}
+
+	async triggerTransition(): Promise<void> {
+		await this.client.POST('/api/switcher/transition')
+	}
+
+	async loadProject(
+		id: number,
+		confirmInterruptions: boolean,
+		options: { enableDevices?: boolean; restoreAutoCut?: boolean; restoreSwitcher?: boolean } = {},
+	): Promise<{ loaded: boolean; impact?: ProjectLoadImpact }> {
+		const query = { id, ...options }
+		let response = await this.client.PUT('/api/projects/load', { params: { query } })
+		if (response.response.status === 409) {
+			const impact = response.error
+			if (!confirmInterruptions || !impact?.confirmationToken) return { loaded: false, impact }
+			response = await this.client.PUT('/api/projects/load', {
+				params: { query: { ...query, confirm: true, confirmationToken: impact.confirmationToken } },
+			})
+			if (!response.response.ok) throw new Error(`Project load failed with HTTP ${response.response.status}`)
+			return { loaded: true, impact }
+		}
+		if (!response.response.ok) throw new Error(`Project load failed with HTTP ${response.response.status}`)
+		return { loaded: true }
+	}
+
 	/**
 	 * Enables, disables or toggles the component with the given type of a device.
 	 * @param device device to update
@@ -83,7 +264,7 @@ export default class Backend {
 	async toggleComponent(
 		device: Device | undefined,
 		enabled?: boolean,
-		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' = 'DIRECTOR',
+		type: 'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER' = 'DIRECTOR',
 	): Promise<void> {
 		if (device === undefined) {
 			return
@@ -105,7 +286,7 @@ export default class Backend {
 			return
 		}
 		const framer = device.components?.vMixFramer
-		if (framer === null) {
+		if (framer == null) {
 			return
 		}
 		enabled ??= device.feedback?.['FRAMER_VMIX']?.state !== 'RUNNING'
@@ -120,12 +301,11 @@ export default class Backend {
 		}
 		const settings = device.components?.headTrackingDirector
 		if (settings !== null && settings !== undefined) {
-			settings.targetShotSize = shotSize
 			await this.client.PUT('/api/devices/{id}', {
 				params: { path: { id: device.id ?? -1 } },
 				body: {
 					patch: {
-						headTrackingDirector: settings,
+						headTrackingDirector: { ...settings, targetShotSize: shotSize },
 					},
 				},
 			})
@@ -183,11 +363,9 @@ export default class Backend {
 		}
 		const personTracker = device.components?.personTracker
 		if (personTracker !== undefined && personTracker !== null) {
-			personTracker.trackingMode = mode
-			personTracker.targetFaceId = targetFaceId
 			await this.client.PUT('/api/devices/{id}', {
 				params: { path: { id: device.id ?? -1 } },
-				body: { patch: { personTracker } },
+				body: { patch: { personTracker: { ...personTracker, trackingMode: mode, targetFaceId } } },
 			})
 		}
 	}
@@ -201,13 +379,24 @@ export default class Backend {
 		}
 	}
 
-	async getLiveInputs(): Promise<string[]> {
+	async getSwitcherState(): Promise<SwitcherState> {
 		const response = await this.client.GET('/api/switcher')
-		if (response.data?.connectionStatus !== 'CONNECTED') {
+		const state = response.data ?? {}
+		if (state.connectionStatus !== 'CONNECTED') {
 			this.self.log('debug', 'Switcher not connected')
-			return []
+			return { ...state, programs: [], preview: [] }
 		}
-		return response.data.programs ?? []
+		return state
+	}
+
+	async getLiveInputs(): Promise<string[]> {
+		return (await this.getSwitcherState()).programs ?? []
+	}
+
+	async setPreview(input: string): Promise<void> {
+		await this.client.POST('/api/switcher/preview/{input}', {
+			params: { path: { input } },
+		})
 	}
 
 	async triggerRandomMove(id: number): Promise<void> {

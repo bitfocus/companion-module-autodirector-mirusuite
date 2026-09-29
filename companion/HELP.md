@@ -1,42 +1,76 @@
-## MiruSuite Companion Module Help
+# MiruSuite
 
-This module is designed to control the [MiruSuite](https://mirusuite.de) software via Companion.
+Control [MiruSuite](https://mirusuite.de) devices, cameras, AutoCut, the switcher, projects, and Music Follower from Bitfocus Companion.
 
-### Setup
+## Connect to MiruSuite
 
-1. Make sure MiruSuite is running and the Companion server has network access to the device running MiruSuite (port 8080).
-2. Open the Companion web interface and add the MiruSuite module. Set the IP adress of the machine running MiruSuite in the configuration.
-3. MiruSuite is now connected and you can start adding buttons. Try starting with the preconfigured presets!
+1. Start MiruSuite and make sure the computer running Companion can reach it over the network.
+2. Add **MiruSuite** in Companion and enter the MiruSuite server IP address and HTTP port. The default port is `8080`; use `127.0.0.1` when Companion and MiruSuite run on the same computer.
+3. If MiruSuite requires authentication, enter the username and password in the module configuration. Leave them blank when authentication is not configured.
+4. Save the configuration. A connected module loads the available devices, projects, presets, switcher inputs, and other choices from MiruSuite.
 
-If MiruSuite and the Companion server are running on the same device you should use `127.0.0.1` as the IP address.
+If the connection fails, check the address and port, network access/firewall rules, MiruSuite availability, and credentials. The module's **Connection status** variable can also be used to show connection state on a Companion button.
 
-### Usage
-The MiruSuite Companion module offers different presets, actions, and feedbacks corresponding to the MiruSuite workflows. 
+## Using presets
 
-You can find explanations for all presets in the following table:
+Presets are generated from the devices and settings configured in MiruSuite. Their names include the target device where relevant. Sections and groups are organized by workflow:
 
-| Category        | Preset name            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| --------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General         | Toggle Director        | Toggle the director on and off. **Use this to enable/disable tracking!**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| General         | Enable Director        | Enable the director.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| General         | Disable Director       | Disable the director.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| General         | Random Move            | Move the camera in a random position. **Requires an AutoMove director.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| General         | Preset Move            | Move the camera to a random nearby presets. **Requires an AutoMove director.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| General         | Stop Move              | Stop any ongoing movement of that camera. **Requires an AutoMove director.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| General         | Return Home            | Return that camera to its home position. **Requires a Controller.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Person Tracking | All/Manual/Single      | Set the tracking mode for a given device's director (all, manual, single). **Requires a head tracking director.**                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| Person Tracking | Wide/Medium/Close      | Set the target shot size of a given device's director (wide, medium, close). **Requires a head tracking director.**                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Person Tracking | Exit Steady            | Exit the steady mode of a given device's director. **Requires a head tracking director.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| Person Tracking | Learn Target Face      | Learn the face of the current target person. **Requires a person tracker.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Presets         | _Preset Name_          | Play a saved preset. When holding the button for at least one second the preset gets overwritten by the current position of the camera. **Requires a controller.**                                                                                                                                                                                                                                                                                                                                                                                       |
-| Presets         | Play active Preset     | Move the camera back to it's last active preset. This is useful when using automatic movements to reset the camera to its needed position. When you press a button for more than one second, the preset is updated to the current camera position. **Requires a controller.**                                                                                                                                                                                                                                                                            |
-| AutoCut         | ⏻ AutoCut              | Enables and disables AutoCut.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| Auto Presets    | Learn Auto Presets     | This button has a meta-functionality: You can attach ("learn") different buttons to this button. Configure the target devices, click learn and then hit all *Auto Preset* buttons one after another that should be attached. They will show the corresponding ID after they get clicked. **When you add/modify presets the buttons will be automatically populated accordingly so you don't need to setup buttons for every preset you create!** When you press a button for more than one second, the preset is updated to the current camera position. |
-| Auto Presets    | Auto Preset            | This button needs to be learned via the *Learn Auto Presets* button. When it's attached, MiruSuite automatically distributes the available presets over all *Auto Preset* buttons.                                                                                                                                                                                                                                                                                                                                                                       |
-| Auto Presets    | Clear All Auto Buttons | Deletes all attached buttons.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Companion section or group                     | What you can do                                                                                                                                                                                                                                             |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Video: _device_** — General                  | Enable, disable, or toggle the device's director; trigger random or nearby-preset moves for AutoMove; stop an AutoMove; return a PTZ camera home. Only controls supported by that device's configured components are shown.                                 |
+| **Video: _device_** — Person Tracking          | Choose tracking mode and shot size, learn the current target's face, correct framing once, adjust the target point or tracking sensitivity, and exit steady mode. Controls that need a head-tracking director or person tracker appear only when available. |
+| **Video: _device_** — PTZ                      | Hold direction or zoom buttons to move the camera. Manual movement speed is shared across PTZ cameras and can be adjusted with the speed buttons.                                                                                                           |
+| **Video: _device_** — Saved Presets            | Recall MiruSuite camera presets. The active-preset control reapplies the camera's current active preset.                                                                                                                                                    |
+| **Audio: _device_** — AutoCut                  | Set or clear the dominant-speaker override, and enable/disable the device's AutoCut audio component when it has one.                                                                                                                                        |
+| **vMix Framer: _device_**                      | Adjust the frame once or enable, disable, and toggle the vMix Framer.                                                                                                                                                                                       |
+| **Application** — AutoCut                      | Enable, disable, or toggle AutoCut. Presets also include target shot-size configuration controls.                                                                                                                                                           |
+| **Application** — Projects                     | One preset per available project. These presets confirm reported interruptions and request device enablement plus AutoCut and switcher setting restoration. Use the **Load Project** action to choose these options yourself.                               |
+| **Application** — Switcher                     | Select a configured input for Program or Preview, swap the buses with **CUT**, or trigger the transition configured in MiruSuite.                                                                                                                           |
+| **Application** — Gamepad                      | Assign a video device to MiruSuite's shared gamepad control.                                                                                                                                                                                                |
+| **Application** — Orchestra and Music Follower | Include/exclude eligible devices in Orchestra, change common Orchestra settings, toggle each Music Follower, and select ready music pieces or setlist entries.                                                                                              |
 
+Presets and dropdown choices depend on the current MiruSuite configuration. Configure devices, components, presets, switcher inputs, projects, and Orchestra content in MiruSuite first; then refresh or reconnect the module if you change that configuration.
 
-For more help visit the [MiruSuite Docs](https://docs.mirusuite.de/advanced/companion.html).
+## Actions
 
-### Compatibility
-This version of the plugin was tested with MiruSuite v1.2.0.
+Add an action directly when a preset does not expose the option you need. Available actions include:
+
+- **Camera and tracking:** set shot size, director state, tracking mode/person, target point, sensitivity, and component state; learn a target face; correct framing; play or overwrite a preset; reapply the active preset; trigger or stop AutoMove; and return a PTZ camera home.
+- **Manual PTZ:** move a camera with pan, tilt, and zoom values, and increase or decrease the shared movement speed. Movement values range from `-1` to `1` and are scaled by that shared speed.
+- **AutoCut:** turn AutoCut on, off, or toggle it; set, clear, or toggle the dominant-speaker override for an audio device.
+- **Switcher:** set Program or Preview to an input, swap Program and Preview, or trigger MiruSuite's configured transition. MiruSuite can reject a cut while a camera is moving.
+- **Projects:** load a project and choose whether to confirm reported interruptions, enable its devices, and restore AutoCut or switcher settings. A load that MiruSuite reports would interrupt running sources or disconnect the switcher requires the confirmation option.
+- **Gamepad:** select a video device for the shared gamepad or clear the selection.
+- **Music Follower:** start or stop a device's component; select an analyzed, ready music piece or a ready setlist entry; move to the next or previous entry; or reset the follower.
+- **Orchestra:** enable/disable a device in Orchestra and update Boolean, numeric, or excluded-device settings.
+
+## Feedbacks
+
+Feedbacks let a button reflect MiruSuite's current state. Depending on your configuration, the module provides feedback for:
+
+- component enabled state and director status;
+- tracking mode, selected person, and shot size;
+- active camera preset, live camera/input, and switcher Program/Preview bus;
+- AutoCut running state and live state, dominant-speaker identity/override, and active project;
+- vMix Framer state, controller connection, and stable framing;
+- selected gamepad camera;
+- Music Follower status, selected piece or setlist entry; and
+- Orchestra setting values and whether a device is enabled in Orchestra.
+
+Most device feedbacks are populated from devices known to MiruSuite, so the relevant component must be configured on the selected device. Feedbacks that refer to a project, switcher input, face, preset, or Music Follower item use the values currently reported by MiruSuite.
+
+## Variables
+
+Use Companion variables in button text, expressions, and other modules. Global variables include connection status, device and preset counts, active project, dominant speaker, gamepad camera, AutoCut state/countdown/live shots, live inputs, manual PTZ speed, and Orchestra settings. Device-specific variables are named with the MiruSuite numeric device ID, for example:
+
+- `$(autodirector-mirusuite:device_12_name)`
+- `$(autodirector-mirusuite:device_12_director_state)`
+- `$(autodirector-mirusuite:device_12_active_preset_name)`
+- `$(autodirector-mirusuite:device_12_controller_pan_angle)`
+- `$(autodirector-mirusuite:device_12_music_follower_status)`
+
+Replace `12` with the device ID shown by MiruSuite. Only variables relevant to configured devices/components are defined. For the full variable list, use Companion's variable picker after the module connects.
+
+## More information
+
+For MiruSuite guidance, see the [Companion integration documentation](https://docs.mirusuite.de/advanced/companion.html).

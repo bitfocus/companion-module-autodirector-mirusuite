@@ -1,10 +1,13 @@
 import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 
-export interface ModuleConfig {
+export type ModuleConfig = {
 	host: string
 	port: number
 	username: string
-	password: string
+}
+
+export type ModuleSecrets = {
+	password?: string
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -37,7 +40,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			default: '',
 		},
 		{
-			type: 'textinput',
+			type: 'secret-text',
 			id: 'password',
 			label: 'Password',
 			tooltip: 'Password for authentication with MiruSuite. Leave empty if not required.',
