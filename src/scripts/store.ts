@@ -77,7 +77,7 @@ export class Store {
 			this.backend.loadActivePresetMap(),
 			this.backend.listPresets(),
 		])
-		let [
+		const [
 			switcherState,
 			autoCutEnabled,
 			dominantSpeakerOverride,
@@ -86,9 +86,9 @@ export class Store {
 			activeProject,
 			gamepadDevice,
 			orchestraSettings,
-			musicPieces,
-			setlists,
-			...musicFollowerStates
+			initialMusicPieces,
+			initialSetlists,
+			...initialMusicFollowerStates
 		] = await Promise.allSettled([
 			loadSwitcherState(),
 			this.backend.isAutoCutRunning(),
@@ -104,6 +104,9 @@ export class Store {
 				.filter((device) => device.id !== undefined && device.components?.musicFollower != null)
 				.map(async (device) => this.backend.loadMusicFollowerState(device.id!)),
 		])
+		let musicPieces = initialMusicPieces
+		let setlists = initialSetlists
+		let musicFollowerStates = initialMusicFollowerStates
 		const optionalRefreshes = [
 			['switcher state', switcherState],
 			['AutoCut state', autoCutEnabled],
