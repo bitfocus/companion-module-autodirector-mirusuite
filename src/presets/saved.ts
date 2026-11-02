@@ -1,9 +1,9 @@
 import { combineRgb, type DropdownChoice } from '@companion-module/base'
-import type { LegacyPresets as CompanionPresetDefinitions } from './helpers.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './helpers.js'
 
 export function addPlayPresetPreset(presets: CompanionPresetDefinitions, preset: DropdownChoice): void {
 	presets['playPreset-' + preset.id] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Presets',
 		name: preset.label ?? 'Unknown',
 		style: {

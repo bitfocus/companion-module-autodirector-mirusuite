@@ -1,10 +1,10 @@
 import { combineRgb } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from '../main.js'
 import { getPTZCapableDevices } from '../scripts/helpers.js'
-import { action, button, feedback, type LegacyPresets } from './helpers.js'
+import { action, button, feedback, type CategorizedPresets } from './helpers.js'
 
-export function getOrchestraPresets(self: MiruSuiteModuleInstance): LegacyPresets {
-	const presets: LegacyPresets = {}
+export function getOrchestraPresets(self: MiruSuiteModuleInstance): CategorizedPresets {
+	const presets: CategorizedPresets = {}
 	if (!self.store.getDevices().some((device) => device.components?.musicFollower != null)) return presets
 
 	for (const device of self.store.getDevices()) {

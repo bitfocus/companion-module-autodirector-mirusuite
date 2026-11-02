@@ -1,9 +1,23 @@
+import type { CompanionActionDefinitions, CompanionInputFieldDropdown } from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
 import type { MiruSuiteModuleInstance } from '../main.js'
-import type { CompanionActionEvent } from '@companion-module/base'
 import type { OrchestraBooleanSetting } from '../api/types.js'
 import { createDeviceOptions } from '../scripts/helpers.js'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<
+	Pick<
+		MiruSuiteInstanceTypes['actions'],
+		| 'startMusicFollower'
+		| 'stopMusicFollower'
+		| 'selectMusicPiece'
+		| 'selectMusicSetlistEntry'
+		| 'musicFollowerNext'
+		| 'musicFollowerPrevious'
+		| 'musicFollowerReset'
+		| 'toggleOrchestraDevice'
+		| 'setOrchestraSetting'
+	>
+>
 
 const settings = [
 	{ id: 'movePreviewCameras', label: 'Move preview cameras', kind: 'boolean' },
@@ -35,7 +49,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Start Music Follower',
 			description: 'Enable the Music Follower component on a device.',
 			options: [musicDeviceSelector(self)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const device = self.store.getDeviceById(Number(event.options.deviceId))
 				if (!device || device.id === undefined || device.components?.musicFollower == null) return
 				await self.backend?.toggleComponent(device, true, 'MUSIC_FOLLOWER')
@@ -46,7 +60,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Stop Music Follower',
 			description: 'Disable the Music Follower component on a device.',
 			options: [musicDeviceSelector(self)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const device = self.store.getDeviceById(Number(event.options.deviceId))
 				if (!device || device.id === undefined || device.components?.musicFollower == null) return
 				await self.backend?.toggleComponent(device, false, 'MUSIC_FOLLOWER')
@@ -68,7 +82,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 					default: readyPieces[0]?.id ?? -1,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const pieceId = Number(event.options.pieceId)
 				const device = self.store.getDeviceById(deviceId)
@@ -98,7 +112,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 					default: firstReadyEntry(self) ?? '',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const selectedEntry = event.options.entry
 				const [setlistId, entryId] = (typeof selectedEntry === 'string' ? selectedEntry : '').split(':').map(Number)
 				if (!Number.isInteger(setlistId) || !Number.isInteger(entryId)) return
@@ -126,7 +140,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 					default: devices[0]?.id ?? -1,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				if (!Number.isInteger(deviceId) || !self.store.getDevices().some((device) => device.id === deviceId)) return
 				await self.backend?.toggleOrchestraDevice(deviceId)
@@ -138,6 +152,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 			options: [
 				{
 					id: 'setting',
+					disableAutoExpression: true,
 					type: 'dropdown',
 					label: 'Setting',
 					choices: settings.map(({ id, label }) => ({ id, label })),
@@ -175,7 +190,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 					isVisibleExpression: '$(options:setting) == "disabledDeviceIds"',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const settingOption = event.options.setting
 				const setting = typeof settingOption === 'string' ? settingOption : ''
 				const definition = settings.find((entry) => entry.id === setting)
@@ -200,13 +215,16 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 		},
 	}
 
-	function musicFollowerTransport(self: MiruSuiteModuleInstance, operation: 'next' | 'previous' | 'reset') {
+	function musicFollowerTransport(
+		self: MiruSuiteModuleInstance,
+		operation: 'next' | 'previous' | 'reset',
+	): Actions['musicFollowerNext'] {
 		const labels = { next: 'Next Setlist Entry', previous: 'Previous Setlist Entry', reset: 'Reset Music Follower' }
 		return {
 			name: labels[operation],
 			description: `Send the ${operation} command to the selected device Music Follower.`,
 			options: [musicDeviceSelector(self)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = self.store.getDeviceById(deviceId)
 				if (!Number.isInteger(deviceId) || deviceId < 0 || device?.components?.musicFollower == null) return
@@ -219,7 +237,7 @@ export function GetOrchestraActions(self: MiruSuiteModuleInstance): Actions {
 	}
 }
 
-function musicDeviceSelector(self: MiruSuiteModuleInstance): any {
+function musicDeviceSelector(self: MiruSuiteModuleInstance): CompanionInputFieldDropdown<'deviceId'> {
 	const devices = createDeviceOptions(
 		self.store.getDevices().filter((device) => device.components?.musicFollower != null),
 	)

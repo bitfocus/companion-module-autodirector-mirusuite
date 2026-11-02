@@ -31,13 +31,13 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 	const switcherInputOption =
 		switcherInputChoices.length > 0
 			? {
-					id: 'input',
+					id: 'input' as const,
 					type: 'dropdown' as const,
 					label: 'Input',
 					choices: switcherInputChoices,
 					default: switcherInputChoices[0].id,
 				}
-			: { id: 'input', type: 'textinput' as const, label: 'Input', default: '' }
+			: { id: 'input' as const, type: 'textinput' as const, label: 'Input', default: '' }
 	self.setFeedbackDefinitions({
 		enabledComponentType: {
 			name: 'Component Type Enabled',
@@ -71,11 +71,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 					return false
 				}
 				const componentType = feedback.options.componentType as
-					| 'INPUT'
-					| 'CONTROLLER'
-					| 'DIRECTOR'
-					| 'AUTO_CUT'
-					| 'MUSIC_FOLLOWER'
+					'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER'
 				const components = getComponentsOfType(device, componentType)
 				return components.some((component) => device.feedback?.[component]?.state === 'RUNNING')
 			},
@@ -131,6 +127,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 					type: 'dropdown',
 					label: 'Mode',
 					id: 'mode',
+					disableAutoExpression: true,
 					default: 'ALL',
 					choices: [
 						{ id: 'ALL', label: 'ALL' },
@@ -252,7 +249,7 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 			},
 			options: [
 				{
-					id: 'input',
+					id: 'input' as const,
 					type: 'textinput',
 					label: 'Input',
 					default: '1',
@@ -451,6 +448,8 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 					id: 'pieceId',
 					type: 'number',
 					label: 'Piece ID',
+					min: -1,
+					max: Number.MAX_SAFE_INTEGER,
 					default: -1,
 				},
 			],
@@ -468,8 +467,8 @@ export function UpdateFeedbacks(self: MiruSuiteModuleInstance): void {
 					self,
 					createDeviceOptions(store.getDevices().filter((device) => device.components?.musicFollower != null)),
 				),
-				{ id: 'setlistId', type: 'number', label: 'Setlist ID', default: -1 },
-				{ id: 'entryId', type: 'number', label: 'Entry ID', default: -1 },
+				{ id: 'setlistId', type: 'number', label: 'Setlist ID', default: -1, min: -1, max: Number.MAX_SAFE_INTEGER },
+				{ id: 'entryId', type: 'number', label: 'Entry ID', default: -1, min: -1, max: Number.MAX_SAFE_INTEGER },
 			],
 			callback: (feedback) => {
 				const state = store.getMusicFollowerState(Number(feedback.options.deviceId))

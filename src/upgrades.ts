@@ -21,7 +21,17 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<ModuleConfig, ModuleSe
 					componentType: feedback.options.componentType ?? { isExpression: false, value: 'DIRECTOR' },
 				},
 			}))
-		const legacyConfig = props.config as (ModuleConfig & { password?: string }) | null
+		return {
+			updatedConfig: null,
+			updatedActions: [],
+			updatedFeedbacks,
+		}
+	},
+	(
+		_: CompanionUpgradeContext<ModuleConfig>,
+		props: CompanionStaticUpgradeProps<ModuleConfig, ModuleSecrets>,
+	): CompanionStaticUpgradeResult<ModuleConfig, ModuleSecrets> => {
+		const legacyConfig = props.config
 		const hasLegacyPassword = legacyConfig !== null && Object.prototype.hasOwnProperty.call(legacyConfig, 'password')
 		const updatedConfig: ModuleConfig | null = hasLegacyPassword
 			? {
@@ -30,15 +40,19 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<ModuleConfig, ModuleSe
 					username: legacyConfig?.username ?? '',
 				}
 			: null
+		const password =
+			legacyConfig && 'password' in legacyConfig && typeof legacyConfig.password === 'string'
+				? legacyConfig.password
+				: ''
 		const updatedSecrets: ModuleSecrets | null = hasLegacyPassword
-			? { ...(props.secrets ?? {}), password: legacyConfig?.password ?? '' }
+			? { ...(props.secrets ?? {}), password: props.secrets?.password ?? password }
 			: null
 
 		return {
 			updatedConfig,
 			updatedSecrets,
 			updatedActions: [],
-			updatedFeedbacks,
+			updatedFeedbacks: [],
 		}
 	},
 ]

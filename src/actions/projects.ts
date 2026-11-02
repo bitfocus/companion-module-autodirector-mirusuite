@@ -1,7 +1,8 @@
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
 import type { MiruSuiteModuleInstance } from '../main.js'
-import type { CompanionActionEvent } from '@companion-module/base'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<Pick<MiruSuiteInstanceTypes['actions'], 'loadProject'>>
 
 export function GetProjectActions(self: MiruSuiteModuleInstance): Actions {
 	const projects = self.store.getProjects()
@@ -46,7 +47,7 @@ export function GetProjectActions(self: MiruSuiteModuleInstance): Actions {
 					default: false,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const projectId = Number(event.options.projectId)
 				if (
 					!Number.isInteger(projectId) ||

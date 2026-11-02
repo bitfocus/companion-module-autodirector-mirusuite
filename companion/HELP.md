@@ -74,3 +74,17 @@ Replace `12` with the device ID shown by MiruSuite. Only variables relevant to c
 ## More information
 
 For MiruSuite guidance, see the [Companion integration documentation](https://docs.mirusuite.de/advanced/companion.html).
+
+## Upgrading from 1.0.x
+
+Version 1.1.1 removed the automatic button learning feature. Existing buttons using
+`learnAutoButtons`, `playAutoPreset`, `overwriteAutoPreset`, or `clearAllAutoButtons`
+no longer perform those operations. The `learnMode` and `autoPreset` feedbacks and
+`learningMode`, `offlineMode`, and `autoConfiguredButtons` variables were also removed.
+Remove those entries from existing buttons and replace them with the supported
+Play Preset / Overwrite Preset actions and Active Preset feedback, selecting saved
+MiruSuite presets explicitly. Automatic button assignment and offline learning
+have no direct replacement.
+
+Saved connection passwords are migrated to Companion secrets automatically.
+This module requires Companion 5.0 or later with the Node 26 runtime.

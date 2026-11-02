@@ -7,3 +7,6 @@ DEBUG-*
 .DS_Store
 openapi.json
 *.tgz
+/*.tgz
+/.yarn
+/.vscode

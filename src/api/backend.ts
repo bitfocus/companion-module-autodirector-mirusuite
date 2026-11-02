@@ -1,4 +1,3 @@
-/* eslint-disable n/no-unsupported-features/node-builtins */
 import Jimp from 'jimp'
 import { InstanceStatus } from '@companion-module/base'
 import { MiruSuiteModuleInstance } from '../main.js'
@@ -52,7 +51,10 @@ export default class Backend {
 			// We override the fetch function to update connection status and throw in case of errors
 			const checkedFetch: typeof fetch = async (input, init) => {
 				try {
-					const response = await fetch(input, init)
+					const callerSignal = init?.signal ?? (input instanceof Request ? input.signal : undefined)
+					const timeoutSignal = AbortSignal.timeout(5000)
+					const signal = callerSignal ? AbortSignal.any([callerSignal, timeoutSignal]) : timeoutSignal
+					const response = await fetch(input, { ...init, signal })
 					const requestUrl = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
 					const projectLoadConflict =
 						response.status === 409 && new URL(requestUrl, this.baseUrl).pathname === '/api/projects/load'
@@ -60,9 +62,16 @@ export default class Backend {
 						throw new Error(`MiruSuite returned ${response.status} ${response.statusText}`)
 					}
 					if (projectLoadConflict) return response
-					this.self.connectionState = 'Connected'
-					this.self.updateStatus(InstanceStatus.Ok)
-					if (this.self.store.hasConfiguration) this.self.updateVariableValues()
+					// Recover once, without letting HTTP success hide a broken event stream.
+					if (
+						this.self.connectionState === 'Disconnected' &&
+						this.self.guiStreamConnected &&
+						this.self.store.hasConfiguration
+					) {
+						this.self.connectionState = 'Connected'
+						this.self.updateStatus(InstanceStatus.Ok)
+						this.self.updateVariableValues()
+					}
 					return response
 				} catch (error) {
 					this.self.connectionState = 'Disconnected'
