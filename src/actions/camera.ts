@@ -1,4 +1,6 @@
-import { type CompanionActionEvent, type DropdownChoice } from '@companion-module/base'
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
+import { type DropdownChoice } from '@companion-module/base'
 import { toShotSize, toTrackingMode } from '../api/types.js'
 import type { MiruSuiteModuleInstance } from '../main.js'
 import {
@@ -11,7 +13,34 @@ import {
 	getPTZCapableDevices,
 } from '../scripts/helpers.js'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<
+	Pick<
+		MiruSuiteInstanceTypes['actions'],
+		| 'setShotSize'
+		| 'toggleDirector'
+		| 'setDirector'
+		| 'setComponent'
+		| 'setTrackingMode'
+		| 'correctFraming'
+		| 'learnTargetFace'
+		| 'playPreset'
+		| 'playActivePreset'
+		| 'overwritePreset'
+		| 'triggerMovement'
+		| 'triggerReturnToHome'
+		| 'moveCamera'
+		| 'increaseMoveSpeed'
+		| 'decreaseMoveSpeed'
+		| 'exitSteadyMode'
+		| 'stopAutoMove'
+		| 'updateTargetShotSizeConfig'
+		| 'adjustFramer'
+		| 'toggleVMixFramer'
+		| 'setVMixFramer'
+		| 'moveTargetPoint'
+		| 'updateSensitivity'
+	>
+>
 
 export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 	const backend = self.backend
@@ -41,7 +70,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 				},
 				getDeviceSelector(self, videoDeviceOptions),
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const size = toShotSize(event.options.size)
 				if (!size) {
 					self.log('warn', 'Invalid shot size: ' + JSON.stringify(event.options.size))
@@ -58,7 +87,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			description:
 				'Enables/disables the director. Use this if you want to temporarily disable tracking. This action needs a director to be installed on the device.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				self.log('info', 'Toggling director for device ' + deviceId)
@@ -82,7 +111,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: 'true',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				const enable = event.options.enabled == 'true'
@@ -121,15 +150,11 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: 'toggle',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				const componentType = event.options.componentType as
-					| 'INPUT'
-					| 'CONTROLLER'
-					| 'DIRECTOR'
-					| 'AUTO_CUT'
-					| 'MUSIC_FOLLOWER'
+					'INPUT' | 'CONTROLLER' | 'DIRECTOR' | 'AUTO_CUT' | 'MUSIC_FOLLOWER'
 				const enabledOption = event.options.enabled
 				let enabled: boolean | undefined = undefined
 				if (enabledOption === 'true') {
@@ -151,6 +176,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			options: [
 				{
 					id: 'mode',
+					disableAutoExpression: true,
 					type: 'dropdown',
 					label: 'Mode',
 					choices: [
@@ -163,7 +189,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 				getFaceSelector(self, faceChoices),
 				getDeviceSelector(self, videoDeviceOptions),
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const mode = toTrackingMode(event.options.mode)
 				if (!mode) {
 					self.log('warn', 'Invalid tracking mode: ' + JSON.stringify(event.options.mode))
@@ -180,7 +206,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Correct Framing Once',
 			description: 'Correct the current framing once while head tracking is disabled.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				if (!store.getDeviceById(deviceId)?.components?.headTrackingDirector) {
 					self.log('warn', `Correct framing: device ${deviceId} has no head tracking director`)
@@ -194,7 +220,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			description:
 				'Learn the face of the current target person. Use this action to teach MiruSuite the face of a person. This action needs a person tracker to be installed on the device.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				self.log('info', 'Learning face for device ' + deviceId)
@@ -213,7 +239,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: false,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const presetId = Number(event.options.preset)
 				const force = event.options.force == true
 				self.log('info', 'Playing preset ' + presetId + ' with force=' + force)
@@ -233,7 +259,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: false,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const force = event.options.force == true
 				self.log('info', 'Re-applying preset of device ' + deviceId + ' with force=' + force)
@@ -244,7 +270,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Overwrite Preset',
 			description: 'Overwrite a preset with the current device position',
 			options: [getPresetSelector(self, presetChoices)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const presetId = Number(event.options.preset)
 				self.log('info', 'Overwriting preset ' + presetId)
 				await backend?.overwritePreset(presetId)
@@ -267,7 +293,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: 'preset',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				if (event.options.type === 'preset') {
 					self.log('info', 'Triggering preset transition move for device ' + deviceId)
@@ -282,7 +308,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Return to home',
 			description: 'Return device to home position. This action needs a PTZ controller to be installed on the device.',
 			options: [getDeviceSelector(self, ptzDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				await backend?.triggerReturnToHome(deviceId)
 			},
@@ -324,7 +350,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					range: false,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const speed = self.manualMoveSpeed
 				const pan = Math.max(-1, Math.min(1, Number(event.options.pan) || 0)) * speed
@@ -349,7 +375,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					range: false,
 				},
 			],
-			callback(event: CompanionActionEvent) {
+			callback(event) {
 				self.adjustManualMoveSpeed(Math.max(0.01, Number(event.options.step) || 0.05))
 				self.log('info', `Manual movement speed increased to ${Math.round(self.manualMoveSpeed * 100)}%`)
 			},
@@ -369,7 +395,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					range: false,
 				},
 			],
-			callback(event: CompanionActionEvent) {
+			callback(event) {
 				self.adjustManualMoveSpeed(-Math.max(0.01, Number(event.options.step) || 0.05))
 				self.log('info', `Manual movement speed decreased to ${Math.round(self.manualMoveSpeed * 100)}%`)
 			},
@@ -379,7 +405,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			description:
 				'Exit steady mode of device. This action needs a head tracking director to be installed on the device.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				await backend?.exitSteadyMode(deviceId)
 			},
@@ -389,7 +415,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			description:
 				'Stop auto-movement of device. This action needs an auto-move director to be installed on the device.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				await backend?.stopAutoMove(deviceId)
 			},
@@ -428,7 +454,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: '1',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const size = toShotSize(event.options.size)
 				if (!size) {
 					self.log('warn', 'Invalid shot size: ' + JSON.stringify(event.options.size))
@@ -444,7 +470,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'vMix Framer: Adjust once',
 			description: 'Adjust the framer to the target person once.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				if (device) {
@@ -459,7 +485,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Toggle vMix Framer',
 			description: 'Enable, disable, or toggle the vMix framer component of a device.',
 			options: [getDeviceSelector(self, videoDeviceOptions)],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				if (device) {
@@ -489,7 +515,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					default: 'true',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				const enable = event.options.enabled == 'true'
@@ -524,7 +550,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					max: 1,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				if (!device) {
@@ -555,7 +581,7 @@ export function GetCameraActions(self: MiruSuiteModuleInstance): Actions {
 					step: 0.01,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				if (!device) {

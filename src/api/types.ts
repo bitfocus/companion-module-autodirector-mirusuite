@@ -18,10 +18,7 @@ export type DeviceSummary = components['schemas']['DeviceSummary']
 export type GamepadSelectedDevice = components['schemas']['GamepadSelectedDevice']
 export type OrchestraSettings = components['schemas']['OrchestraSettings']
 export type OrchestraBooleanSetting =
-	| 'movePreviewCameras'
-	| 'saveCameraGain'
-	| 'saveDirectorSettings'
-	| 'autoMoveCameras'
+	'movePreviewCameras' | 'saveCameraGain' | 'saveDirectorSettings' | 'autoMoveCameras'
 export type MusicPiece = components['schemas']['MusicPiece']
 export type Setlist = components['schemas']['Setlist']
 export type MusicFollowerState = components['schemas']['MusicFollowerStateDto']

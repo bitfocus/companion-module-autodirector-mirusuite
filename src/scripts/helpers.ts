@@ -1,4 +1,8 @@
-import { DropdownChoice } from '@companion-module/base'
+import {
+	type CompanionInputFieldDropdown,
+	type CompanionInputFieldMultiDropdown,
+	DropdownChoice,
+} from '@companion-module/base'
 import type { ComponentFeedback, ComponentId, Device, PresetEntity, ShotSize } from '../api/types.js'
 import { MiruSuiteModuleInstance } from '../main.js'
 export type DeviceId2SwitcherInput = { [key: number]: string }
@@ -44,16 +48,16 @@ export function hasPTZController(device: Device | undefined): boolean {
 
 	return Boolean(
 		device.components?.panasonicController ??
-			device.components?.canonController ??
-			device.components?.birdDogController ??
-			device.components?.sonyCGIController ??
-			device.components?.sonyViscaController ??
-			device.components?.marshallViscaController ??
-			device.components?.telycamViscaController ??
-			device.components?.unrealEngineController ??
-			device.components?.simulatedCropController ??
-			device.components?.zCamViscaController ??
-			device.components?.obsbotViscaController,
+		device.components?.canonController ??
+		device.components?.birdDogController ??
+		device.components?.sonyCGIController ??
+		device.components?.sonyViscaController ??
+		device.components?.marshallViscaController ??
+		device.components?.telycamViscaController ??
+		device.components?.unrealEngineController ??
+		device.components?.simulatedCropController ??
+		device.components?.zCamViscaController ??
+		device.components?.obsbotViscaController,
 	)
 }
 
@@ -95,7 +99,7 @@ export function getDisplayableDeviceNamesFromPreset(
 			.join(', ') ?? 'Unknown'
 	)
 }
-function onlyUnique(value: any, index: any, array: any) {
+function onlyUnique<T>(value: T, index: number, array: T[]) {
 	return array.indexOf(value) === index
 }
 
@@ -128,7 +132,10 @@ export function getPresetChoices(
 	}
 }
 
-export function getPresetSelector(_self: MiruSuiteModuleInstance, presetChoices: DropdownChoice[]): any {
+export function getPresetSelector(
+	_self: MiruSuiteModuleInstance,
+	presetChoices: DropdownChoice[],
+): CompanionInputFieldDropdown<'preset'> {
 	const choices = presetChoices.length > 0 ? presetChoices : [unavailablePresetChoice]
 	return {
 		id: 'preset',
@@ -140,24 +147,45 @@ export function getPresetSelector(_self: MiruSuiteModuleInstance, presetChoices:
 }
 
 export function getDeviceSelector(
+	self: MiruSuiteModuleInstance,
+	choices: DropdownChoice[],
+	multi: true,
+	title?: string,
+): CompanionInputFieldMultiDropdown<'deviceIds'>
+export function getDeviceSelector(
+	self: MiruSuiteModuleInstance,
+	choices: DropdownChoice[],
+	multi?: false,
+	title?: string,
+): CompanionInputFieldDropdown<'deviceId'>
+export function getDeviceSelector(
 	_self: MiruSuiteModuleInstance,
 	deviceChoices: DropdownChoice[],
 	multi = false,
 	title = 'Device',
-): any {
+): CompanionInputFieldDropdown | CompanionInputFieldMultiDropdown {
 	const choices = deviceChoices.length > 0 ? deviceChoices : [unavailableDeviceChoice]
-	return {
-		id: multi ? 'deviceIds' : 'deviceId',
-		type: multi ? 'multidropdown' : 'dropdown',
+	const common = {
 		label: title,
-		default: multi ? [] : choices[0].id,
+		choices,
+		tooltip: 'Select devices configured in MiruSuite.',
+	}
+	if (multi) return { ...common, id: 'deviceIds', type: 'multidropdown', default: [] }
+	return {
+		id: 'deviceId',
+		type: 'dropdown',
+		label: title,
+		default: choices[0].id,
 		choices,
 		tooltip:
 			'You can select multiple devices. To make a device available, you first need to create a device in MiruSuite and add a video input to it.',
 	}
 }
 
-export function getFaceSelector(_self: MiruSuiteModuleInstance, faceChoices: DropdownChoice[]): any {
+export function getFaceSelector(
+	_self: MiruSuiteModuleInstance,
+	faceChoices: DropdownChoice[],
+): CompanionInputFieldDropdown<'person'> {
 	const choices = faceChoices.length > 0 ? faceChoices : [unavailableFaceChoice]
 	return {
 		id: 'person',

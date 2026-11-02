@@ -1,7 +1,15 @@
+import type {
+	CompanionActionDefinitions,
+	CompanionInputFieldDropdown,
+	CompanionInputFieldTextInput,
+} from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
 import type { MiruSuiteModuleInstance } from '../main.js'
 import type { CompanionActionEvent } from '@companion-module/base'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<
+	Pick<MiruSuiteInstanceTypes['actions'], 'cutToInput' | 'setPreviewInput' | 'cutSwitcher' | 'triggerTransition'>
+>
 
 export function GetSwitcherActions(self: MiruSuiteModuleInstance): Actions {
 	const backend = self.backend
@@ -9,13 +17,17 @@ export function GetSwitcherActions(self: MiruSuiteModuleInstance): Actions {
 	const switcherInputChoices = switcherInputs
 		.filter((input) => input.id !== undefined)
 		.map((input) => ({ id: input.id!, label: input.name ?? input.id! }))
-	const inputOption = () => ({
-		id: 'input',
-		type: switcherInputChoices.length > 0 ? 'dropdown' : 'textinput',
-		label: 'Input',
-		default: switcherInputChoices[0]?.id ?? '',
-		...(switcherInputChoices.length > 0 ? { choices: switcherInputChoices } : {}),
-	})
+	const inputOption = (): CompanionInputFieldDropdown<'input'> | CompanionInputFieldTextInput<'input'> =>
+		switcherInputChoices.length > 0
+			? {
+					id: 'input',
+					type: 'dropdown',
+					label: 'Input',
+					default: switcherInputChoices[0].id,
+					choices: switcherInputChoices,
+				}
+			: { id: 'input', type: 'textinput', label: 'Input', default: '' }
+
 	const selectedInput = (event: CompanionActionEvent): string => {
 		const selected = typeof event.options.input === 'string' ? event.options.input : ''
 		if (!selected) return ''
@@ -30,7 +42,7 @@ export function GetSwitcherActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Set Program Input',
 			description: 'Cut directly to a named input on the connected switcher.',
 			options: [inputOption()],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const input = selectedInput(event)
 				if (input) await backend?.cutTo(input)
 			},
@@ -39,7 +51,7 @@ export function GetSwitcherActions(self: MiruSuiteModuleInstance): Actions {
 			name: 'Set Preview Input',
 			description: 'Set the Preview bus to a named input on the connected switcher.',
 			options: [inputOption()],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const input = selectedInput(event)
 				if (input) await backend?.setPreview(input)
 			},

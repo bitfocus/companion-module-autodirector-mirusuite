@@ -419,7 +419,7 @@ test('new contextual presets reference registered actions and feedbacks, and sta
 	assert.equal(presets['musicPiece-7-12'], undefined)
 	assert.ok(presets['orchestra-move-camera-count-3'])
 	assert.ok(presets['orchestra-device-7'])
-	assert.ok(presets['orchestra-device-8'])
+	assert.equal(presets['orchestra-device-8'], undefined, 'audio-only devices are not PTZ Orchestra cameras')
 	assert.equal(presets['orchestra-device-7'].feedbacks[0].style.bgcolor, combineRgb(0, 0, 255))
 	for (const preset of Object.values(presets)) {
 		for (const step of preset.steps ?? []) {
@@ -594,5 +594,5 @@ test('AutoCut update events reload per-device component feedback before updating
 	await handler.handleMessage(JSON.stringify({ type: 'AUTO_CUT_UPDATED' }))
 	assert.equal(deviceRefreshes, 1)
 	assert.equal(runningRefreshes, 1)
-	assert.equal(variableRefreshes, 2)
+	assert.equal(variableRefreshes, 1)
 })

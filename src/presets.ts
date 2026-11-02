@@ -1,7 +1,7 @@
 import type { DropdownChoice } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from './main.js'
-import type { LegacyPresets as CompanionPresetDefinitions } from './presets/helpers.js'
-import { convertLegacyPresets } from './presets/modern.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './presets/helpers.js'
+import { organizePresets } from './presets/modern.js'
 import {
 	addExitSteadyModePreset,
 	addLearnTargetFacePreset,
@@ -127,6 +127,6 @@ export function UpdatePresets(self: MiruSuiteModuleInstance): void {
 		getGamepadPresets(self),
 		getOrchestraPresets(self),
 	)
-	const { structure, definitions } = convertLegacyPresets(self, presets)
+	const { structure, definitions } = organizePresets(self, presets)
 	self.setPresetDefinitions(structure, definitions)
 }

@@ -1,8 +1,12 @@
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
 import { type CompanionActionEvent, type DropdownChoice } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from '../main.js'
 import { createDeviceOptions, getDeviceSelector } from '../scripts/helpers.js'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<
+	Pick<MiruSuiteInstanceTypes['actions'], 'toggleAutoCut' | 'setOverrideDominantSpeaker'>
+>
 
 export function GetAutoCutActions(self: MiruSuiteModuleInstance): Actions {
 	const backend = self.backend
@@ -65,7 +69,7 @@ export function GetAutoCutActions(self: MiruSuiteModuleInstance): Actions {
 					default: 'toggle',
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const deviceId = Number(event.options.deviceId)
 				const device = store.getDeviceById(deviceId)
 				const mode = event.options.mode

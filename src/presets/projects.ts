@@ -1,8 +1,8 @@
 import type { MiruSuiteModuleInstance } from '../main.js'
-import { action, button, feedback, type LegacyPresets } from './helpers.js'
+import { action, button, feedback, type CategorizedPresets } from './helpers.js'
 
-export function getProjectPresets(self: MiruSuiteModuleInstance): LegacyPresets {
-	const presets: LegacyPresets = {}
+export function getProjectPresets(self: MiruSuiteModuleInstance): CategorizedPresets {
+	const presets: CategorizedPresets = {}
 	for (const project of self.store.getProjects()) {
 		if (project.id === undefined) continue
 		presets[`loadProject-${project.id}`] = button(

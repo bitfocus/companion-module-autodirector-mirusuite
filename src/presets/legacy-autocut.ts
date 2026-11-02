@@ -1,11 +1,11 @@
 import { combineRgb, type DropdownChoice } from '@companion-module/base'
 import type { ShotSize } from '../api/types.js'
-import type { LegacyPresets as CompanionPresetDefinitions } from './helpers.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './helpers.js'
 import { shotSizeToLabel } from '../scripts/helpers.js'
 
 export function addTriggerAutoCut(presets: CompanionPresetDefinitions): void {
 	presets['toggleAutoCut'] = {
-		type: 'button',
+		type: 'simple',
 		category: 'AutoCut',
 		name: 'Toggle AutoCut',
 		style: {
@@ -45,7 +45,7 @@ export function addOverrideDominantSpeakerPreset(
 	deviceId: number,
 ): void {
 	presets['overrideDominantSpeaker-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'AutoCut',
 		name: 'Override Dominant Speaker',
 		style: {
@@ -89,7 +89,7 @@ export function addToggleAutoCutAudioPreset(
 	deviceId: number,
 ): void {
 	presets['toggleAudioAutoCut-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'AutoCut',
 		name: 'Toggle AutoCut Audio',
 		style: {
@@ -135,7 +135,7 @@ export function addConfigureTargetShotSizes(presets: CompanionPresetDefinitions)
 		// Add increase and decrease buttons for each shot size
 		const increaseText = '+\n' + shotSizeToLabel(shotSize)
 		presets['increaseShotSize-' + shotSize] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Person Tracking',
 			name: increaseText,
 			style: {
@@ -163,7 +163,7 @@ export function addConfigureTargetShotSizes(presets: CompanionPresetDefinitions)
 		}
 		const decreaseText = '-\n' + shotSizeToLabel(shotSize)
 		presets['decreaseShotSize-' + shotSize] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Person Tracking',
 			name: decreaseText,
 			style: {

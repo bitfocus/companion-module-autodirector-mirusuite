@@ -1,5 +1,6 @@
+import { ptzArrowValues } from '../static/arrows.js'
 import { combineRgb, type DropdownChoice } from '@companion-module/base'
-import type { LegacyPresets as CompanionPresetDefinitions } from './helpers.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './helpers.js'
 import { getDeviceNameFromVideoDeviceChoices } from '../scripts/helpers.js'
 
 export function addManualMoveSpeedPresets(presets: CompanionPresetDefinitions): void {
@@ -8,7 +9,7 @@ export function addManualMoveSpeedPresets(presets: CompanionPresetDefinitions): 
 		const icon = isIncrease ? '+' : '-'
 		const title = `${icon}\nMove Speed\n$(autodirector-mirusuite:manual_move_speed)`
 		presets[`manualMoveSpeed-${direction}`] = {
-			type: 'button',
+			type: 'simple',
 			category: 'PTZ',
 			name: `${isIncrease ? 'Increase' : 'Decrease'} Manual Movement Speed`,
 			style: {
@@ -40,21 +41,22 @@ export function addPTZDirectionPresets(
 ): void {
 	const diagonalSpeed = 1 / Math.sqrt(2)
 	const directions = [
-		{ id: 'topLeft', label: '↖', pan: -diagonalSpeed, tilt: diagonalSpeed },
-		{ id: 'top', label: '↑', pan: 0, tilt: 1 },
-		{ id: 'topRight', label: '↗', pan: diagonalSpeed, tilt: diagonalSpeed },
-		{ id: 'left', label: '←', pan: -1, tilt: 0 },
-		{ id: 'right', label: '→', pan: 1, tilt: 0 },
-		{ id: 'bottomLeft', label: '↙', pan: -diagonalSpeed, tilt: -diagonalSpeed },
-		{ id: 'bottom', label: '↓', pan: 0, tilt: -1 },
-		{ id: 'bottomRight', label: '↘', pan: diagonalSpeed, tilt: -diagonalSpeed },
+		{ asset: 'nw', id: 'topLeft', label: '↖', pan: -diagonalSpeed, tilt: diagonalSpeed },
+		{ asset: 'n', id: 'top', label: '↑', pan: 0, tilt: 1 },
+		{ asset: 'ne', id: 'topRight', label: '↗', pan: diagonalSpeed, tilt: diagonalSpeed },
+		{ asset: 'w', id: 'left', label: '←', pan: -1, tilt: 0 },
+		{ asset: 'e', id: 'right', label: '→', pan: 1, tilt: 0 },
+		{ asset: 'sw', id: 'bottomLeft', label: '↙', pan: -diagonalSpeed, tilt: -diagonalSpeed },
+		{ asset: 's', id: 'bottom', label: '↓', pan: 0, tilt: -1 },
+		{ asset: 'se', id: 'bottomRight', label: '↘', pan: diagonalSpeed, tilt: -diagonalSpeed },
 	]
 	const deviceName = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 
 	for (const direction of directions) {
 		const text = direction.label + '\n' + deviceName
 		presets['ptzMove-' + direction.id + '-' + deviceId] = {
-			type: 'button',
+			graphic: { image: ptzArrowValues[`ptz_arrow_${direction.asset}`], caption: deviceName },
+			type: 'simple',
 			category: 'PTZ',
 			name: text,
 			style: {
@@ -108,7 +110,7 @@ export function addPTZZoomPresets(
 	for (const direction of zoomDirections) {
 		const text = direction.label + '\n' + deviceName
 		presets['ptzZoom-' + direction.id + '-' + deviceId] = {
-			type: 'button',
+			type: 'simple',
 			category: 'PTZ',
 			name: text,
 			style: {

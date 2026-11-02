@@ -1,8 +1,9 @@
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { MiruSuiteInstanceTypes } from '../instance-types.js'
 import type { MiruSuiteModuleInstance } from '../main.js'
-import type { CompanionActionEvent } from '@companion-module/base'
 import { createDeviceOptions } from '../scripts/helpers.js'
 
-type Actions = Record<string, any>
+type Actions = CompanionActionDefinitions<Pick<MiruSuiteInstanceTypes['actions'], 'setGamepadDevice'>>
 
 export function GetGamepadActions(self: MiruSuiteModuleInstance): Actions {
 	const devices = createDeviceOptions(self.store.getVideoDevices())
@@ -20,7 +21,7 @@ export function GetGamepadActions(self: MiruSuiteModuleInstance): Actions {
 					default: self.store.getGamepadDeviceId() ?? -1,
 				},
 			],
-			async callback(event: CompanionActionEvent) {
+			async callback(event) {
 				const selected = Number(event.options.deviceId)
 				if (
 					selected !== -1 &&

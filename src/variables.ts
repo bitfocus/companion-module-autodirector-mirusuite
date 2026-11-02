@@ -1,5 +1,5 @@
 import type { JsonValue } from '@companion-module/base'
-import { readFileSync } from 'node:fs'
+import { ptzArrowValues } from './static/arrows.js'
 import type { Device } from './api/types.js'
 import type { MiruSuiteModuleInstance } from './main.js'
 import { getInputComponentType, hasPTZController } from './scripts/helpers.js'
@@ -93,12 +93,7 @@ export function UpdateVariableDefinitions(self: MiruSuiteModuleInstance): void {
 
 	self.setVariableDefinitions(definitions)
 	if (!self.ptzArrowImagesInitialized) {
-		const arrowValues: Record<string, string> = {}
-		for (const direction of ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']) {
-			const base64 = readFileSync(new URL(`./static/arrows/${direction}.png`, import.meta.url)).toString('base64')
-			arrowValues[`ptz_arrow_${direction}`] = `data:image/png;base64,${base64}`
-		}
-		self.setVariableValues({ ...buildVariableValues(self), ...arrowValues })
+		self.setVariableValues({ ...buildVariableValues(self), ...ptzArrowValues })
 		self.ptzArrowImagesInitialized = true
 	} else {
 		self.setVariableValues(buildVariableValues(self))

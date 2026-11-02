@@ -1,5 +1,5 @@
 import { combineRgb, type DropdownChoice } from '@companion-module/base'
-import type { LegacyPresets as CompanionPresetDefinitions } from './helpers.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './helpers.js'
 
 export function addVMixFramerPresets(
 	presets: CompanionPresetDefinitions,
@@ -7,7 +7,7 @@ export function addVMixFramerPresets(
 	deviceId: number,
 ): void {
 	presets['vmixFramerAdjustFrame-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'vMix Framer',
 		name: 'Adjust Frame',
 		style: {
@@ -32,7 +32,7 @@ export function addVMixFramerPresets(
 		feedbacks: [],
 	}
 	presets['vMixFramerToggle-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'vMix Framer',
 		name: 'Toggle Framer',
 		style: {
@@ -68,7 +68,7 @@ export function addVMixFramerPresets(
 		],
 	}
 	presets['vMixFramerEnable-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'vMix Framer',
 		name: 'Enable Framer',
 		style: {
@@ -105,7 +105,7 @@ export function addVMixFramerPresets(
 		],
 	}
 	presets['vMixFramerDisable-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'vMix Framer',
 		name: 'Disable Framer',
 		style: {

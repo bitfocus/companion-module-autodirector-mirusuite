@@ -53,7 +53,9 @@ export class EventHandler {
 			if (this.self.connectionState !== 'Connected') {
 				this.self.connectionState = 'Connected'
 				this.self.updateStatus(InstanceStatus.Ok)
-				void this.self.updateConfiguration()
+				void this.self.updateConfiguration().catch((error) => {
+					this.self.log('warn', `Could not refresh configuration after reconnect: ${String(error)}`)
+				})
 			}
 		}
 
@@ -137,9 +139,6 @@ export class EventHandler {
 					this.self.checkFeedbacks('orchestraSetting', 'orchestraDeviceEnabled')
 					break
 			}
-			this.self.connectionState = 'Connected'
-			this.self.updateStatus(InstanceStatus.Ok)
-			this.self.updateVariableValues()
 		} catch (error) {
 			this.self.log('error', `Error handling MiruSuite event: ${String(error)}`)
 		}

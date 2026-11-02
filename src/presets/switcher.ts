@@ -1,9 +1,9 @@
 import { combineRgb } from '@companion-module/base'
 import type { MiruSuiteModuleInstance } from '../main.js'
-import { action, button, feedback, type LegacyPresets } from './helpers.js'
+import { action, button, feedback, type CategorizedPresets } from './helpers.js'
 
-export function getSwitcherPresets(self?: MiruSuiteModuleInstance): LegacyPresets {
-	const presets: LegacyPresets = {
+export function getSwitcherPresets(self?: MiruSuiteModuleInstance): CategorizedPresets {
+	const presets: CategorizedPresets = {
 		cutSwitcher: button('Switcher', 'CUT', [action('cutSwitcher', {})]),
 		triggerTransition: button('Switcher', 'Transition', [action('triggerTransition', {})]),
 	}

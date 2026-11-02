@@ -1,6 +1,6 @@
 import { combineRgb, type DropdownChoice } from '@companion-module/base'
 import type { ShotSize, TrackingMode } from '../api/types.js'
-import type { LegacyPresets as CompanionPresetDefinitions } from './helpers.js'
+import type { CategorizedPresets as CompanionPresetDefinitions } from './helpers.js'
 import { getDeviceNameFromVideoDeviceChoices, shotSizeToLabel } from '../scripts/helpers.js'
 
 export function addShotSizePreset(
@@ -12,7 +12,7 @@ export function addShotSizePreset(
 	let text = shotSizeToLabel(shotSize)
 	text += ' (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['shotSize-' + shotSize + '-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Person Tracking',
 		name: text,
 		style: {
@@ -58,7 +58,7 @@ export function toggleDirectorPreset(
 	let text = '⏻ Director'
 	text += '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['toggledDirector-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -99,7 +99,7 @@ export function enableDirectorPreset(
 	let text = 'Enable Director'
 	text += '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['enableDirector-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -146,7 +146,7 @@ export function disableDirectorPreset(
 	let text = 'Disable Director'
 	text += '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['disableDirector-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -194,7 +194,7 @@ export function addTriggerMovementPreset(
 ): void {
 	const text = `${type === 'random' ? 'Random Move' : 'Preset Move'}\n(${getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)})`
 	presets['movement-' + type + '-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -228,7 +228,7 @@ export function addStopAutoMovePreset(
 ): void {
 	const text = 'Stop Move' + '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['stop-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -263,7 +263,7 @@ export function addTrackingModePreset(
 ): void {
 	const text = mode + '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['trackingMode' + mode + '-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Person Tracking',
 		name: text,
 		style: {
@@ -308,7 +308,7 @@ export function addLearnTargetFacePreset(
 	const text = 'Learn Target Face'
 	const name = text + '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['learnTargetFace-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Person Tracking',
 		name: name,
 		style: {
@@ -341,7 +341,7 @@ export function addReApplyPreset(
 ): void {
 	const name = getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId)
 	presets['reapplyPreset-' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Presets',
 		name: 'Play active preset\n' + name,
 		style: {
@@ -374,7 +374,7 @@ export function addReturnToHomeButton(
 ): void {
 	const text = 'Return\nHome' + '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['returnToHome' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'General',
 		name: text,
 		style: {
@@ -407,7 +407,7 @@ export function addExitSteadyModePreset(
 ): void {
 	const text = 'Exit Steady\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['exitSteadyMode' + deviceId] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Person Tracking',
 		name: text,
 		style: {
@@ -442,7 +442,7 @@ export function addMoveTargetButtonPresets(
 	const directionLabels: Record<(typeof directions)[number], string> = { UP: '↑', DOWN: '↓', LEFT: '←', RIGHT: '→' }
 	for (const direction of directions) {
 		presets['moveTarget-' + direction + '-' + deviceId] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Person Tracking',
 			name:
 				'Target ' +
@@ -490,8 +490,7 @@ export function addMoveTargetRotaryPresets(
 	for (const axis of axes) {
 		const icon = axis === 'X' ? '↔' : '↕'
 		presets['moveTargetRotary-' + axis + '-' + deviceId] = {
-			type: 'button',
-			options: { rotaryActions: true },
+			type: 'simple',
 			category: 'Person Tracking',
 			name: 'Target ' + icon + '\n(' + videoDeviceChoices.find((d) => Number(d.id) === deviceId)?.label + ')',
 			style: {
@@ -545,7 +544,7 @@ export function addUpdateSensitivityPresets(
 			getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) +
 			')'
 		presets['updateSensitivity-' + direction + '-' + deviceId] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Person Tracking',
 			name: text,
 			style: {
@@ -580,8 +579,7 @@ export function addUpdateSensitivityRotaryPresets(
 ): void {
 	const text = 'Sensitivity' + '\n (' + getDeviceNameFromVideoDeviceChoices(videoDeviceChoices, deviceId) + ')'
 	presets['updateSensitivityRotary-' + deviceId] = {
-		type: 'button',
-		options: { rotaryActions: true },
+		type: 'simple',
 		category: 'Person Tracking',
 		name: text,
 		style: {

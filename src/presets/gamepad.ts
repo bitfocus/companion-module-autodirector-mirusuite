@@ -1,8 +1,8 @@
 import type { MiruSuiteModuleInstance } from '../main.js'
-import { action, button, feedback, type LegacyPresets } from './helpers.js'
+import { action, button, feedback, type CategorizedPresets } from './helpers.js'
 
-export function getGamepadPresets(self: MiruSuiteModuleInstance): LegacyPresets {
-	const presets: LegacyPresets = {}
+export function getGamepadPresets(self: MiruSuiteModuleInstance): CategorizedPresets {
+	const presets: CategorizedPresets = {}
 	for (const device of self.store.getVideoDevices()) {
 		if (device.id === undefined) continue
 		presets[`gamepadCamera-${device.id}`] = button(
