@@ -15,6 +15,7 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 	backend: Backend | null = null
 	store: Store = new Store(this)
 	connectionState = 'Connecting'
+	guiStreamConnected = false
 	manualMoveSpeed = 0.2
 	ptzArrowImagesInitialized = false
 	private eventHandler: EventHandler | null = null
@@ -80,8 +81,9 @@ export class MiruSuiteModuleInstance extends InstanceBase<MiruSuiteInstanceTypes
 			if (this.store.hasConfiguration) this.updateVariableValues()
 			throw error
 		}
-		this.connectionState = 'Connected'
-		this.updateStatus(InstanceStatus.Ok)
+		const connected = this.eventHandler === null || this.guiStreamConnected
+		this.connectionState = connected ? 'Connected' : 'Disconnected'
+		this.updateStatus(connected ? InstanceStatus.Ok : InstanceStatus.ConnectionFailure)
 		this.updateDefinitions()
 		this.updateVariableValues()
 		this.checkFeedbacks(

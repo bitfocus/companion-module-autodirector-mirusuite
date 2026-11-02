@@ -8,6 +8,10 @@ import { EventHandler } from '../dist/scripts/eventhandler.js'
 import { UpdateActions } from '../dist/actions.js'
 import { UpdateFeedbacks } from '../dist/feedbacks.js'
 import { UpdateVariableDefinitions } from '../dist/variables.js'
+import { MiruSuiteModuleInstance } from '../dist/main.js'
+import { organizePresets } from '../dist/presets/modern.js'
+import { addMoveTargetRotaryPresets, addUpdateSensitivityRotaryPresets } from '../dist/presets/legacy-camera.js'
+import { addPlayPresetPreset } from '../dist/presets/saved.js'
 
 test('1.0.3 connections migrate passwords at index 1, even when index 0 already ran', () => {
 	const config = { host: 'localhost', port: 8080, username: 'admin', password: 'saved-password' }
@@ -27,6 +31,7 @@ test('1.0.3 connections migrate passwords at index 1, even when index 0 already 
 function makeInstance() {
 	const self = {
 		connectionState: 'Disconnected',
+		guiStreamConnected: false,
 		manualMoveSpeed: 0.2,
 		log() {},
 		updateStatus() {},
@@ -136,4 +141,101 @@ test('unknown GUI events do not push variables or change connection status', asy
 	await new EventHandler(self, 'localhost', 8080, '', '').handleMessage('{"type":"FUTURE_EVENT"}')
 	assert.equal(pushes, 0)
 	assert.equal(self.connectionState, 'Disconnected')
+})
+
+test('HTTP recovery restores status once while the GUI stream remains connected', async (t) => {
+	const self = makeInstance()
+	self.connectionState = 'Connected'
+	self.guiStreamConnected = true
+	self.store.configurationLoaded = true
+	let pushes = 0
+	self.updateVariableValues = () => pushes++
+	let failing = true
+	t.mock.method(globalThis, 'fetch', async () => (failing ? new Response('', { status: 503 }) : new Response('[]')))
+	const backend = new Backend(self)
+	await backend.setup('localhost', 8080)
+	await assert.rejects(backend.loadDevices())
+	assert.equal(self.connectionState, 'Disconnected')
+	const failurePushes = pushes
+	failing = false
+	await backend.loadDevices()
+	assert.equal(self.connectionState, 'Connected')
+	assert.equal(pushes, failurePushes + 1)
+	await backend.loadDevices()
+	assert.equal(pushes, failurePushes + 1, 'healthy requests do not repeatedly push variables')
+	self.guiStreamConnected = false
+	self.connectionState = 'Disconnected'
+	await backend.loadDevices()
+	assert.equal(self.connectionState, 'Disconnected', 'HTTP recovery cannot mask a stream outage')
+	assert.equal(pushes, failurePushes + 1)
+})
+
+test('GUI stream health tracks open, error, and close and every reopen refreshes configuration', async () => {
+	const self = makeInstance()
+	let refreshes = 0
+	self.updateConfiguration = async () => refreshes++
+	const handler = new EventHandler(self, 'localhost', 8080, '', '')
+	try {
+		handler.connect()
+		const source = handler.guiSource
+		self.connectionState = 'Connected'
+		source.onopen()
+		assert.equal(refreshes, 0, 'initial open does not repeat a successful configuration load')
+		source.onerror()
+		source.onopen()
+		assert.equal(self.guiStreamConnected, true)
+		assert.equal(refreshes, 1)
+		source.onerror()
+		assert.equal(self.guiStreamConnected, false)
+		// A separate configuration refresh must not suppress the stream's reconnect refresh.
+		self.connectionState = 'Connected'
+		source.onopen()
+		assert.equal(refreshes, 2)
+	} finally {
+		handler.close()
+	}
+	assert.equal(self.guiStreamConnected, false)
+})
+
+test('configuration refresh cannot mark a disconnected GUI stream healthy', async () => {
+	const self = makeInstance()
+	self.backend = {}
+	self.eventHandler = {}
+	self.store.loadConfiguration = async () => {}
+	self.updateDefinitions = () => {}
+	await MiruSuiteModuleInstance.prototype.updateConfiguration.call(self)
+	assert.equal(self.connectionState, 'Disconnected')
+	self.guiStreamConnected = true
+	await MiruSuiteModuleInstance.prototype.updateConfiguration.call(self)
+	assert.equal(self.connectionState, 'Connected')
+})
+
+test('rotary and single-device saved presets stay with their device; shared presets stay in Application', () => {
+	const self = makeInstance()
+	self.store.devices = [
+		{ id: 7, name: 'Camera' },
+		{ id: 8, name: 'Other camera' },
+	]
+	self.store.presets = [
+		{ id: 1, commands: [{ deviceId: 7 }, { deviceId: 7 }] },
+		{ id: 2, commands: [{ deviceId: 7 }, { deviceId: 8 }] },
+		{ id: 3, commands: [] },
+		{ id: 4, commands: [{ deviceId: 99 }] },
+	]
+	const presets = {}
+	addMoveTargetRotaryPresets(presets, [{ id: 7, label: 'Camera' }], 7)
+	addUpdateSensitivityRotaryPresets(presets, [{ id: 7, label: 'Camera' }], 7)
+	for (const id of [1, 2, 3, 4, 5]) addPlayPresetPreset(presets, { id, label: `Preset ${id}` })
+	const { structure, definitions } = organizePresets(self, presets)
+	const groups = Object.fromEntries(
+		structure.map((section) => [section.id, section.definitions.flatMap((group) => group.presets)]),
+	)
+	assert.deepEqual(groups['device-7'], [
+		'moveTargetRotary-X-7',
+		'moveTargetRotary-Y-7',
+		'updateSensitivityRotary-7',
+		'playPreset-1',
+	])
+	assert.deepEqual(groups['module-wide'], ['playPreset-2', 'playPreset-3', 'playPreset-4', 'playPreset-5'])
+	assert.equal(definitions['moveTargetRotary-X-7'].steps[0].rotate_left[0].options.deviceId, 7)
 })

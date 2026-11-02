@@ -6,6 +6,7 @@ import type MiruSuiteModuleInstance from '../main.js'
 export class EventHandler {
 	private guiSource: EventSource | null = null
 	private stateSource: EventSource | null = null
+	private guiStreamOpened = false
 	private stateStreamOpened = false
 
 	constructor(
@@ -32,6 +33,7 @@ export class EventHandler {
 			void this.handleMessage(event.data)
 		}
 		source.onerror = () => {
+			this.self.guiStreamConnected = false
 			this.self.connectionState = 'Disconnected'
 			this.self.updateStatus(InstanceStatus.ConnectionFailure, 'MiruSuite event stream disconnected')
 			this.self.store.clearLiveState()
@@ -50,9 +52,10 @@ export class EventHandler {
 			)
 		}
 		source.onopen = () => {
-			if (this.self.connectionState !== 'Connected') {
-				this.self.connectionState = 'Connected'
-				this.self.updateStatus(InstanceStatus.Ok)
+			const refresh = this.guiStreamOpened || this.self.connectionState !== 'Connected'
+			this.self.guiStreamConnected = true
+			this.guiStreamOpened = true
+			if (refresh) {
 				void this.self.updateConfiguration().catch((error) => {
 					this.self.log('warn', `Could not refresh configuration after reconnect: ${String(error)}`)
 				})
@@ -86,10 +89,12 @@ export class EventHandler {
 	}
 
 	close(): void {
+		this.self.guiStreamConnected = false
 		this.guiSource?.close()
 		this.guiSource = null
 		this.stateSource?.close()
 		this.stateSource = null
+		this.guiStreamOpened = false
 		this.stateStreamOpened = false
 	}
 

@@ -62,6 +62,16 @@ export default class Backend {
 						throw new Error(`MiruSuite returned ${response.status} ${response.statusText}`)
 					}
 					if (projectLoadConflict) return response
+					// Recover once, without letting HTTP success hide a broken event stream.
+					if (
+						this.self.connectionState === 'Disconnected' &&
+						this.self.guiStreamConnected &&
+						this.self.store.hasConfiguration
+					) {
+						this.self.connectionState = 'Connected'
+						this.self.updateStatus(InstanceStatus.Ok)
+						this.self.updateVariableValues()
+					}
 					return response
 				} catch (error) {
 					this.self.connectionState = 'Disconnected'

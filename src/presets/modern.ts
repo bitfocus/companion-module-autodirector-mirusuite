@@ -21,11 +21,24 @@ export function organizePresets(
 		{ name: string; groups: Map<string, CompanionPresetGroupSimple<MiruSuiteInstanceTypes>> }
 	>()
 	for (const [id, { category, graphic, ...preset }] of Object.entries(presets)) {
-		const deviceAction = preset.steps
-			.flatMap((step) => [...step.down, ...step.up])
-			.find((action) => 'deviceId' in action.options)
-		const deviceId =
-			deviceAction && 'deviceId' in deviceAction.options ? Number(deviceAction.options.deviceId) : undefined
+		const actions = preset.steps.flatMap((step) => [
+			...step.down,
+			...step.up,
+			...(step.rotate_left ?? []),
+			...(step.rotate_right ?? []),
+		])
+		const deviceIds = new Set<number>()
+		for (const action of actions) {
+			if ('deviceId' in action.options) deviceIds.add(Number(action.options.deviceId))
+			if (action.actionId === 'playPreset') {
+				const savedPreset = self.store.getPresetById(Number(action.options.preset))
+				for (const command of savedPreset?.commands ?? []) {
+					if (command.deviceId !== undefined) deviceIds.add(command.deviceId)
+				}
+			}
+		}
+		// A preset targeting several devices belongs to the application section.
+		const deviceId = deviceIds.size === 1 ? [...deviceIds][0] : undefined
 		const device = deviceId === undefined ? undefined : self.store.getDeviceById(deviceId)
 		const sectionId = device ? `device-${device.id}` : 'module-wide'
 		let section = sections.get(sectionId)
