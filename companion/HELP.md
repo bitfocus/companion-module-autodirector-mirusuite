@@ -77,7 +77,7 @@ For MiruSuite guidance, see the [Companion integration documentation](https://do
 
 ## Upgrading from 1.0.x
 
-Version 1.1.0 removed the automatic button learning feature. Existing buttons using
+Version 1.1.1 removed the automatic button learning feature. Existing buttons using
 `learnAutoButtons`, `playAutoPreset`, `overwriteAutoPreset`, or `clearAllAutoButtons`
 no longer perform those operations. The `learnMode` and `autoPreset` feedbacks and
 `learningMode`, `offlineMode`, and `autoConfiguredButtons` variables were also removed.
