@@ -9,7 +9,7 @@ import { Store } from '../dist/scripts/store.js'
 // Exercise the distributable bundle from an isolated directory with no asset files.
 mkdirSync('.yarn', { recursive: true })
 const directory = mkdtempSync(resolve('.yarn/package-smoke-'))
-execFileSync('tar', ['-xf', resolve(process.argv[2] ?? 'autodirector-mirusuite-1.1.0.tgz'), '-C', directory])
+execFileSync('tar', ['-xf', resolve(process.argv[2] ?? 'autodirector-mirusuite-1.1.1.tgz'), '-C', directory])
 const moduleDirectory = resolve(directory, 'autodirector-mirusuite')
 assert.equal(existsSync(resolve(moduleDirectory, 'static/arrows/n.png')), false)
 const { MiruSuiteModuleInstance, UpgradeScripts } = await import(
